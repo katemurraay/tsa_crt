@@ -23,6 +23,8 @@ def save_uncertainty_csv(preds, std, labels, feature, filename, bivariate=False)
         dct = {feature: preds,
                'std': std,
                'labels': labels}
+    print(type(preds), type(std), type(labels))
+    print(len(preds), len(std), labels.shape)
     df = pd.DataFrame(dct)
     df.to_csv(PATH)
 

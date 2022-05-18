@@ -1,147 +1,174 @@
-from datetime import datetime
+"""
+Interface of a predictive model with shared functionalities
+"""
 
 import numpy as np
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 from math import sqrt
-from sklearn.svm import SVR
+from sklearn import svm
 from sklearn.model_selection import GridSearchCV
 from joblib import load, dump
 from models.model_interface import ModelInterface
 import sklearn.metrics as metrics
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import TimeSeriesSplit
+from models.model_interface import ModelInterface
 
 
-class SVRPredictor(ModelInterface):
-    def __init__(self):
-        ModelInterface.__init__(self, "SVRPredictor")
+class SVR(ModelInterface):
+    def __init__(self, name):
+        """
+        Constructor of the Model Interface class
+        :param name: string: name of the model
+        """
+        super().__init__(name)
         self.p = {'kernel': 'rbf',
-                               'degree': 3,
-                               'tol': 0.001,
-                               'C': 1.0,
-                               'sliding_window': 288
-                               }
+                  'degree': 3,
+                  'tol': 0.001,
+                  'C': 1.0,
+                  'sliding_window': 288
+                  }
         self.parameter_list = {'kernel': ('linear', 'poly', 'rbf', 'sigmoid'),
-                      'degree': [2,3,4,5,6,7,8,9,10],
-                      #'tol': [1e-3, 1e-4, 1e-5],
-                      #'C': [1, 2]
-                      }
+                               'degree': [2, 3, 4, 5, 6, 7, 8, 9, 10],
+                               }
 
         self.tuning_window = 0
+        """int:"""
 
-    # Initialize the model
+        self.history_X = None
+        """np.array: temporary training features"""
+        self.history_y = None
+        """np.array: temporary training labels"""
+
+        # Model configuration
+        self.verbose = True
+        """Boolean: Print output of the training phase"""
+
     def create_model(self):
-        self.model = SVR(kernel=self.p['kernel'],
-                         degree=self.p['degree'])
+        """
+        Create an instance of the model. This function contains the definition and the library of the model
+        :return: None
+        """
+        self.model = svm.SVR(kernel=self.p['kernel'],
+                             degree=self.p['degree'])
 
     def fit(self):
-        start_time = datetime.now()
-        if self.parameter_list['sliding_window']>0:
-            X_train = self.ds.X_train[-self.parameter_list['sliding_window']:]
-            y_train = self.ds.y_train[-self.parameter_list['sliding_window']:]
+        """
+        Training of the model
+        :return: None
+        """
+        self.history_X = self.ds.X_train
+        self.history_y = self.ds.y_train
 
-        self.model = self.model.fit(X_train, y_train.ravel())
-        return datetime.now() - start_time
+        if self.p['sliding_window'] > 0:
+            self.history_X = self.ds.X_train[-self.p['sliding_window']:]
+            self.history_y = self.ds.y_train[-self.p['sliding_window']:]
 
+        self.model = self.model.fit(self.history_X, self.history_y.ravel())
+
+    def tune(self, X, y):
+        """
+        Tune the models with new available samples (X, y)
+        :param X: nparray: Training features
+        :param y: nparray: Training labels
+        :return: None
+        """
+        pass
 
     def predict(self, X):
+        """
+        Inference step on the samples X
+        :param X: np.array: Input samples to predict
+        :return: np.array: predictions: Predictions of the samples X
+        """
         if self.model is None:
             print("ERROR: the model needs to be trained before predict")
             return
 
+        self.history_X = self.ds.X_train
+        self.history_y = self.ds.y_train
+
         predicted_mean = list()
-        X = self.ds.X_timeseries
-        X_len = X.shape[0]
-        # predicted_stdv = list()
-        if self.tuning_window == 0:
-            self.tuning_window = X_len
-        for j in range(X_len // self.tuning_window):
-            start = j * self.tuning_window
+        steps = X.shape[0]
 
-            pred = self.model.predict(X[j * self.tuning_window:(j + 1) * self.tuning_window])  # horizon=steps + horizon, reindex=False)
+        # manage also the case when X.shape[0] % steps !=0
+        iterations = X.shape[0] // steps + 1 * (X.shape[0] % steps != 0)
+        for j in range(iterations):
+            # last iterations predict over the last remaining steps
 
-            # yhat_mean = output.mean.iloc[-1]
-            # yhat_var = output.variance.iloc[-1]
+            self.temp_model = svm.SVR(kernel=self.p['kernel'],
+                                      degree=self.p['degree']
+                                      )
 
-            [predicted_mean.append(em) for em in pred]
-            obs = X[j * self.tuning_window + self.ds.horizon:(j + 1) * self.tuning_window + self.ds.horizon]
-            self.history = list(self.history[0]), list(self.history[1])
-            [self.history[0].append(a) for a in X[j * self.tuning_window:(j + 1) * self.tuning_window]]
-            [self.history[1].append(a) for a in y[j * self.tuning_window:(j + 1) * self.tuning_window]]
+            self.model = self.temp_model.fit(self.history_X, self.history_y)
+            print(j, steps, j * steps, (j + 1) * steps)
+            output = self.model.predict(X[j * steps:(j + 1) * steps])
 
-            # self.history = pd.DataFrame(self.history)
-            if self.parameter_list['sliding_window']:
-                self.history = self.history[0][-self.parameter_list['sliding_window']:], \
-                               self.history[1][-self.parameter_list['sliding_window']:]
+            [predicted_mean.append(em) for em in output]
 
-            # print(t, " predicted mean = ", yhat_mean, " predicted variance = ", yhat_var, ' expected ', obs)
+        mse = mean_squared_error(X[:len(predicted_mean)], predicted_mean)
+        mae = mean_absolute_error(X[:len(predicted_mean)], predicted_mean)
 
-        # evaluate forecasts
-        X = np.concatenate(X, axis=0)
+        if self.verbose:
+            print('MSE: %.3f' % mse)
+            print('MAE: %.3f' % mae)
+        return predicted_mean
 
-        rmse = sqrt(mean_squared_error(X[:len(predicted_mean)], predicted_mean))
-        print('Test RMSE: %.3f' % rmse)
-        # self.history = list(self.history.values)
-        return predicted_mean, self.history  # .train_model.params, self.history
+    def fit_predict(self, X):
+        """
+        Training the model on self.ds.X_train and self.ds.y_train and predict on samples X
+        :param X: np.array: Input samples to predict
+        :return: np.array: predictions: predictions of the samples X
+        """
+        if self.ds is None:
+            print("ERROR: dataset not linked")
+        self.fit()
+        predictions = self.predict(X)
+        return predictions
 
-    def param_selection(self, history):
-        X_train, y_train = history
+    def evaluate(self):
+        """
+        Evaluate the model on the training set ds.X_train
+        :return: np.array: predictions: predictions of the trained model on the ds.X_train set
+        """
+        if self.verbose:
+            print("Evaluate")
+        return self.predict(self.ds.X_train)
 
-        parameters = {'kernel': ('linear', 'poly', 'rbf', 'sigmoid'),
-                      'degree': [2,3,4,5,6,7,8,9,10],
-                      #'tol': [1e-3, 1e-4, 1e-5],
-                      #'C': [1, 2]
-                      }
+    def save_model(self):
+        """
+        Save the model into a file in self.saved_models directory
+        :return: boolean: 1 if saving operating is successful, 0 otherwise
+        """
+        if self.model is None:
+            print("ERROR: the model must be available before saving it")
+            return
+        dump(self.model, self.model_path + self.name + '_model.joblib')
+        return 1
 
-        mod = SVR()
+    def load_model(self):
+        """
+        Load the model from a file
+        :return: boolean: 1 if loading operating is successful, 0 otherwise
+        """
+        self.model = load(self.model_path + self.name + '_model.joblib')
+        return 1
+
+    def hyperparametrization(self):
+        """
+        Search the best parameter configuration
+        :return: None
+        """
+        self.temp_model = svm.SVR()
         tscv = TimeSeriesSplit(n_splits=10)
-        mse_score = make_scorer(self.mse, greater_is_better=False)
+        mse_score = make_scorer(mean_squared_error, greater_is_better=False)
 
-        svr_gs = GridSearchCV(estimator=mod, cv=tscv, param_grid=parameters, scoring=mse_score)
-        svr_gs.fit(X_train, y_train.ravel())
+        svr_gs = GridSearchCV(estimator=self.temp_model, cv=tscv, param_grid=self.parameter_list, scoring=mse_score)
+        svr_gs.fit(self.ds.X_train, self.ds.y_train.ravel())
 
         print("BEST MODEL", svr_gs.best_estimator_)
         print("BEST PARAMS", svr_gs.best_params_)
         print("BEST SCORE", svr_gs.best_score_)
 
-        self.parameter_list['kernel'] = svr_gs.best_params_['kernel']
-        self.parameter_list['degree'] = svr_gs.best_params_['degree']
-        #self.parameter_list['tol'] = svr_gs.best_params_['tol']
-        #self.parameter_list['C'] = svr_gs.best_params_['C']
-
-    def regression_results(self, y_true, y_pred):
-        # Regression metrics
-        explained_variance = metrics.explained_variance_score(y_true, y_pred)
-        mean_absolute_error = metrics.mean_absolute_error(y_true, y_pred)
-        mse = metrics.mean_squared_error(y_true, y_pred)
-        # mean_squared_log_error=metrics.mean_squared_log_error(y_true, y_pred)
-        median_absolute_error = metrics.median_absolute_error(y_true, y_pred)
-        r2 = metrics.r2_score(y_true, y_pred)
-        print('explained_variance: ', round(explained_variance, 4))
-        # print('mean_squared_log_error: ', round(mean_squared_log_error,4))
-        print('r2: ', round(r2, 4))
-        print('MAE: ', round(mean_absolute_error, 4))
-        print('MSE: ', round(mse, 4))
-        print('RMSE: ', round(np.sqrt(mse), 4))
-
-    def mse(self, actual, predict):
-        predict = np.array(predict)
-        actual = np.array(actual)
-        score = mean_squared_error(actual, predict)
-        # distance = predict - actual
-        # square_distance = distance ** 2
-        # mean_square_distance = square_distance.mean()
-        # score = np.sqrt(mean_square_distance)
-        return score
-
-    def save_model(self):
-        if self.train_model is None:
-            print("ERROR: the model must be available before saving it")
-            return
-        dump(self.train_model, self.model_path + self.name + str(self.count_save).zfill(4) + '_model.joblib')
-        # self.train_model.save(self.model_path + self.name + str(self.count_save).zfill(4) + '_model.pkl')
-        self.count_save += 1
-
-    def load_model(self, name):
-        load(name)
-        return
+        self.p['kernel'] = svr_gs.best_params_['kernel']
+        self.p['degree'] = svr_gs.best_params_['degree']

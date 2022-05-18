@@ -1,6 +1,6 @@
 """
-Interface of a predictive probabilistic model with shared functionalities
-Inherits from ModelInterface class
+Hybrid Bayesian Neural Network model
+Inherits from ModelProbabilisticDL class
 """
 import numpy as np
 import tensorflow as tf
@@ -23,6 +23,7 @@ from datetime import datetime
 
 import pickle
 from models.model_probabilistic import ModelProbabilistic
+
 
 class HBNN(ModelProbabilisticDL):
     def __init__(self, name):
@@ -137,25 +138,29 @@ class HBNN(ModelProbabilisticDL):
         """
         Inference step on the samples X
         :param X: np.array: Input samples to predict
-        :return: np.array: predictions: Predictions of the samples X
+        :return: np.array: prediction_mean: predictions of the mean of the samples X
+                 np.array: prediction_std: predictions of the standard deviation of the samples X
         """
         if self.model is None:
             print("ERROR: the model needs to be trained before predict")
             return
         predictions = self.model(X)
-        return predictions
+        prediction_mean = predictions.mean().numpy()
+        prediction_std = predictions.stddev().numpy()
+        return prediction_mean, prediction_std
 
     def fit_predict(self, X):
         """
         Training the model on self.ds.X_train and self.ds.y_train and predict on samples X
         :param X: np.array: Input samples to predict
-        :return: np.array: predictions: predictions of the samples X
+        :return: np.array: prediction_mean: predictions of the mean of the samples X
+                 np.array: prediction_std: predictions of the standard deviation of the samples X
         """
         if self.ds is None:
             print("ERROR: dataset not linked")
         self.fit()
-        predictions = self.predict(X)
-        return predictions
+        prediction_mean, prediction_std = self.predict(X)
+        return prediction_mean, prediction_std
 
     def evaluate(self):
         """
@@ -297,4 +302,3 @@ class HBNN(ModelProbabilisticDL):
             :return:
             """
             return super(HBNN.VarLayer, self).call(inputs)
-
