@@ -10,11 +10,22 @@ def save_output_csv(preds, labels, feature, filename):
     df.to_csv(PATH)
 
 
-def save_uncertainty_csv(preds, std, labels, feature, filename):
+def save_uncertainty_csv(preds, std, labels, feature, filename, bivariate=False):
     PATH = "res/output_" + filename + ".csv"
-    dct = {feature: preds,
-           'std': std,
-           'labels': labels}
+    if bivariate:
+        print("preds shape", preds.shape)
+        print(labels.shape)
+        dct = {'avgcpu': preds[:, 0],
+               'stdavgcpu': std[:, 0],
+               'labelsavgcpu': labels[:, 0],
+               'avgmem': preds[:, 1],
+               'stdavgmem': std[:, 1],
+               'labelsavgmem': labels[:, 1],
+               }
+    else:
+        dct = {feature: preds,
+               'std': std,
+               'labels': labels}
     df = pd.DataFrame(dct)
     df.to_csv(PATH)
 

@@ -20,7 +20,7 @@ class ModelInterface:
         self.ds = None
         """Dataset: Dataset used for training the model"""
         self.model_path = './saved_models/'
-        """string: Path of the dictory where to save the model"""
+        """string: Path of the directory where to save the model"""
         self.parameter_list = {}
         """dict: Dictionary of hyperparameters search space"""
         self.p = {}

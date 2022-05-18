@@ -203,10 +203,10 @@ class DatasetInterface:
         dataset = dataset.map(lambda window: (window[:-self.output_window], window[-self.output_window:]))
         X, y = [], []
         a = list(dataset.as_numpy_iterator())
-        for i, (X, y) in enumerate(a):
+        for i, (A, b) in enumerate(a):
             if i == len(a) - self.horizon:
                 break
-            X.append(X)
+            X.append(A)
             y.append(a[i + self.horizon][1])
         X = np.array(X)
         y = np.array(y)

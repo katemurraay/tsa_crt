@@ -17,6 +17,6 @@ class CustomSaveCheckpoint(tf.keras.callbacks.Callback):
         if logs['val_loss'] < self.dnn.best_val_loss:
             print('New best validation loss: ', logs['val_loss'])
             self.dnn.best_val_loss = logs['val_loss']
-            self.dnn.model = self.dnn.train_model
+            self.dnn.model = self.dnn.temp_model
             self.dnn.save_model()
             print('Model save id ', str(self.dnn.count_save - 1).zfill(4))

@@ -3,7 +3,7 @@ Interface of a predictive probabilistic model with shared functionalities
 Inherits from ModelInterface class
 """
 
-from model_interface import ModelInterface
+from models.model_interface import ModelInterface
 
 
 class ModelProbabilistic(ModelInterface):
