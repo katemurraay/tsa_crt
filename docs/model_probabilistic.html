@@ -16,8 +16,17 @@
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
         <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
-        <div>
+        <div>            <a class="pdoc-button module-list-button" href="index.html">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
+  <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+</svg>                &nbsp;
+                Module Index
+            </a>
 
+
+            <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
+                   pattern=".+" required>
 
 
 
@@ -30,55 +39,10 @@
                                 <a class="function" href="#ModelProbabilistic.__init__">ModelProbabilistic</a>
                         </li>
                         <li>
-                                <a class="variable" href="#ModelProbabilistic.name">name</a>
+                                <a class="variable" href="#ModelProbabilistic.is_probabilistic">is_probabilistic</a>
                         </li>
                         <li>
-                                <a class="variable" href="#ModelProbabilistic.model">model</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#ModelProbabilistic.temp_model">temp_model</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#ModelProbabilistic.ds">ds</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#ModelProbabilistic.model_path">model_path</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#ModelProbabilistic.parameter_list">parameter_list</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#ModelProbabilistic.p">p</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#ModelProbabilistic.verbose">verbose</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ModelProbabilistic.create_model">create_model</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ModelProbabilistic.fit">fit</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ModelProbabilistic.tune">tune</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ModelProbabilistic.predict_probability">predict_probability</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ModelProbabilistic.fit_predict">fit_predict</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ModelProbabilistic.evaluate">evaluate</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ModelProbabilistic.save_model">save_model</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ModelProbabilistic.load_model">load_model</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ModelProbabilistic.hyperparametrization">hyperparametrization</a>
+                                <a class="function" href="#ModelProbabilistic.predict">predict</a>
                         </li>
                 </ul>
 
@@ -99,117 +63,43 @@
                     <h1 class="modulename">
 model_probabilistic    </h1>
 
-                        <div class="docstring"><p>Interface of a predictive probabilistic model with shared functionalities</p>
+                        <div class="docstring"><p>Interface of a predictive probabilistic model with shared functionalities
+Inherits from ModelInterface class</p>
 </div>
 
                         <input id="model_probabilistic-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="model_probabilistic-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">Interface of a predictive probabilistic model with shared functionalities</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="k">class</span> <span class="nc">ModelProbabilistic</span><span class="p">():</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="sd">        Constructor of the Model Interface class</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">        :param name: string: name of the model</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>        <span class="sd">&quot;&quot;&quot;string: Name of the Model&quot;&quot;&quot;</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>        <span class="sd">&quot;&quot;&quot;Model: The best trained model&quot;&quot;&quot;</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>        <span class="sd">&quot;&quot;&quot;Model: Temporary model in the training phase&quot;&quot;&quot;</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>        <span class="sd">&quot;&quot;&quot;Dataset: Dataset used for training the model&quot;&quot;&quot;</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="s1">&#39;./saved_models/&#39;</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>        <span class="sd">&quot;&quot;&quot;string: Path of the dictory where to save the model&quot;&quot;&quot;</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_list</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of hyperparameters search space&quot;&quot;&quot;</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of Hyperparameter configuration of the model&quot;&quot;&quot;</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>        <span class="c1"># Model configuration</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>        <span class="sd">&quot;&quot;&quot;Boolean: Print output of the training phase&quot;&quot;&quot;</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">        Create an instance of the model. This function contains the definition and the library of the model</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">        :return: None</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>        <span class="k">pass</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">        Training of the model</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">        :return: None</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>        <span class="k">pass</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="k">def</span> <span class="nf">tune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">        Tune the models with new available samples (X, y)</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">        :param X: nparray: Training features</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">        :param y: nparray: Training labels</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">        :return: None</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>        <span class="k">pass</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="k">def</span> <span class="nf">predict_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        Inference step on the samples X</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">        :return: np.array or tfp.distributions.Distribution: Probability distribution of the prediction of the samples X</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: the model needs to be trained before predict&quot;</span><span class="p">)</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>            <span class="k">return</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>        <span class="k">return</span> <span class="n">predictions</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">        Training the model on self.ds.X_train and self.ds.y_train and predict on samples X</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">        :return: np.array: predictions: predictions of the samples X</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: dataset not linked&quot;</span><span class="p">)</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_probability</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>        <span class="k">return</span> <span class="n">predictions</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">        Evaluate the model on the training set ds.X_train</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">        :return: np.array: predictions: predictions of the trained model on the ds.X_train set</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_probability</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">X_train</span><span class="p">)</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">        Save the model into a file in self.saved_models directory</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">        :return: boolean: 1 if saving operating is successful, 0 otherwise</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="k">return</span> <span class="mi">0</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">        Load the model from a file</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">        :return: boolean: 1 if loading operating is successful, 0 otherwise</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="k">pass</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="k">def</span> <span class="nf">hyperparametrization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        Search the best parameter configuration</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">        :return: None</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="k">pass</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">Interface of a predictive probabilistic model with shared functionalities</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">Inherits from ModelInterface class</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span> <span class="nn">model_interface</span> <span class="kn">import</span> <span class="n">ModelInterface</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="k">class</span> <span class="nc">ModelProbabilistic</span><span class="p">(</span><span class="n">ModelInterface</span><span class="p">):</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">        Constructor of the Model Probabilistic class</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">        :param name: string: name of the model</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">is_probabilistic</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>        <span class="sd">&quot;&quot;&quot;Boolean: Determines if the model is probabilistic&quot;&quot;&quot;</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">        Inference step on the samples X</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">        :return: np.array or tfp.distributions.Distribution: Probability distribution of the prediction of the samples X</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: the model needs to be trained before predict&quot;</span><span class="p">)</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>            <span class="k">return</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="k">return</span> <span class="n">predictions</span>
 </span></pre></div>
 
 
@@ -219,111 +109,33 @@ model_probabilistic    </h1>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">ModelProbabilistic</span>:
+    <span class="name">ModelProbabilistic</span><wbr>(<span class="base"><a href="model_interface.html#ModelInterface">model_interface.ModelInterface</a></span>):
 
                 <label class="view-source-button" for="ModelProbabilistic-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#ModelProbabilistic"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic-7"><a href="#ModelProbabilistic-7"><span class="linenos">  7</span></a><span class="k">class</span> <span class="nc">ModelProbabilistic</span><span class="p">():</span>
-</span><span id="ModelProbabilistic-8"><a href="#ModelProbabilistic-8"><span class="linenos">  8</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-</span><span id="ModelProbabilistic-9"><a href="#ModelProbabilistic-9"><span class="linenos">  9</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-10"><a href="#ModelProbabilistic-10"><span class="linenos"> 10</span></a><span class="sd">        Constructor of the Model Interface class</span>
-</span><span id="ModelProbabilistic-11"><a href="#ModelProbabilistic-11"><span class="linenos"> 11</span></a><span class="sd">        :param name: string: name of the model</span>
-</span><span id="ModelProbabilistic-12"><a href="#ModelProbabilistic-12"><span class="linenos"> 12</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-13"><a href="#ModelProbabilistic-13"><span class="linenos"> 13</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="ModelProbabilistic-14"><a href="#ModelProbabilistic-14"><span class="linenos"> 14</span></a>        <span class="sd">&quot;&quot;&quot;string: Name of the Model&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-15"><a href="#ModelProbabilistic-15"><span class="linenos"> 15</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ModelProbabilistic-16"><a href="#ModelProbabilistic-16"><span class="linenos"> 16</span></a>        <span class="sd">&quot;&quot;&quot;Model: The best trained model&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-17"><a href="#ModelProbabilistic-17"><span class="linenos"> 17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ModelProbabilistic-18"><a href="#ModelProbabilistic-18"><span class="linenos"> 18</span></a>        <span class="sd">&quot;&quot;&quot;Model: Temporary model in the training phase&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-19"><a href="#ModelProbabilistic-19"><span class="linenos"> 19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ModelProbabilistic-20"><a href="#ModelProbabilistic-20"><span class="linenos"> 20</span></a>        <span class="sd">&quot;&quot;&quot;Dataset: Dataset used for training the model&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-21"><a href="#ModelProbabilistic-21"><span class="linenos"> 21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="s1">&#39;./saved_models/&#39;</span>
-</span><span id="ModelProbabilistic-22"><a href="#ModelProbabilistic-22"><span class="linenos"> 22</span></a>        <span class="sd">&quot;&quot;&quot;string: Path of the dictory where to save the model&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-23"><a href="#ModelProbabilistic-23"><span class="linenos"> 23</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_list</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="ModelProbabilistic-24"><a href="#ModelProbabilistic-24"><span class="linenos"> 24</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of hyperparameters search space&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-25"><a href="#ModelProbabilistic-25"><span class="linenos"> 25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="ModelProbabilistic-26"><a href="#ModelProbabilistic-26"><span class="linenos"> 26</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of Hyperparameter configuration of the model&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-27"><a href="#ModelProbabilistic-27"><span class="linenos"> 27</span></a>
-</span><span id="ModelProbabilistic-28"><a href="#ModelProbabilistic-28"><span class="linenos"> 28</span></a>        <span class="c1"># Model configuration</span>
-</span><span id="ModelProbabilistic-29"><a href="#ModelProbabilistic-29"><span class="linenos"> 29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="ModelProbabilistic-30"><a href="#ModelProbabilistic-30"><span class="linenos"> 30</span></a>        <span class="sd">&quot;&quot;&quot;Boolean: Print output of the training phase&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-31"><a href="#ModelProbabilistic-31"><span class="linenos"> 31</span></a>
-</span><span id="ModelProbabilistic-32"><a href="#ModelProbabilistic-32"><span class="linenos"> 32</span></a>    <span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic-33"><a href="#ModelProbabilistic-33"><span class="linenos"> 33</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-34"><a href="#ModelProbabilistic-34"><span class="linenos"> 34</span></a><span class="sd">        Create an instance of the model. This function contains the definition and the library of the model</span>
-</span><span id="ModelProbabilistic-35"><a href="#ModelProbabilistic-35"><span class="linenos"> 35</span></a><span class="sd">        :return: None</span>
-</span><span id="ModelProbabilistic-36"><a href="#ModelProbabilistic-36"><span class="linenos"> 36</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-37"><a href="#ModelProbabilistic-37"><span class="linenos"> 37</span></a>        <span class="k">pass</span>
-</span><span id="ModelProbabilistic-38"><a href="#ModelProbabilistic-38"><span class="linenos"> 38</span></a>
-</span><span id="ModelProbabilistic-39"><a href="#ModelProbabilistic-39"><span class="linenos"> 39</span></a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic-40"><a href="#ModelProbabilistic-40"><span class="linenos"> 40</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-41"><a href="#ModelProbabilistic-41"><span class="linenos"> 41</span></a><span class="sd">        Training of the model</span>
-</span><span id="ModelProbabilistic-42"><a href="#ModelProbabilistic-42"><span class="linenos"> 42</span></a><span class="sd">        :return: None</span>
-</span><span id="ModelProbabilistic-43"><a href="#ModelProbabilistic-43"><span class="linenos"> 43</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-44"><a href="#ModelProbabilistic-44"><span class="linenos"> 44</span></a>        <span class="k">pass</span>
-</span><span id="ModelProbabilistic-45"><a href="#ModelProbabilistic-45"><span class="linenos"> 45</span></a>
-</span><span id="ModelProbabilistic-46"><a href="#ModelProbabilistic-46"><span class="linenos"> 46</span></a>    <span class="k">def</span> <span class="nf">tune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-</span><span id="ModelProbabilistic-47"><a href="#ModelProbabilistic-47"><span class="linenos"> 47</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-48"><a href="#ModelProbabilistic-48"><span class="linenos"> 48</span></a><span class="sd">        Tune the models with new available samples (X, y)</span>
-</span><span id="ModelProbabilistic-49"><a href="#ModelProbabilistic-49"><span class="linenos"> 49</span></a><span class="sd">        :param X: nparray: Training features</span>
-</span><span id="ModelProbabilistic-50"><a href="#ModelProbabilistic-50"><span class="linenos"> 50</span></a><span class="sd">        :param y: nparray: Training labels</span>
-</span><span id="ModelProbabilistic-51"><a href="#ModelProbabilistic-51"><span class="linenos"> 51</span></a><span class="sd">        :return: None</span>
-</span><span id="ModelProbabilistic-52"><a href="#ModelProbabilistic-52"><span class="linenos"> 52</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-53"><a href="#ModelProbabilistic-53"><span class="linenos"> 53</span></a>        <span class="k">pass</span>
-</span><span id="ModelProbabilistic-54"><a href="#ModelProbabilistic-54"><span class="linenos"> 54</span></a>
-</span><span id="ModelProbabilistic-55"><a href="#ModelProbabilistic-55"><span class="linenos"> 55</span></a>    <span class="k">def</span> <span class="nf">predict_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-</span><span id="ModelProbabilistic-56"><a href="#ModelProbabilistic-56"><span class="linenos"> 56</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-57"><a href="#ModelProbabilistic-57"><span class="linenos"> 57</span></a><span class="sd">        Inference step on the samples X</span>
-</span><span id="ModelProbabilistic-58"><a href="#ModelProbabilistic-58"><span class="linenos"> 58</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
-</span><span id="ModelProbabilistic-59"><a href="#ModelProbabilistic-59"><span class="linenos"> 59</span></a><span class="sd">        :return: np.array or tfp.distributions.Distribution: Probability distribution of the prediction of the samples X</span>
-</span><span id="ModelProbabilistic-60"><a href="#ModelProbabilistic-60"><span class="linenos"> 60</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-61"><a href="#ModelProbabilistic-61"><span class="linenos"> 61</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="ModelProbabilistic-62"><a href="#ModelProbabilistic-62"><span class="linenos"> 62</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: the model needs to be trained before predict&quot;</span><span class="p">)</span>
-</span><span id="ModelProbabilistic-63"><a href="#ModelProbabilistic-63"><span class="linenos"> 63</span></a>            <span class="k">return</span>
-</span><span id="ModelProbabilistic-64"><a href="#ModelProbabilistic-64"><span class="linenos"> 64</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span id="ModelProbabilistic-65"><a href="#ModelProbabilistic-65"><span class="linenos"> 65</span></a>        <span class="k">return</span> <span class="n">predictions</span>
-</span><span id="ModelProbabilistic-66"><a href="#ModelProbabilistic-66"><span class="linenos"> 66</span></a>
-</span><span id="ModelProbabilistic-67"><a href="#ModelProbabilistic-67"><span class="linenos"> 67</span></a>    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-</span><span id="ModelProbabilistic-68"><a href="#ModelProbabilistic-68"><span class="linenos"> 68</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-69"><a href="#ModelProbabilistic-69"><span class="linenos"> 69</span></a><span class="sd">        Training the model on self.ds.X_train and self.ds.y_train and predict on samples X</span>
-</span><span id="ModelProbabilistic-70"><a href="#ModelProbabilistic-70"><span class="linenos"> 70</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
-</span><span id="ModelProbabilistic-71"><a href="#ModelProbabilistic-71"><span class="linenos"> 71</span></a><span class="sd">        :return: np.array: predictions: predictions of the samples X</span>
-</span><span id="ModelProbabilistic-72"><a href="#ModelProbabilistic-72"><span class="linenos"> 72</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-73"><a href="#ModelProbabilistic-73"><span class="linenos"> 73</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="ModelProbabilistic-74"><a href="#ModelProbabilistic-74"><span class="linenos"> 74</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: dataset not linked&quot;</span><span class="p">)</span>
-</span><span id="ModelProbabilistic-75"><a href="#ModelProbabilistic-75"><span class="linenos"> 75</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-</span><span id="ModelProbabilistic-76"><a href="#ModelProbabilistic-76"><span class="linenos"> 76</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_probability</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span id="ModelProbabilistic-77"><a href="#ModelProbabilistic-77"><span class="linenos"> 77</span></a>        <span class="k">return</span> <span class="n">predictions</span>
-</span><span id="ModelProbabilistic-78"><a href="#ModelProbabilistic-78"><span class="linenos"> 78</span></a>
-</span><span id="ModelProbabilistic-79"><a href="#ModelProbabilistic-79"><span class="linenos"> 79</span></a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic-80"><a href="#ModelProbabilistic-80"><span class="linenos"> 80</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-81"><a href="#ModelProbabilistic-81"><span class="linenos"> 81</span></a><span class="sd">        Evaluate the model on the training set ds.X_train</span>
-</span><span id="ModelProbabilistic-82"><a href="#ModelProbabilistic-82"><span class="linenos"> 82</span></a><span class="sd">        :return: np.array: predictions: predictions of the trained model on the ds.X_train set</span>
-</span><span id="ModelProbabilistic-83"><a href="#ModelProbabilistic-83"><span class="linenos"> 83</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-84"><a href="#ModelProbabilistic-84"><span class="linenos"> 84</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_probability</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">X_train</span><span class="p">)</span>
-</span><span id="ModelProbabilistic-85"><a href="#ModelProbabilistic-85"><span class="linenos"> 85</span></a>
-</span><span id="ModelProbabilistic-86"><a href="#ModelProbabilistic-86"><span class="linenos"> 86</span></a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic-87"><a href="#ModelProbabilistic-87"><span class="linenos"> 87</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-88"><a href="#ModelProbabilistic-88"><span class="linenos"> 88</span></a><span class="sd">        Save the model into a file in self.saved_models directory</span>
-</span><span id="ModelProbabilistic-89"><a href="#ModelProbabilistic-89"><span class="linenos"> 89</span></a><span class="sd">        :return: boolean: 1 if saving operating is successful, 0 otherwise</span>
-</span><span id="ModelProbabilistic-90"><a href="#ModelProbabilistic-90"><span class="linenos"> 90</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-91"><a href="#ModelProbabilistic-91"><span class="linenos"> 91</span></a>        <span class="k">return</span> <span class="mi">0</span>
-</span><span id="ModelProbabilistic-92"><a href="#ModelProbabilistic-92"><span class="linenos"> 92</span></a>
-</span><span id="ModelProbabilistic-93"><a href="#ModelProbabilistic-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic-94"><a href="#ModelProbabilistic-94"><span class="linenos"> 94</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-95"><a href="#ModelProbabilistic-95"><span class="linenos"> 95</span></a><span class="sd">        Load the model from a file</span>
-</span><span id="ModelProbabilistic-96"><a href="#ModelProbabilistic-96"><span class="linenos"> 96</span></a><span class="sd">        :return: boolean: 1 if loading operating is successful, 0 otherwise</span>
-</span><span id="ModelProbabilistic-97"><a href="#ModelProbabilistic-97"><span class="linenos"> 97</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-98"><a href="#ModelProbabilistic-98"><span class="linenos"> 98</span></a>        <span class="k">pass</span>
-</span><span id="ModelProbabilistic-99"><a href="#ModelProbabilistic-99"><span class="linenos"> 99</span></a>
-</span><span id="ModelProbabilistic-100"><a href="#ModelProbabilistic-100"><span class="linenos">100</span></a>    <span class="k">def</span> <span class="nf">hyperparametrization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic-101"><a href="#ModelProbabilistic-101"><span class="linenos">101</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-102"><a href="#ModelProbabilistic-102"><span class="linenos">102</span></a><span class="sd">        Search the best parameter configuration</span>
-</span><span id="ModelProbabilistic-103"><a href="#ModelProbabilistic-103"><span class="linenos">103</span></a><span class="sd">        :return: None</span>
-</span><span id="ModelProbabilistic-104"><a href="#ModelProbabilistic-104"><span class="linenos">104</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic-105"><a href="#ModelProbabilistic-105"><span class="linenos">105</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic-10"><a href="#ModelProbabilistic-10"><span class="linenos">10</span></a><span class="k">class</span> <span class="nc">ModelProbabilistic</span><span class="p">(</span><span class="n">ModelInterface</span><span class="p">):</span>
+</span><span id="ModelProbabilistic-11"><a href="#ModelProbabilistic-11"><span class="linenos">11</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span id="ModelProbabilistic-12"><a href="#ModelProbabilistic-12"><span class="linenos">12</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic-13"><a href="#ModelProbabilistic-13"><span class="linenos">13</span></a><span class="sd">        Constructor of the Model Probabilistic class</span>
+</span><span id="ModelProbabilistic-14"><a href="#ModelProbabilistic-14"><span class="linenos">14</span></a><span class="sd">        :param name: string: name of the model</span>
+</span><span id="ModelProbabilistic-15"><a href="#ModelProbabilistic-15"><span class="linenos">15</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic-16"><a href="#ModelProbabilistic-16"><span class="linenos">16</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span id="ModelProbabilistic-17"><a href="#ModelProbabilistic-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">is_probabilistic</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ModelProbabilistic-18"><a href="#ModelProbabilistic-18"><span class="linenos">18</span></a>        <span class="sd">&quot;&quot;&quot;Boolean: Determines if the model is probabilistic&quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic-19"><a href="#ModelProbabilistic-19"><span class="linenos">19</span></a>
+</span><span id="ModelProbabilistic-20"><a href="#ModelProbabilistic-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span><span id="ModelProbabilistic-21"><a href="#ModelProbabilistic-21"><span class="linenos">21</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic-22"><a href="#ModelProbabilistic-22"><span class="linenos">22</span></a><span class="sd">        Inference step on the samples X</span>
+</span><span id="ModelProbabilistic-23"><a href="#ModelProbabilistic-23"><span class="linenos">23</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
+</span><span id="ModelProbabilistic-24"><a href="#ModelProbabilistic-24"><span class="linenos">24</span></a><span class="sd">        :return: np.array or tfp.distributions.Distribution: Probability distribution of the prediction of the samples X</span>
+</span><span id="ModelProbabilistic-25"><a href="#ModelProbabilistic-25"><span class="linenos">25</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic-26"><a href="#ModelProbabilistic-26"><span class="linenos">26</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ModelProbabilistic-27"><a href="#ModelProbabilistic-27"><span class="linenos">27</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: the model needs to be trained before predict&quot;</span><span class="p">)</span>
+</span><span id="ModelProbabilistic-28"><a href="#ModelProbabilistic-28"><span class="linenos">28</span></a>            <span class="k">return</span>
+</span><span id="ModelProbabilistic-29"><a href="#ModelProbabilistic-29"><span class="linenos">29</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span id="ModelProbabilistic-30"><a href="#ModelProbabilistic-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="n">predictions</span>
 </span></pre></div>
 
 
@@ -339,33 +151,18 @@ model_probabilistic    </h1>
 
     </div>
     <a class="headerlink" href="#ModelProbabilistic.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.__init__-8"><a href="#ModelProbabilistic.__init__-8"><span class="linenos"> 8</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-</span><span id="ModelProbabilistic.__init__-9"><a href="#ModelProbabilistic.__init__-9"><span class="linenos"> 9</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.__init__-10"><a href="#ModelProbabilistic.__init__-10"><span class="linenos">10</span></a><span class="sd">        Constructor of the Model Interface class</span>
-</span><span id="ModelProbabilistic.__init__-11"><a href="#ModelProbabilistic.__init__-11"><span class="linenos">11</span></a><span class="sd">        :param name: string: name of the model</span>
-</span><span id="ModelProbabilistic.__init__-12"><a href="#ModelProbabilistic.__init__-12"><span class="linenos">12</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.__init__-13"><a href="#ModelProbabilistic.__init__-13"><span class="linenos">13</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="ModelProbabilistic.__init__-14"><a href="#ModelProbabilistic.__init__-14"><span class="linenos">14</span></a>        <span class="sd">&quot;&quot;&quot;string: Name of the Model&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.__init__-15"><a href="#ModelProbabilistic.__init__-15"><span class="linenos">15</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ModelProbabilistic.__init__-16"><a href="#ModelProbabilistic.__init__-16"><span class="linenos">16</span></a>        <span class="sd">&quot;&quot;&quot;Model: The best trained model&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.__init__-17"><a href="#ModelProbabilistic.__init__-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ModelProbabilistic.__init__-18"><a href="#ModelProbabilistic.__init__-18"><span class="linenos">18</span></a>        <span class="sd">&quot;&quot;&quot;Model: Temporary model in the training phase&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.__init__-19"><a href="#ModelProbabilistic.__init__-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ModelProbabilistic.__init__-20"><a href="#ModelProbabilistic.__init__-20"><span class="linenos">20</span></a>        <span class="sd">&quot;&quot;&quot;Dataset: Dataset used for training the model&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.__init__-21"><a href="#ModelProbabilistic.__init__-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="s1">&#39;./saved_models/&#39;</span>
-</span><span id="ModelProbabilistic.__init__-22"><a href="#ModelProbabilistic.__init__-22"><span class="linenos">22</span></a>        <span class="sd">&quot;&quot;&quot;string: Path of the dictory where to save the model&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.__init__-23"><a href="#ModelProbabilistic.__init__-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_list</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="ModelProbabilistic.__init__-24"><a href="#ModelProbabilistic.__init__-24"><span class="linenos">24</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of hyperparameters search space&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.__init__-25"><a href="#ModelProbabilistic.__init__-25"><span class="linenos">25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="ModelProbabilistic.__init__-26"><a href="#ModelProbabilistic.__init__-26"><span class="linenos">26</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of Hyperparameter configuration of the model&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.__init__-27"><a href="#ModelProbabilistic.__init__-27"><span class="linenos">27</span></a>
-</span><span id="ModelProbabilistic.__init__-28"><a href="#ModelProbabilistic.__init__-28"><span class="linenos">28</span></a>        <span class="c1"># Model configuration</span>
-</span><span id="ModelProbabilistic.__init__-29"><a href="#ModelProbabilistic.__init__-29"><span class="linenos">29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="ModelProbabilistic.__init__-30"><a href="#ModelProbabilistic.__init__-30"><span class="linenos">30</span></a>        <span class="sd">&quot;&quot;&quot;Boolean: Print output of the training phase&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.__init__-11"><a href="#ModelProbabilistic.__init__-11"><span class="linenos">11</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span id="ModelProbabilistic.__init__-12"><a href="#ModelProbabilistic.__init__-12"><span class="linenos">12</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic.__init__-13"><a href="#ModelProbabilistic.__init__-13"><span class="linenos">13</span></a><span class="sd">        Constructor of the Model Probabilistic class</span>
+</span><span id="ModelProbabilistic.__init__-14"><a href="#ModelProbabilistic.__init__-14"><span class="linenos">14</span></a><span class="sd">        :param name: string: name of the model</span>
+</span><span id="ModelProbabilistic.__init__-15"><a href="#ModelProbabilistic.__init__-15"><span class="linenos">15</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic.__init__-16"><a href="#ModelProbabilistic.__init__-16"><span class="linenos">16</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span id="ModelProbabilistic.__init__-17"><a href="#ModelProbabilistic.__init__-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">is_probabilistic</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ModelProbabilistic.__init__-18"><a href="#ModelProbabilistic.__init__-18"><span class="linenos">18</span></a>        <span class="sd">&quot;&quot;&quot;Boolean: Determines if the model is probabilistic&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Constructor of the Model Interface class</p>
+            <div class="docstring"><p>Constructor of the Model Probabilistic class</p>
 
 <h6 id="parameters">Parameters</h6>
 
@@ -376,234 +173,41 @@ model_probabilistic    </h1>
 
 
                             </div>
-                            <div id="ModelProbabilistic.name" class="classattr">
+                            <div id="ModelProbabilistic.is_probabilistic" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span>
+            <span class="name">is_probabilistic</span>
 
         
     </div>
-    <a class="headerlink" href="#ModelProbabilistic.name"></a>
+    <a class="headerlink" href="#ModelProbabilistic.is_probabilistic"></a>
     
-            <div class="docstring"><p>string: Name of the Model</p>
+            <div class="docstring"><p>Boolean: Determines if the model is probabilistic</p>
 </div>
 
 
                             </div>
-                            <div id="ModelProbabilistic.model" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.model"></a>
-    
-            <div class="docstring"><p>Model: The best trained model</p>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.temp_model" class="classattr">
-                                <div class="attr variable">
-            <span class="name">temp_model</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.temp_model"></a>
-    
-            <div class="docstring"><p>Model: Temporary model in the training phase</p>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.ds" class="classattr">
-                                <div class="attr variable">
-            <span class="name">ds</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.ds"></a>
-    
-            <div class="docstring"><p>Dataset: Dataset used for training the model</p>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.model_path" class="classattr">
-                                <div class="attr variable">
-            <span class="name">model_path</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.model_path"></a>
-    
-            <div class="docstring"><p>string: Path of the dictory where to save the model</p>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.parameter_list" class="classattr">
-                                <div class="attr variable">
-            <span class="name">parameter_list</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.parameter_list"></a>
-    
-            <div class="docstring"><p>dict: Dictionary of hyperparameters search space</p>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.p" class="classattr">
-                                <div class="attr variable">
-            <span class="name">p</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.p"></a>
-    
-            <div class="docstring"><p>dict: Dictionary of Hyperparameter configuration of the model</p>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.verbose" class="classattr">
-                                <div class="attr variable">
-            <span class="name">verbose</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.verbose"></a>
-    
-            <div class="docstring"><p>Boolean: Print output of the training phase</p>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.create_model" class="classattr">
-                                        <input id="ModelProbabilistic.create_model-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="ModelProbabilistic.predict" class="classattr">
+                                        <input id="ModelProbabilistic.predict-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">create_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+        <span class="name">predict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">X</span></span>)</span>
 
-                <label class="view-source-button" for="ModelProbabilistic.create_model-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.create_model"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.create_model-32"><a href="#ModelProbabilistic.create_model-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic.create_model-33"><a href="#ModelProbabilistic.create_model-33"><span class="linenos">33</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.create_model-34"><a href="#ModelProbabilistic.create_model-34"><span class="linenos">34</span></a><span class="sd">        Create an instance of the model. This function contains the definition and the library of the model</span>
-</span><span id="ModelProbabilistic.create_model-35"><a href="#ModelProbabilistic.create_model-35"><span class="linenos">35</span></a><span class="sd">        :return: None</span>
-</span><span id="ModelProbabilistic.create_model-36"><a href="#ModelProbabilistic.create_model-36"><span class="linenos">36</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.create_model-37"><a href="#ModelProbabilistic.create_model-37"><span class="linenos">37</span></a>        <span class="k">pass</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Create an instance of the model. This function contains the definition and the library of the model</p>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>None</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.fit" class="classattr">
-                                        <input id="ModelProbabilistic.fit-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">fit</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
-
-                <label class="view-source-button" for="ModelProbabilistic.fit-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ModelProbabilistic.predict-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#ModelProbabilistic.fit"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.fit-39"><a href="#ModelProbabilistic.fit-39"><span class="linenos">39</span></a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic.fit-40"><a href="#ModelProbabilistic.fit-40"><span class="linenos">40</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.fit-41"><a href="#ModelProbabilistic.fit-41"><span class="linenos">41</span></a><span class="sd">        Training of the model</span>
-</span><span id="ModelProbabilistic.fit-42"><a href="#ModelProbabilistic.fit-42"><span class="linenos">42</span></a><span class="sd">        :return: None</span>
-</span><span id="ModelProbabilistic.fit-43"><a href="#ModelProbabilistic.fit-43"><span class="linenos">43</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.fit-44"><a href="#ModelProbabilistic.fit-44"><span class="linenos">44</span></a>        <span class="k">pass</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Training of the model</p>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>None</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.tune" class="classattr">
-                                        <input id="ModelProbabilistic.tune-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">tune</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">X</span>, </span><span class="param"><span class="n">y</span></span>)</span>
-
-                <label class="view-source-button" for="ModelProbabilistic.tune-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.tune"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.tune-46"><a href="#ModelProbabilistic.tune-46"><span class="linenos">46</span></a>    <span class="k">def</span> <span class="nf">tune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-</span><span id="ModelProbabilistic.tune-47"><a href="#ModelProbabilistic.tune-47"><span class="linenos">47</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.tune-48"><a href="#ModelProbabilistic.tune-48"><span class="linenos">48</span></a><span class="sd">        Tune the models with new available samples (X, y)</span>
-</span><span id="ModelProbabilistic.tune-49"><a href="#ModelProbabilistic.tune-49"><span class="linenos">49</span></a><span class="sd">        :param X: nparray: Training features</span>
-</span><span id="ModelProbabilistic.tune-50"><a href="#ModelProbabilistic.tune-50"><span class="linenos">50</span></a><span class="sd">        :param y: nparray: Training labels</span>
-</span><span id="ModelProbabilistic.tune-51"><a href="#ModelProbabilistic.tune-51"><span class="linenos">51</span></a><span class="sd">        :return: None</span>
-</span><span id="ModelProbabilistic.tune-52"><a href="#ModelProbabilistic.tune-52"><span class="linenos">52</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.tune-53"><a href="#ModelProbabilistic.tune-53"><span class="linenos">53</span></a>        <span class="k">pass</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Tune the models with new available samples (X, y)</p>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>X: nparray</strong>:  Training features</li>
-<li><strong>y: nparray</strong>:  Training labels</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>None</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.predict_probability" class="classattr">
-                                        <input id="ModelProbabilistic.predict_probability-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">predict_probability</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">X</span></span>)</span>
-
-                <label class="view-source-button" for="ModelProbabilistic.predict_probability-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.predict_probability"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.predict_probability-55"><a href="#ModelProbabilistic.predict_probability-55"><span class="linenos">55</span></a>    <span class="k">def</span> <span class="nf">predict_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-</span><span id="ModelProbabilistic.predict_probability-56"><a href="#ModelProbabilistic.predict_probability-56"><span class="linenos">56</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.predict_probability-57"><a href="#ModelProbabilistic.predict_probability-57"><span class="linenos">57</span></a><span class="sd">        Inference step on the samples X</span>
-</span><span id="ModelProbabilistic.predict_probability-58"><a href="#ModelProbabilistic.predict_probability-58"><span class="linenos">58</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
-</span><span id="ModelProbabilistic.predict_probability-59"><a href="#ModelProbabilistic.predict_probability-59"><span class="linenos">59</span></a><span class="sd">        :return: np.array or tfp.distributions.Distribution: Probability distribution of the prediction of the samples X</span>
-</span><span id="ModelProbabilistic.predict_probability-60"><a href="#ModelProbabilistic.predict_probability-60"><span class="linenos">60</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.predict_probability-61"><a href="#ModelProbabilistic.predict_probability-61"><span class="linenos">61</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="ModelProbabilistic.predict_probability-62"><a href="#ModelProbabilistic.predict_probability-62"><span class="linenos">62</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: the model needs to be trained before predict&quot;</span><span class="p">)</span>
-</span><span id="ModelProbabilistic.predict_probability-63"><a href="#ModelProbabilistic.predict_probability-63"><span class="linenos">63</span></a>            <span class="k">return</span>
-</span><span id="ModelProbabilistic.predict_probability-64"><a href="#ModelProbabilistic.predict_probability-64"><span class="linenos">64</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span id="ModelProbabilistic.predict_probability-65"><a href="#ModelProbabilistic.predict_probability-65"><span class="linenos">65</span></a>        <span class="k">return</span> <span class="n">predictions</span>
+    <a class="headerlink" href="#ModelProbabilistic.predict"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.predict-20"><a href="#ModelProbabilistic.predict-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span><span id="ModelProbabilistic.predict-21"><a href="#ModelProbabilistic.predict-21"><span class="linenos">21</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic.predict-22"><a href="#ModelProbabilistic.predict-22"><span class="linenos">22</span></a><span class="sd">        Inference step on the samples X</span>
+</span><span id="ModelProbabilistic.predict-23"><a href="#ModelProbabilistic.predict-23"><span class="linenos">23</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
+</span><span id="ModelProbabilistic.predict-24"><a href="#ModelProbabilistic.predict-24"><span class="linenos">24</span></a><span class="sd">        :return: np.array or tfp.distributions.Distribution: Probability distribution of the prediction of the samples X</span>
+</span><span id="ModelProbabilistic.predict-25"><a href="#ModelProbabilistic.predict-25"><span class="linenos">25</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic.predict-26"><a href="#ModelProbabilistic.predict-26"><span class="linenos">26</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ModelProbabilistic.predict-27"><a href="#ModelProbabilistic.predict-27"><span class="linenos">27</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: the model needs to be trained before predict&quot;</span><span class="p">)</span>
+</span><span id="ModelProbabilistic.predict-28"><a href="#ModelProbabilistic.predict-28"><span class="linenos">28</span></a>            <span class="k">return</span>
+</span><span id="ModelProbabilistic.predict-29"><a href="#ModelProbabilistic.predict-29"><span class="linenos">29</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span id="ModelProbabilistic.predict-30"><a href="#ModelProbabilistic.predict-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="n">predictions</span>
 </span></pre></div>
 
 
@@ -624,173 +228,208 @@ model_probabilistic    </h1>
 
 
                             </div>
-                            <div id="ModelProbabilistic.fit_predict" class="classattr">
-                                        <input id="ModelProbabilistic.fit_predict-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">fit_predict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">X</span></span>)</span>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="model_interface.html#ModelInterface">model_interface.ModelInterface</a></dt>
+                                <dd id="ModelProbabilistic.name" class="variable"><a href="model_interface.html#ModelInterface.name">name</a></dd>
+                <dd id="ModelProbabilistic.model" class="variable"><a href="model_interface.html#ModelInterface.model">model</a></dd>
+                <dd id="ModelProbabilistic.temp_model" class="variable"><a href="model_interface.html#ModelInterface.temp_model">temp_model</a></dd>
+                <dd id="ModelProbabilistic.ds" class="variable"><a href="model_interface.html#ModelInterface.ds">ds</a></dd>
+                <dd id="ModelProbabilistic.model_path" class="variable"><a href="model_interface.html#ModelInterface.model_path">model_path</a></dd>
+                <dd id="ModelProbabilistic.parameter_list" class="variable"><a href="model_interface.html#ModelInterface.parameter_list">parameter_list</a></dd>
+                <dd id="ModelProbabilistic.p" class="variable"><a href="model_interface.html#ModelInterface.p">p</a></dd>
+                <dd id="ModelProbabilistic.verbose" class="variable"><a href="model_interface.html#ModelInterface.verbose">verbose</a></dd>
+                <dd id="ModelProbabilistic.create_model" class="function"><a href="model_interface.html#ModelInterface.create_model">create_model</a></dd>
+                <dd id="ModelProbabilistic.fit" class="function"><a href="model_interface.html#ModelInterface.fit">fit</a></dd>
+                <dd id="ModelProbabilistic.tune" class="function"><a href="model_interface.html#ModelInterface.tune">tune</a></dd>
+                <dd id="ModelProbabilistic.fit_predict" class="function"><a href="model_interface.html#ModelInterface.fit_predict">fit_predict</a></dd>
+                <dd id="ModelProbabilistic.evaluate" class="function"><a href="model_interface.html#ModelInterface.evaluate">evaluate</a></dd>
+                <dd id="ModelProbabilistic.save_model" class="function"><a href="model_interface.html#ModelInterface.save_model">save_model</a></dd>
+                <dd id="ModelProbabilistic.load_model" class="function"><a href="model_interface.html#ModelInterface.load_model">load_model</a></dd>
+                <dd id="ModelProbabilistic.hyperparametrization" class="function"><a href="model_interface.html#ModelInterface.hyperparametrization">hyperparametrization</a></dd>
 
-                <label class="view-source-button" for="ModelProbabilistic.fit_predict-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.fit_predict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.fit_predict-67"><a href="#ModelProbabilistic.fit_predict-67"><span class="linenos">67</span></a>    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-</span><span id="ModelProbabilistic.fit_predict-68"><a href="#ModelProbabilistic.fit_predict-68"><span class="linenos">68</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.fit_predict-69"><a href="#ModelProbabilistic.fit_predict-69"><span class="linenos">69</span></a><span class="sd">        Training the model on self.ds.X_train and self.ds.y_train and predict on samples X</span>
-</span><span id="ModelProbabilistic.fit_predict-70"><a href="#ModelProbabilistic.fit_predict-70"><span class="linenos">70</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
-</span><span id="ModelProbabilistic.fit_predict-71"><a href="#ModelProbabilistic.fit_predict-71"><span class="linenos">71</span></a><span class="sd">        :return: np.array: predictions: predictions of the samples X</span>
-</span><span id="ModelProbabilistic.fit_predict-72"><a href="#ModelProbabilistic.fit_predict-72"><span class="linenos">72</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.fit_predict-73"><a href="#ModelProbabilistic.fit_predict-73"><span class="linenos">73</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="ModelProbabilistic.fit_predict-74"><a href="#ModelProbabilistic.fit_predict-74"><span class="linenos">74</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: dataset not linked&quot;</span><span class="p">)</span>
-</span><span id="ModelProbabilistic.fit_predict-75"><a href="#ModelProbabilistic.fit_predict-75"><span class="linenos">75</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-</span><span id="ModelProbabilistic.fit_predict-76"><a href="#ModelProbabilistic.fit_predict-76"><span class="linenos">76</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_probability</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</span><span id="ModelProbabilistic.fit_predict-77"><a href="#ModelProbabilistic.fit_predict-77"><span class="linenos">77</span></a>        <span class="k">return</span> <span class="n">predictions</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Training the model on self.ds.X_train and self.ds.y_train and predict on samples X</p>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>X: np.array</strong>:  Input samples to predict</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>np.array: predictions: predictions of the samples X</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.evaluate" class="classattr">
-                                        <input id="ModelProbabilistic.evaluate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">evaluate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
-
-                <label class="view-source-button" for="ModelProbabilistic.evaluate-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.evaluate"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.evaluate-79"><a href="#ModelProbabilistic.evaluate-79"><span class="linenos">79</span></a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic.evaluate-80"><a href="#ModelProbabilistic.evaluate-80"><span class="linenos">80</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.evaluate-81"><a href="#ModelProbabilistic.evaluate-81"><span class="linenos">81</span></a><span class="sd">        Evaluate the model on the training set ds.X_train</span>
-</span><span id="ModelProbabilistic.evaluate-82"><a href="#ModelProbabilistic.evaluate-82"><span class="linenos">82</span></a><span class="sd">        :return: np.array: predictions: predictions of the trained model on the ds.X_train set</span>
-</span><span id="ModelProbabilistic.evaluate-83"><a href="#ModelProbabilistic.evaluate-83"><span class="linenos">83</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.evaluate-84"><a href="#ModelProbabilistic.evaluate-84"><span class="linenos">84</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_probability</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">X_train</span><span class="p">)</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Evaluate the model on the training set ds.X_train</p>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>np.array: predictions: predictions of the trained model on the ds.X_train set</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.save_model" class="classattr">
-                                        <input id="ModelProbabilistic.save_model-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">save_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
-
-                <label class="view-source-button" for="ModelProbabilistic.save_model-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.save_model"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.save_model-86"><a href="#ModelProbabilistic.save_model-86"><span class="linenos">86</span></a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic.save_model-87"><a href="#ModelProbabilistic.save_model-87"><span class="linenos">87</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.save_model-88"><a href="#ModelProbabilistic.save_model-88"><span class="linenos">88</span></a><span class="sd">        Save the model into a file in self.saved_models directory</span>
-</span><span id="ModelProbabilistic.save_model-89"><a href="#ModelProbabilistic.save_model-89"><span class="linenos">89</span></a><span class="sd">        :return: boolean: 1 if saving operating is successful, 0 otherwise</span>
-</span><span id="ModelProbabilistic.save_model-90"><a href="#ModelProbabilistic.save_model-90"><span class="linenos">90</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.save_model-91"><a href="#ModelProbabilistic.save_model-91"><span class="linenos">91</span></a>        <span class="k">return</span> <span class="mi">0</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Save the model into a file in self.saved_models directory</p>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>boolean: 1 if saving operating is successful, 0 otherwise</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.load_model" class="classattr">
-                                        <input id="ModelProbabilistic.load_model-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">load_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
-
-                <label class="view-source-button" for="ModelProbabilistic.load_model-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.load_model"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.load_model-93"><a href="#ModelProbabilistic.load_model-93"><span class="linenos">93</span></a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic.load_model-94"><a href="#ModelProbabilistic.load_model-94"><span class="linenos">94</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.load_model-95"><a href="#ModelProbabilistic.load_model-95"><span class="linenos">95</span></a><span class="sd">        Load the model from a file</span>
-</span><span id="ModelProbabilistic.load_model-96"><a href="#ModelProbabilistic.load_model-96"><span class="linenos">96</span></a><span class="sd">        :return: boolean: 1 if loading operating is successful, 0 otherwise</span>
-</span><span id="ModelProbabilistic.load_model-97"><a href="#ModelProbabilistic.load_model-97"><span class="linenos">97</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.load_model-98"><a href="#ModelProbabilistic.load_model-98"><span class="linenos">98</span></a>        <span class="k">pass</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Load the model from a file</p>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>boolean: 1 if loading operating is successful, 0 otherwise</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="ModelProbabilistic.hyperparametrization" class="classattr">
-                                        <input id="ModelProbabilistic.hyperparametrization-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">hyperparametrization</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
-
-                <label class="view-source-button" for="ModelProbabilistic.hyperparametrization-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#ModelProbabilistic.hyperparametrization"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.hyperparametrization-100"><a href="#ModelProbabilistic.hyperparametrization-100"><span class="linenos">100</span></a>    <span class="k">def</span> <span class="nf">hyperparametrization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelProbabilistic.hyperparametrization-101"><a href="#ModelProbabilistic.hyperparametrization-101"><span class="linenos">101</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.hyperparametrization-102"><a href="#ModelProbabilistic.hyperparametrization-102"><span class="linenos">102</span></a><span class="sd">        Search the best parameter configuration</span>
-</span><span id="ModelProbabilistic.hyperparametrization-103"><a href="#ModelProbabilistic.hyperparametrization-103"><span class="linenos">103</span></a><span class="sd">        :return: None</span>
-</span><span id="ModelProbabilistic.hyperparametrization-104"><a href="#ModelProbabilistic.hyperparametrization-104"><span class="linenos">104</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelProbabilistic.hyperparametrization-105"><a href="#ModelProbabilistic.hyperparametrization-105"><span class="linenos">105</span></a>        <span class="k">pass</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Search the best parameter configuration</p>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>None</p>
-</blockquote>
-</div>
-
-
+            </div>
+                                </dl>
                             </div>
                 </section>
     </main>
-</body>
+<script>
+    function escapeHTML(html) {
+        return document.createElement('div').appendChild(document.createTextNode(html)).parentNode.innerHTML;
+    }
+
+    const originalContent = document.querySelector("main.pdoc");
+    let currentContent = originalContent;
+
+    function setContent(innerHTML) {
+        let elem;
+        if (innerHTML) {
+            elem = document.createElement("main");
+            elem.classList.add("pdoc");
+            elem.innerHTML = innerHTML;
+        } else {
+            elem = originalContent;
+        }
+        if (currentContent !== elem) {
+            currentContent.replaceWith(elem);
+            currentContent = elem;
+        }
+    }
+
+    function getSearchTerm() {
+        return (new URL(window.location)).searchParams.get("search");
+    }
+
+    const searchBox = document.querySelector(".pdoc input[type=search]");
+    searchBox.addEventListener("input", function () {
+        let url = new URL(window.location);
+        if (searchBox.value.trim()) {
+            url.hash = "";
+            url.searchParams.set("search", searchBox.value);
+        } else {
+            url.searchParams.delete("search");
+        }
+        history.replaceState("", "", url.toString());
+        onInput();
+    });
+    window.addEventListener("popstate", onInput);
+
+
+    let search, searchErr;
+
+    async function initialize() {
+        try {
+            search = await new Promise((resolve, reject) => {
+                const script = document.createElement("script");
+                script.type = "text/javascript";
+                script.async = true;
+                script.onload = () => resolve(window.pdocSearch);
+                script.onerror = (e) => reject(e);
+                script.src = "search.js";
+                document.getElementsByTagName("head")[0].appendChild(script);
+            });
+        } catch (e) {
+            console.error("Cannot fetch pdoc search index");
+            searchErr = "Cannot fetch search index.";
+        }
+        onInput();
+
+        document.querySelector("nav.pdoc").addEventListener("click", e => {
+            if (e.target.hash) {
+                searchBox.value = "";
+                searchBox.dispatchEvent(new Event("input"));
+            }
+        });
+    }
+
+    function onInput() {
+        setContent((() => {
+            const term = getSearchTerm();
+            if (!term) {
+                return null
+            }
+            if (searchErr) {
+                return `<h3>Error: ${searchErr}</h3>`
+            }
+            if (!search) {
+                return "<h3>Searching...</h3>"
+            }
+
+            window.scrollTo({top: 0, left: 0, behavior: 'auto'});
+
+            const results = search(term);
+
+            let html;
+            if (results.length === 0) {
+                html = `No search results for '${escapeHTML(term)}'.`
+            } else {
+                html = `<h4>${results.length} search result${results.length > 1 ? "s" : ""} for '${escapeHTML(term)}'.</h4>`;
+            }
+            for (let result of results.slice(0, 10)) {
+                let doc = result.doc;
+                let url = `${doc.modulename.replaceAll(".", "/")}.html`;
+                if (doc.qualname) {
+                    url += `#${doc.qualname}`;
+                }
+
+                let heading;
+                switch (result.doc.type) {
+                    case "function":
+                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
+                        break;
+                    case "class":
+                        heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
+                        if (doc.bases)
+                            heading += `<wbr>(<span class="base">${doc.bases}</span>)`;
+                        heading += `:`;
+                        break;
+                    case "variable":
+                        heading = `<span class="name">${doc.fullname}</span>`;
+                        if (doc.annotation)
+                            heading += `<span class="annotation">${doc.annotation}</span>`;
+                        if (doc.default_value)
+                            heading += `<span class="default_value">${doc.default_value}</span>`;
+                        break;
+                    default:
+                        heading = `<span class="name">${doc.fullname}</span>`;
+                        break;
+                }
+                html += `
+                        <section class="search-result">
+                        <a href="${url}" class="attr ${doc.type}">${heading}</a>
+                        <div class="docstring">${doc.doc}</div>
+                        </section>
+                    `;
+
+            }
+            return html;
+        })());
+    }
+
+    if (getSearchTerm()) {
+        initialize();
+        searchBox.value = getSearchTerm();
+        onInput();
+    } else {
+        searchBox.addEventListener("focus", initialize, {once: true});
+    }
+
+    searchBox.addEventListener("keydown", e => {
+        if (["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+            let focused = currentContent.querySelector(".search-result.focused");
+            if (!focused) {
+                currentContent.querySelector(".search-result").classList.add("focused");
+            } else if (
+                e.key === "ArrowDown"
+                && focused.nextElementSibling
+                && focused.nextElementSibling.classList.contains("search-result")
+            ) {
+                focused.classList.remove("focused");
+                focused.nextElementSibling.classList.add("focused");
+                focused.nextElementSibling.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "nearest"
+                });
+            } else if (
+                e.key === "ArrowUp"
+                && focused.previousElementSibling
+                && focused.previousElementSibling.classList.contains("search-result")
+            ) {
+                focused.classList.remove("focused");
+                focused.previousElementSibling.classList.add("focused");
+                focused.previousElementSibling.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "nearest"
+                });
+            } else if (
+                e.key === "Enter"
+            ) {
+                focused.querySelector("a").click();
+            }
+        }
+    });
+</script></body>
 </html>

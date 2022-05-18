@@ -1,8 +1,10 @@
-from datetime import datetime
-
 """
 Interface of a predictive model with shared functionalities
 """
+
+from datetime import datetime
+
+
 class ModelInterface:
     def __init__(self, name):
         """

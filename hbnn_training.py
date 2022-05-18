@@ -13,7 +13,7 @@ from util import dataset, plot_training, save_results
 
 # os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 wins = [288]
-hs = [2]
+hs = [0]
 resources = ['cpu']  # , 'mem']
 clusters = ['a']  # , 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
@@ -25,12 +25,16 @@ for win in wins:
                 experiment_name = 'HBNN-' + res + '-' + c + '-w' + str(win) + '-h' + str(h)
 
                 # Data creation and load
-                ds = dataset.DatasetInterface(filename='res_task_' + c + '.csv', input_window=win, horizon=h,
-                                              target_name=['avg' + res, 'avgmem'],
-                                              train_split=0.8)
+                # ds = dataset.DatasetInterface(filename='res_task_' + c + '.csv', input_window=win, output_window=1,
+                #                               horizon=h, training_features=['avgcpu', 'time', 'avgmem'],
+                #                               target_name=['avg' + res, 'avgmem'], train_split_factor=0.8)
+
+                ds = dataset.DatasetInterface(filename='res_task_' + c + '.csv', input_window=win, output_window=1,
+                                              horizon=h, training_features=['avgcpu', 'time', 'avgmem'],
+                                              target_name=['avg' + res, 'avgmem'], train_split_factor=0.8)
 
                 ds.dataset_creation()
-                ds.dataset_normalization()
+                ds.dataset_normalization(['standard', 'minmax', 'minmax'])
 
                 ds.data_summary()
                 parameters = pd.read_csv("hyperparams/p_hbnn-" + c + ".csv").iloc[0]
@@ -46,7 +50,7 @@ for win in wins:
 
                 p = {'first_conv_dim': parameters['first_conv_dim'],
                      'first_conv_activation': parameters['first_conv_activation'],
-                     #'first_conv_kernel': (parameters['first_conv_kernel'],),
+                     # 'first_conv_kernel': (parameters['first_conv_kernel'],),
                      'second_lstm_dim': parameters['second_lstm_dim'],
                      'first_dense_dim': parameters['first_dense_dim'],
                      'first_dense_activation': dense_act,

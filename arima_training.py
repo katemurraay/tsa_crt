@@ -11,19 +11,19 @@ def main():
     resources = ['cpu', 'mem']
     clusters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
-    tuned = True
+    tuned = False
 
     for resource in resources:
         for cluster in clusters:
             experiment_name = 'arima-' + cluster + '-' + resource + '-h' + str(h)
 
-            # Data creation and load
-            ds = dataset.Dataset(meta=False, filename='res_task_' + cluster + '.csv', horizon=h,
-                                 resource=resource)
-            ds.window_size = 1  # ARIMA accepts only 1 feature
+            # # Data creation and load
+            ds = dataset.DatasetInterface(filename='res_task_' + cluster + '.csv', input_window=1, output_window=2,
+                                          horizon=h, training_features=['avgcpu'],
+                                          target_name=['avgcpu'], train_split_factor=0.8)
+
             ds.dataset_creation()
-            ds.X_train = ds.X_train.reshape(-1, 1)  # reshape to 2-dim array for ARIMA
-            ds.X_test = ds.X_test.reshape(-1, 1)
+            ds.dataset_normalization(['minmax'])
 
             ds.data_summary()
 
@@ -52,7 +52,7 @@ def main():
                      'Q': 0,
                      'D': 0,
                      'S': 12,
-                     'selection': True,
+                     'selection': False,
                      'loop': 1,
                      'horizon': 0,
                      'sliding_window': 288

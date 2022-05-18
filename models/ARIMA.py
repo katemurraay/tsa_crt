@@ -85,7 +85,6 @@ class ARIMAPredictor:
 
             if self.parameter_list['sliding_window']:
                 self.history = self.history[-self.parameter_list['sliding_window']:]
-            print(t, " predicted = ", yhat, ' expected ', obs)
 
         # evaluate forecasts
         X = np.concatenate(X, axis=0)
