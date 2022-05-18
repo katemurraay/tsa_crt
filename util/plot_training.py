@@ -30,7 +30,6 @@ def plot_series_interval(time, series, series2, std, format="-", start=0, end=No
                          title="output", bivariate=False):
     plt.figure(figsize=(20, 10))
     if bivariate:
-        print(series.shape, series2.shape, std.shape, start, end)
         min = np.array(series2) - 2 * np.array(std)
         min = np.squeeze(min)
         max = np.array(series2) + 2 * np.array(std)

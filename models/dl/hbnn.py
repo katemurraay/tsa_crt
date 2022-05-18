@@ -24,48 +24,6 @@ from datetime import datetime
 import pickle
 from models.model_probabilistic import ModelProbabilistic
 
-
-@tf.keras.utils.register_keras_serializable()
-class VarLayer(tfp.layers.DenseVariational):
-    """
-    Variational Dense Layer inherits from tfp.layers.DenseVariational
-    """
-
-    def __init__(self, name, units, make_prior_fn, make_posterior_fn, kl_weight, activation, **kwargs):
-        """
-        Constructor of the variational dense layer
-        :param name: string: name of the layer
-        :param units: int: number of neurons
-        :param make_prior_fn: func: priori probability function
-        :param make_posterior_fn: func: posteriori probability function
-        :param kl_weight: float: kl weight
-        :param activation: keras.activation.function: activation function of the layer
-        :param kwargs: dict: extra arguments (see tfp.layers.DenseVariational documentation)
-        """
-        super().__init__(units=units, make_prior_fn=make_prior_fn, make_posterior_fn=make_posterior_fn, name=name,
-                         kl_weight=kl_weight, activation=activation, **kwargs)
-
-    def get_config(self):
-        """
-        configuration of the layer
-        :return: None
-        """
-        config = super(VarLayer, self).get_config()
-        config.update({
-            'name': self.name,
-            'units': self.units,
-            'activation': self.activation})
-        return config
-
-    def call(self, inputs):
-        """
-        Method necessary for talos implementation to make this class callable
-        :param inputs: parameters
-        :return:
-        """
-        return super(VarLayer, self).call(inputs)
-
-
 class HBNN(ModelProbabilisticDL):
     def __init__(self, name):
         """
@@ -124,11 +82,11 @@ class HBNN(ModelProbabilisticDL):
 
         x = LSTM(self.p['first_lstm_dim'])(x)
 
-        x = VarLayer('var', self.p['first_dense_dim'],
-                     self.prior,
-                     self.posterior,
-                     1 / self.ds.X_train.shape[0],
-                     self.p['first_dense_activation'])(x)
+        x = self.VarLayer('var', self.p['first_dense_dim'],
+                          self.prior,
+                          self.posterior,
+                          1 / self.ds.X_train.shape[0],
+                          self.p['first_dense_activation'])(x)
         distribution_params = layers.Dense(units=2 * self.ds.y_train.shape[2])(x)
         outputs = tfp.layers.IndependentNormal(self.ds.y_train.shape[2])(distribution_params)
 
@@ -299,3 +257,44 @@ class HBNN(ModelProbabilisticDL):
         :return:
         """
         return -estimated_distribution.log_prob(targets)
+
+    @tf.keras.utils.register_keras_serializable()
+    class VarLayer(tfp.layers.DenseVariational):
+        """
+        Variational Dense Layer inherits from tfp.layers.DenseVariational
+        """
+
+        def __init__(self, name, units, make_prior_fn, make_posterior_fn, kl_weight, activation, **kwargs):
+            """
+            Constructor of the variational dense layer
+            :param name: string: name of the layer
+            :param units: int: number of neurons
+            :param make_prior_fn: func: priori probability function
+            :param make_posterior_fn: func: posteriori probability function
+            :param kl_weight: float: kl weight
+            :param activation: keras.activation.function: activation function of the layer
+            :param kwargs: dict: extra arguments (see tfp.layers.DenseVariational documentation)
+            """
+            super().__init__(units=units, make_prior_fn=make_prior_fn, make_posterior_fn=make_posterior_fn, name=name,
+                             kl_weight=kl_weight, activation=activation, **kwargs)
+
+        def get_config(self):
+            """
+            configuration of the layer
+            :return: None
+            """
+            config = super(HBNN.VarLayer, self).get_config()
+            config.update({
+                'name': self.name,
+                'units': self.units,
+                'activation': self.activation})
+            return config
+
+        def call(self, inputs):
+            """
+            Method necessary for talos implementation to make this class callable
+            :param inputs: parameters
+            :return:
+            """
+            return super(HBNN.VarLayer, self).call(inputs)
+
