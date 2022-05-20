@@ -2,6 +2,8 @@
 Interface of a predictive model with shared functionalities
 """
 
+import pickle
+
 
 class ModelInterface:
     def __init__(self, name):
@@ -60,6 +62,7 @@ class ModelInterface:
         if self.model is None:
             print("ERROR: the model needs to be trained before predict")
             return
+        X = X.reshape(-1, 1)
         predictions = self.model.predict(X)
         return predictions
 
@@ -87,14 +90,18 @@ class ModelInterface:
         Save the model into a file in self.saved_models directory
         :return: boolean: 1 if saving operating is successful, 0 otherwise
         """
-        return 0
+        if self.model is None:
+            print("ERROR: the model must be available before saving it")
+            return
+        pickle.dump(self.model, self.model_path + self.name + '_model.pkl')
+        return 1
 
     def load_model(self):
         """
         Load the model from a file
         :return: boolean: 1 if loading operating is successful, 0 otherwise
         """
-        pass
+        self.model = pickle.load(self.model_path + self.name + '_model.pkl')
 
     def hyperparametrization(self):
         """

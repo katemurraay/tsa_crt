@@ -1,6 +1,6 @@
 from util import dataset, plot_training, save_results
 import numpy as np
-from models import LSTM
+import LSTM
 from keras.utils.vis_utils import plot_model
 import pandas as pd
 import os

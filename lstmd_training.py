@@ -1,10 +1,7 @@
 from util import dataset, plot_training, save_results
 import numpy as np
-from models import LSTMD
-import matplotlib.pyplot as plt
+import LSTMD
 from keras.utils.vis_utils import plot_model
-from tensorflow import keras
-import tensorflow as tf
 import pandas as pd
 import os
 from sklearn.metrics import mean_squared_error, mean_absolute_error

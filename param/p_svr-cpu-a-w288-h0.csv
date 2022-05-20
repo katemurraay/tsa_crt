@@ -1,2 +1,2 @@
-,kernel,degree,tol,C,sliding_window
-0,rbf,3,0.001,1.0,288
+,kernel,degree,tol,C
+0,rbf,3,0.001,1.0

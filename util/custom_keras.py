@@ -1,3 +1,7 @@
+"""
+Class to customise callbacks
+"""
+
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -7,15 +11,28 @@ from tensorflow.keras import backend as K
 
 class CustomSaveCheckpoint(tf.keras.callbacks.Callback):
     def __init__(self, model):
+        """
+        Constructor of the CustomSaveCheckpoint class
+        :param model: model to monitor
+        """
         self.monitor = 'val_loss'
+        """string: metric to monitor"""
         self.dnn = model
+        """keras model: best model found"""
         self.dnn.best_val_loss = np.inf
+        """float: best validation loss found"""
 
     def on_epoch_end(self, epoch, logs=None):
-        # logs is a dictionary
-        print("LOGS", logs)
+        """
+        Check the validation loss at the end of the training epoch and save the model if the validation loss
+        has improved
+        :param epoch: int: epoch number
+        :param logs: dict: dictionary of parameters and metrics to monitor
+        :return: None
+        """
+        # print("LOGS", logs)
         if logs['val_loss'] < self.dnn.best_val_loss:
-            print('New best validation loss: ', logs['val_loss'])
+            print('New best validation loss at epoch ', epoch, ' :', logs['val_loss'])
             self.dnn.best_val_loss = logs['val_loss']
             self.dnn.model = self.dnn.temp_model
             self.dnn.save_model()

@@ -31,24 +31,24 @@ class ARIMA(ModelProbabilistic):
                   'D': 0,
                   'S': 12,
                   'loop': 0,
-                  'horizon': 0,
-                  'sliding_window': 288
                   }
         """dict: Dictionary of Hyperparameter configuration of the model"""
-        self.history = None
+        self.__history = None
         """np.array: temporary training set"""
 
         # Model configuration
         self.verbose = True
         """Boolean: Print output of the training phase"""
+        self.sliding_window = 288
+        """int: sliding window to apply in the training phase"""
 
     def create_model(self):
         """
         Create an instance of the model. This function contains the definition and the library of the model
         :return: None
         """
-        self.model = arima.model.ARIMA(self.ds.X_train, order=(self.p['p'], self.p['d'],
-                                                               self.p['q']),
+        self.model = arima.model.ARIMA(self.ds.X_train_array, order=(self.p['p'], self.p['d'],
+                                                                     self.p['q']),
                                        seasonal_order=(self.p['P'], self.p['Q'],
                                                        self.p['D'], self.p['S']))
 
@@ -57,18 +57,18 @@ class ARIMA(ModelProbabilistic):
         Training of the model
         :return: None
         """
-        self.history = list(self.ds.X_train)
-        if self.p['sliding_window']:
-            self.history = self.history[-self.p['sliding_window']:]
-        self.model = arima.model.ARIMA(self.ds.X_train, order=(self.p['p'], self.p['d'],
-                                                               self.p['q']),
+        self.__history = list(self.ds.X_train_array)
+        if self.sliding_window:
+            self.__history = self.__history[-self.sliding_window:]
+        self.model = arima.model.ARIMA(self.ds.X_train_array, order=(self.p['p'], self.p['d'],
+                                                                     self.p['q']),
                                        seasonal_order=(self.p['P'], self.p['D'],
                                                        self.p['Q'], self.p['S']))
-        self.temp_model = self.model.fit(method_kwargs={"warn_convergence": False})
+        self.__temp_model = self.model.fit(method_kwargs={"warn_convergence": False})
 
         if self.verbose:
-            print(self.temp_model.summary())
-            print(self.temp_model.params)
+            print(self.__temp_model.summary())
+            print(self.__temp_model.params)
 
     def tune(self, X, y):
         """
@@ -77,7 +77,7 @@ class ARIMA(ModelProbabilistic):
         :param y: nparray: Training labels
         :return: None
         """
-        self.history = X
+        self.__history = X
         self.model = arima.model.ARIMA(X, order=(self.p['p'], self.p['d'],
                                                  self.p['q']),
                                        seasonal_order=(self.p['P'], self.p['D'],
@@ -99,8 +99,12 @@ class ARIMA(ModelProbabilistic):
         if self.model is None:
             print("ERROR: the model needs to be trained before predict")
             return
-        self.history = list(self.ds.X_train)
-        predicted_means, predicted_stds = list(), list()
+        self.__history = list(self.ds.X_train_array)
+
+        if np.array_equal(X, self.ds.X_test):
+            X = self.ds.X_test_array
+
+        predicted_mean, predicted_std = list(), list()
         if self.p['loop'] == 0:
             steps = X.shape[0]
         else:
@@ -110,79 +114,32 @@ class ARIMA(ModelProbabilistic):
         iterations = X.shape[0] // steps + 1 * (X.shape[0] % steps != 0)
         for j in range(iterations):
             # last iterations predict over the last remaining steps
-            if j == iterations - 1:
+            if steps != X.shape[0] and j == iterations - 1:
                 steps = X.shape[0] % steps
-            self.model = arima.model.ARIMA(self.history, order=(self.p['p'], self.p['d'],
-                                                                self.p['q']),
+            self.model = arima.model.ARIMA(self.__history, order=(self.p['p'], self.p['d'],
+                                                                  self.p['q']),
                                            seasonal_order=(self.p['P'], self.p['Q'],
                                                            self.p['D'], self.p['S']))
 
             # retrain the model at each step prediction
-            self.temp_model = self.model.fit(method_kwargs={"warn_convergence": False})
-            result = self.temp_model.get_forecast(steps=int(steps + self.p['horizon']))
+            self.__temp_model = self.model.fit(method_kwargs={"warn_convergence": False})
+            result = self.__temp_model.get_forecast(steps=int(steps + self.ds.horizon))
 
-            predicted_mean = result.predicted_mean
-            predicted_std = result.se_mean
+            predicted_mean = list(result.predicted_mean)
+            predicted_std = list(result.se_mean)
 
-            yhat = predicted_mean[self.p['horizon']:]
-            [predicted_means.append(em) for em in predicted_mean[self.p['horizon']:]]
-            [predicted_stds.append(em) for em in predicted_std[self.p['horizon']:]]
-            obs = X[j * steps + self.p['horizon']:(j + 1) * steps + self.p['horizon']]
-            [self.history.append(a) for a in X[j * steps:(j + 1) * steps]]
+            [self.__history.append(a) for a in X[j * steps:(j + 1) * steps]]
 
-            if self.p['sliding_window']:
-                self.history = self.history[-self.p['sliding_window']:]
-
-        mse = mean_squared_error(X[:len(predicted_means)], predicted_means)
-        mae = mean_absolute_error(X[:len(predicted_means)], predicted_means)
+            if self.sliding_window:
+                self.__history = self.__history[-self.sliding_window:]
 
         if self.verbose:
+            mse = mean_squared_error(X, predicted_mean)
+            mae = mean_absolute_error(X, predicted_mean)
             print('MSE: %.3f' % mse)
             print('MAE: %.3f' % mae)
-        self.history = list(self.history)
-        return predicted_means, predicted_stds
-
-    def fit_predict(self, X):
-        """
-        Training the model on self.ds.X_train and self.ds.y_train and predict on samples X
-        :param X: np.array: Input samples to predict
-        :return: np.array: prediction_mean: predictions of the mean of the samples X
-                 np.array: prediction_std: predictions of the standard deviation of the samples X
-        """
-        if self.ds is None:
-            print("ERROR: dataset not linked")
-        self.fit()
-        predicted_means, predicted_stds = self.predict(X)
-        return predicted_means, predicted_stds
-
-    def evaluate(self):
-        """
-        Evaluate the model on the training set ds.X_train
-        :return: np.array: prediction_mean: predictions of the mean of the samples X
-                 np.array: prediction_std: predictions of the standard deviation of the samples X
-        """
-        if self.verbose:
-            print("Evaluate")
-        predicted_mean, predicted_std = self.predict(self.ds.X_train)
+        self.__history = list(self.__history)
         return predicted_mean, predicted_std
-
-    def save_model(self):
-        """
-        Save the model into a file in self.saved_models directory
-        :return: boolean: 1 if saving operating is successful, 0 otherwise
-        """
-        if self.model is None:
-            print("ERROR: the model must be available before saving it")
-            return
-        pickle.dump(self.model, self.model_path + self.name + '_model.pkl')
-        return 1
-
-    def load_model(self):
-        """
-        Load the model from a file
-        :return: boolean: 1 if loading operating is successful, 0 otherwise
-        """
-        self.model = pickle.load(self.model_path + self.name + '_model.pkl')
 
     def hyperparametrization(self):
         """
@@ -198,13 +155,13 @@ class ARIMA(ModelProbabilistic):
         for comb in pdq:
             for combs in pdqs:
                 # try:
-                mod = arima.model.ARIMA(self.ds.X_train,
+                mod = arima.model.ARIMA(self.ds.X_train_array,
                                         order=comb,
                                         seasonal_order=combs,
                                         enforce_stationarity=False,
                                         enforce_invertibility=False)
                 output = mod.fit(method_kwargs={"warn_convergence": False})
-                rmse = self.__evaluate_arima_model(self.ds.X_train, comb, combs)
+                rmse = self.__evaluate_arima_model(self.ds.X_train_array, comb, combs)
                 ans.append([comb, combs, output.aic, rmse])
                 print('Arima {} x {} : AIC Calculated = {}, RMSE Calculated = {}'.format(comb, combs, output.aic,
                                                                                          rmse))
@@ -212,10 +169,9 @@ class ARIMA(ModelProbabilistic):
                 #     continue
 
         ans_df = pd.DataFrame(ans, columns=['pdq', 'pdqs', 'aic', 'rmse'])
+
         if self.verbose:
             print(ans_df)
-
-        print(ans_df)
 
         best = ans_df.loc[ans_df['rmse'].idxmin()]
         self.p['p'], self.p['d'], self.p['q'] = best['pdq']
@@ -246,8 +202,8 @@ class ARIMA(ModelProbabilistic):
                                            seasonal_order=arima_seasonal_order,
                                            enforce_stationarity=False,
                                            enforce_invertibility=False)
-            self.temp_model = self.model.fit(method_kwargs={"warn_convergence": False})
-            result = self.temp_model.get_forecast()
+            self.__temp_model = self.model.fit(method_kwargs={"warn_convergence": False})
+            result = self.__temp_model.get_forecast()
             yhat = result.predicted_mean
             predicted_means.append(yhat)
             predicted_stds.append(result.se_mean)

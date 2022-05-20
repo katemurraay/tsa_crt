@@ -44,6 +44,12 @@
                         <li>
                                 <a class="function" href="#ModelProbabilistic.predict">predict</a>
                         </li>
+                        <li>
+                                <a class="function" href="#ModelProbabilistic.fit_predict">fit_predict</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ModelProbabilistic.evaluate">evaluate</a>
+                        </li>
                 </ul>
 
             </li>
@@ -100,6 +106,30 @@ Inherits from ModelInterface class</p>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>            <span class="k">return</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="k">return</span> <span class="n">predictions</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        Training the model on self.ds.X_train and self.ds.y_train and predict on samples X</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">        :return: np.array: prediction_mean: predictions of the mean of the samples X</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">                 np.array: prediction_std: predictions of the standard deviation of the samples X</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: dataset not linked&quot;</span><span class="p">)</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="n">predicted_means</span><span class="p">,</span> <span class="n">predicted_stds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="n">predicted_means</span><span class="p">,</span> <span class="n">predicted_stds</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">        Evaluate the model on the training set ds.X_train_array</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">        :return: np.array: prediction_mean: predictions of the mean of the samples X</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">                 np.array: prediction_std: predictions of the standard deviation of the samples X</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluate&quot;</span><span class="p">)</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>        <span class="n">predicted_mean</span><span class="p">,</span> <span class="n">predicted_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">X_train_array</span><span class="p">)</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>        <span class="k">return</span> <span class="n">predicted_mean</span><span class="p">,</span> <span class="n">predicted_std</span>
 </span></pre></div>
 
 
@@ -136,6 +166,30 @@ Inherits from ModelInterface class</p>
 </span><span id="ModelProbabilistic-28"><a href="#ModelProbabilistic-28"><span class="linenos">28</span></a>            <span class="k">return</span>
 </span><span id="ModelProbabilistic-29"><a href="#ModelProbabilistic-29"><span class="linenos">29</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 </span><span id="ModelProbabilistic-30"><a href="#ModelProbabilistic-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="n">predictions</span>
+</span><span id="ModelProbabilistic-31"><a href="#ModelProbabilistic-31"><span class="linenos">31</span></a>
+</span><span id="ModelProbabilistic-32"><a href="#ModelProbabilistic-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span><span id="ModelProbabilistic-33"><a href="#ModelProbabilistic-33"><span class="linenos">33</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic-34"><a href="#ModelProbabilistic-34"><span class="linenos">34</span></a><span class="sd">        Training the model on self.ds.X_train and self.ds.y_train and predict on samples X</span>
+</span><span id="ModelProbabilistic-35"><a href="#ModelProbabilistic-35"><span class="linenos">35</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
+</span><span id="ModelProbabilistic-36"><a href="#ModelProbabilistic-36"><span class="linenos">36</span></a><span class="sd">        :return: np.array: prediction_mean: predictions of the mean of the samples X</span>
+</span><span id="ModelProbabilistic-37"><a href="#ModelProbabilistic-37"><span class="linenos">37</span></a><span class="sd">                 np.array: prediction_std: predictions of the standard deviation of the samples X</span>
+</span><span id="ModelProbabilistic-38"><a href="#ModelProbabilistic-38"><span class="linenos">38</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic-39"><a href="#ModelProbabilistic-39"><span class="linenos">39</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ModelProbabilistic-40"><a href="#ModelProbabilistic-40"><span class="linenos">40</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: dataset not linked&quot;</span><span class="p">)</span>
+</span><span id="ModelProbabilistic-41"><a href="#ModelProbabilistic-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</span><span id="ModelProbabilistic-42"><a href="#ModelProbabilistic-42"><span class="linenos">42</span></a>        <span class="n">predicted_means</span><span class="p">,</span> <span class="n">predicted_stds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span id="ModelProbabilistic-43"><a href="#ModelProbabilistic-43"><span class="linenos">43</span></a>        <span class="k">return</span> <span class="n">predicted_means</span><span class="p">,</span> <span class="n">predicted_stds</span>
+</span><span id="ModelProbabilistic-44"><a href="#ModelProbabilistic-44"><span class="linenos">44</span></a>
+</span><span id="ModelProbabilistic-45"><a href="#ModelProbabilistic-45"><span class="linenos">45</span></a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ModelProbabilistic-46"><a href="#ModelProbabilistic-46"><span class="linenos">46</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic-47"><a href="#ModelProbabilistic-47"><span class="linenos">47</span></a><span class="sd">        Evaluate the model on the training set ds.X_train_array</span>
+</span><span id="ModelProbabilistic-48"><a href="#ModelProbabilistic-48"><span class="linenos">48</span></a><span class="sd">        :return: np.array: prediction_mean: predictions of the mean of the samples X</span>
+</span><span id="ModelProbabilistic-49"><a href="#ModelProbabilistic-49"><span class="linenos">49</span></a><span class="sd">                 np.array: prediction_std: predictions of the standard deviation of the samples X</span>
+</span><span id="ModelProbabilistic-50"><a href="#ModelProbabilistic-50"><span class="linenos">50</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic-51"><a href="#ModelProbabilistic-51"><span class="linenos">51</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+</span><span id="ModelProbabilistic-52"><a href="#ModelProbabilistic-52"><span class="linenos">52</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluate&quot;</span><span class="p">)</span>
+</span><span id="ModelProbabilistic-53"><a href="#ModelProbabilistic-53"><span class="linenos">53</span></a>        <span class="n">predicted_mean</span><span class="p">,</span> <span class="n">predicted_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">X_train_array</span><span class="p">)</span>
+</span><span id="ModelProbabilistic-54"><a href="#ModelProbabilistic-54"><span class="linenos">54</span></a>        <span class="k">return</span> <span class="n">predicted_mean</span><span class="p">,</span> <span class="n">predicted_std</span>
 </span></pre></div>
 
 
@@ -228,6 +282,86 @@ Inherits from ModelInterface class</p>
 
 
                             </div>
+                            <div id="ModelProbabilistic.fit_predict" class="classattr">
+                                        <input id="ModelProbabilistic.fit_predict-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">fit_predict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">X</span></span>)</span>
+
+                <label class="view-source-button" for="ModelProbabilistic.fit_predict-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#ModelProbabilistic.fit_predict"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.fit_predict-32"><a href="#ModelProbabilistic.fit_predict-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span><span id="ModelProbabilistic.fit_predict-33"><a href="#ModelProbabilistic.fit_predict-33"><span class="linenos">33</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic.fit_predict-34"><a href="#ModelProbabilistic.fit_predict-34"><span class="linenos">34</span></a><span class="sd">        Training the model on self.ds.X_train and self.ds.y_train and predict on samples X</span>
+</span><span id="ModelProbabilistic.fit_predict-35"><a href="#ModelProbabilistic.fit_predict-35"><span class="linenos">35</span></a><span class="sd">        :param X: np.array: Input samples to predict</span>
+</span><span id="ModelProbabilistic.fit_predict-36"><a href="#ModelProbabilistic.fit_predict-36"><span class="linenos">36</span></a><span class="sd">        :return: np.array: prediction_mean: predictions of the mean of the samples X</span>
+</span><span id="ModelProbabilistic.fit_predict-37"><a href="#ModelProbabilistic.fit_predict-37"><span class="linenos">37</span></a><span class="sd">                 np.array: prediction_std: predictions of the standard deviation of the samples X</span>
+</span><span id="ModelProbabilistic.fit_predict-38"><a href="#ModelProbabilistic.fit_predict-38"><span class="linenos">38</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic.fit_predict-39"><a href="#ModelProbabilistic.fit_predict-39"><span class="linenos">39</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="ModelProbabilistic.fit_predict-40"><a href="#ModelProbabilistic.fit_predict-40"><span class="linenos">40</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: dataset not linked&quot;</span><span class="p">)</span>
+</span><span id="ModelProbabilistic.fit_predict-41"><a href="#ModelProbabilistic.fit_predict-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</span><span id="ModelProbabilistic.fit_predict-42"><a href="#ModelProbabilistic.fit_predict-42"><span class="linenos">42</span></a>        <span class="n">predicted_means</span><span class="p">,</span> <span class="n">predicted_stds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</span><span id="ModelProbabilistic.fit_predict-43"><a href="#ModelProbabilistic.fit_predict-43"><span class="linenos">43</span></a>        <span class="k">return</span> <span class="n">predicted_means</span><span class="p">,</span> <span class="n">predicted_stds</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Training the model on self.ds.X_train and self.ds.y_train and predict on samples X</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>X: np.array</strong>:  Input samples to predict</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>np.array: prediction_mean: predictions of the mean of the samples X
+           np.array: prediction_std: predictions of the standard deviation of the samples X</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="ModelProbabilistic.evaluate" class="classattr">
+                                        <input id="ModelProbabilistic.evaluate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">evaluate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+
+                <label class="view-source-button" for="ModelProbabilistic.evaluate-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#ModelProbabilistic.evaluate"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelProbabilistic.evaluate-45"><a href="#ModelProbabilistic.evaluate-45"><span class="linenos">45</span></a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ModelProbabilistic.evaluate-46"><a href="#ModelProbabilistic.evaluate-46"><span class="linenos">46</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic.evaluate-47"><a href="#ModelProbabilistic.evaluate-47"><span class="linenos">47</span></a><span class="sd">        Evaluate the model on the training set ds.X_train_array</span>
+</span><span id="ModelProbabilistic.evaluate-48"><a href="#ModelProbabilistic.evaluate-48"><span class="linenos">48</span></a><span class="sd">        :return: np.array: prediction_mean: predictions of the mean of the samples X</span>
+</span><span id="ModelProbabilistic.evaluate-49"><a href="#ModelProbabilistic.evaluate-49"><span class="linenos">49</span></a><span class="sd">                 np.array: prediction_std: predictions of the standard deviation of the samples X</span>
+</span><span id="ModelProbabilistic.evaluate-50"><a href="#ModelProbabilistic.evaluate-50"><span class="linenos">50</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ModelProbabilistic.evaluate-51"><a href="#ModelProbabilistic.evaluate-51"><span class="linenos">51</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+</span><span id="ModelProbabilistic.evaluate-52"><a href="#ModelProbabilistic.evaluate-52"><span class="linenos">52</span></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluate&quot;</span><span class="p">)</span>
+</span><span id="ModelProbabilistic.evaluate-53"><a href="#ModelProbabilistic.evaluate-53"><span class="linenos">53</span></a>        <span class="n">predicted_mean</span><span class="p">,</span> <span class="n">predicted_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">X_train_array</span><span class="p">)</span>
+</span><span id="ModelProbabilistic.evaluate-54"><a href="#ModelProbabilistic.evaluate-54"><span class="linenos">54</span></a>        <span class="k">return</span> <span class="n">predicted_mean</span><span class="p">,</span> <span class="n">predicted_std</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Evaluate the model on the training set ds.X_train_array</p>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>np.array: prediction_mean: predictions of the mean of the samples X
+           np.array: prediction_std: predictions of the standard deviation of the samples X</p>
+</blockquote>
+</div>
+
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -243,8 +377,6 @@ Inherits from ModelInterface class</p>
                 <dd id="ModelProbabilistic.create_model" class="function">create_model</dd>
                 <dd id="ModelProbabilistic.fit" class="function">fit</dd>
                 <dd id="ModelProbabilistic.tune" class="function">tune</dd>
-                <dd id="ModelProbabilistic.fit_predict" class="function">fit_predict</dd>
-                <dd id="ModelProbabilistic.evaluate" class="function">evaluate</dd>
                 <dd id="ModelProbabilistic.save_model" class="function">save_model</dd>
                 <dd id="ModelProbabilistic.load_model" class="function">load_model</dd>
                 <dd id="ModelProbabilistic.hyperparametrization" class="function">hyperparametrization</dd>

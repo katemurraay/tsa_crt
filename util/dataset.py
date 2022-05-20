@@ -26,17 +26,29 @@ class DatasetInterface:
         "string: name pof the experiment"
 
         self.X = []
-        """list: Full dataset features"""
+        """list: Full dataset features in windowed format"""
         self.y = []
-        """list: Full dataset labels"""
+        """list: Full dataset labels in windowed format"""
+        self.X_array = []
+        """list: Full dataset features in series format """
+        self.y_array = []
+        """list: Full dataset labels in series format """
         self.X_train = []
-        """list: Training features"""
+        """list: Training features in windowed format"""
         self.X_test = []
-        """list: Test features"""
+        """list: Test features in windowed format"""
         self.y_train = []
-        """list: Training labels"""
+        """list: Training labels in windowed format"""
         self.y_test = []
-        """list: Test labels"""
+        """list: Test labels in windowed format"""
+        self.X_train_array = []
+        """list: Training features in series format"""
+        self.y_train_array = []
+        """list: Training labels in series format"""
+        self.X_test_array = []
+        """list: Test features in series format"""
+        self.y_test_array = []
+        """list: Test labels in series format"""
 
         self.training_features = training_features
         """list of strings: columns names of the features for the training"""
@@ -113,33 +125,35 @@ class DatasetInterface:
         # read the csv file into a pandas dataframe
         df = pd.read_csv(self.data_path + self.data_file)
 
-        if self.input_window > 1:
-            # windowed dataset creation
-            columns = df[self.training_features].to_numpy()
-            self.X, self.y = self.__windowed_dataset(columns)
-            split_value = int(self.X.shape[0] * self.train_split_factor)
-            self.y_train = self.y[:split_value]
-            self.y_test = self.y[split_value:]
-            self.X_train = self.X[:split_value]
-            self.X_test = self.X[split_value:]
+        # windowed dataset creation
+        columns = df[self.training_features].to_numpy()
+        self.X, self.y = self.__windowed_dataset(columns)
+        split_value = int(self.X.shape[0] * self.train_split_factor)
+        self.y_train = self.y[:split_value]
+        self.y_test = self.y[split_value:]
+        self.X_train = self.X[:split_value]
+        self.X_test = self.X[split_value:]
+
+        # unidimensional dataset creation
+        self.X_array = df[self.target_name].to_numpy()
+        self.X_array = self.X_array.reshape(-1, 1)
+        split_value = int(self.X_array.shape[0] * self.train_split_factor)
+        self.y_train_array = self.X_array[self.horizon:self.horizon+split_value-1]
+        self.y_test_array = self.X_array[self.horizon+split_value:]
+        self.X_train_array = self.X_array[:split_value-1]
+        if self.horizon:
+            self.X_test_array = self.X_array[split_value: -self.horizon]
         else:
-            # unidimensional dataset creation
-            self.X = df[self.target_name].to_numpy()
-            self.X = self.X.reshape(-1, 1)
-            split_value = int(self.X.shape[0] * self.train_split_factor)
-            self.y_train = self.X[:split_value]
-            self.y_test = self.X[split_value:]
-            self.X_train = self.X[:split_value]
-            self.X_test = self.X[split_value:]
+            self.X_test_array = self.X_array[split_value:]
 
         if self.verbose:
             print("Data size ", self.X.shape)
 
         if self.verbose:
-            print("Training size ", self.X_train.shape)
-            print("Training labels size", self.y_train.shape)
-            print("Test size ", self.X_test.shape)
-            print("Test labels size", self.y_test.shape)
+            print("Training size ", self.X_train.shape, self.X_train_array.shape)
+            print("Training labels size", self.y_train.shape, self.y_train_array.shape)
+            print("Test size ", self.X_test.shape, self.X_test_array.shape)
+            print("Test labels size", self.y_test.shape, self.y_test_array.shape)
 
     def dataset_normalization(self, methods=["minmax"], scale_range=(0, 1)):
         """
@@ -167,20 +181,18 @@ class DatasetInterface:
                     elif self.normalization[i] == "minmax":
                         self.X_scalers[i] = MinMaxScaler(scale_range)
                         self.y_scalers[i] = MinMaxScaler(scale_range)
-                    if self.input_window > 1:
-                        # window dataset
-                        self.X_train[:, :, i] = self.X_scalers[i].fit_transform(self.X_train[:, :, i])
-                        self.X_test[:, :, i] = self.X_scalers[i].transform(self.X_test[:, :, i])
-                        for j, feature in enumerate(self.target_name):
-                            if i == self.training_features.index(feature):
-                                self.y_train[:, :, j] = self.y_scalers[i].fit_transform(self.y_train[:, :, j])
-                                self.y_test[:, :, j] = self.y_scalers[i].transform(self.y_test[:, :, j])
-                    else:
-                        # unidimensional dataset
-                        self.X_train = self.X_scalers[i].fit_transform(self.X_train)
-                        self.X_test = self.X_scalers[i].transform(self.X_test)
-                        self.y_train = self.y_scalers[i].fit_transform(self.y_train)
-                        self.y_test = self.y_scalers[i].transform(self.y_test)
+                    # window dataset
+                    self.X_train[:, :, i] = self.X_scalers[i].fit_transform(self.X_train[:, :, i])
+                    self.X_test[:, :, i] = self.X_scalers[i].transform(self.X_test[:, :, i])
+                    for j, feature in enumerate(self.target_name):
+                        if i == self.training_features.index(feature):
+                            self.y_train[:, :, j] = self.y_scalers[i].fit_transform(self.y_train[:, :, j])
+                            self.y_test[:, :, j] = self.y_scalers[i].transform(self.y_test[:, :, j])
+                    # unidimensional dataset
+                    self.X_train_array = self.X_scalers[i].fit_transform(self.X_train_array)
+                    self.X_test_array = self.X_scalers[i].transform(self.X_test_array)
+                    self.y_train_array = self.y_scalers[i].fit_transform(self.y_train_array)
+                    self.y_test_array = self.y_scalers[i].transform(self.y_test_array)
 
     def metadata_creation(self):
         """
