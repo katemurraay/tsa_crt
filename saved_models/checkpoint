@@ -1,2 +1,2 @@
-model_checkpoint_path: "svr-cpu-a-w288-h00000_weights.tf"
-all_model_checkpoint_paths: "svr-cpu-a-w288-h00000_weights.tf"
+model_checkpoint_path: "HBNN-cpu-a-w288-h00000_weights.tf"
+all_model_checkpoint_paths: "HBNN-cpu-a-w288-h00000_weights.tf"

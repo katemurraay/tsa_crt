@@ -39,6 +39,18 @@ class ModelInterfaceDL(ModelInterface):
         self.model = save_check.dnn.model
         return history, self.model
 
+    def predict(self, X):
+        """
+        Inference step on the samples X
+        :param X: np.array: Input samples to predict
+        :return: np.array: predictions: Predictions of the samples X
+        """
+        if self.model is None:
+            print("ERROR: the model needs to be trained before predict")
+            return
+        predictions = self.model.predict(X)
+        return predictions
+
     def tune(self, X, y):
         """
         Tune the models with new available samples (X, y)
@@ -89,10 +101,20 @@ class ModelInterfaceDL(ModelInterface):
         Save the model into a file in self.saved_models directory
         :return: boolean: 1 if saving operating is successful, 0 otherwise
         """
-        if self.temp_model is None:
+        if self.model is None:
             print("ERROR: the model must be available before saving it")
             return
-        self.temp_model.save(self.model_path + self.name + str(self.count_save).zfill(4) + '_model.tf',
-                             save_format="tf")
+        self.model.save(self.model_path + self.name + str(self.count_save).zfill(4) + '_model.tf',
+                        save_format="tf")
+        self.count_save += 1
+        return 1
+
+    def load_model(self):
+        """
+        Load the model from a file
+        :return: boolean: 1 if loading operating is successful, 0 otherwise
+        """
+        self.model.load(self.model_path + self.name + str(self.count_save).zfill(4) + '_model.tf',
+                        save_format="tf")
         self.count_save += 1
         return 1

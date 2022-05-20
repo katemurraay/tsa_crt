@@ -1,16 +1,35 @@
 import pandas as pd
 import numpy as np
 
-def save_output_csv(preds, labels, feature, filename):
+
+def save_output_csv(preds, labels, feature, filename, bivariate=False):
     PATH = "res/output_" + filename + ".csv"
-    dct = {feature: preds,
-           'labels': labels}
+    print(preds.shape, labels.shape)
+
+    if bivariate:
+        labels = labels.reshape(-1, preds.shape[1])
+        dct = {'avgcpu': preds[:, 0],
+               'labelsavgcpu': labels[:, 0],
+               'avgmem': preds[:, 1],
+               'labelsavgmem': labels[:, 1]
+               }
+    else:
+        # try:
+        #     labels = labels.reshape(-1, 1)
+        dct = {feature: preds,
+               'labels': labels}
+        # except:
+        #     dct = {feature: preds,
+        #            'labels': labels}
+        #     df = pd.DataFrame(dct)
     df = pd.DataFrame(dct)
     df.to_csv(PATH)
 
 
 def save_uncertainty_csv(preds, std, labels, feature, filename, bivariate=False):
     PATH = "res/output_" + filename + ".csv"
+    print(type(preds), type(std), type(labels))
+    print(len(preds), len(std), labels.shape)
     if bivariate:
         labels = labels.reshape(-1, preds.shape[1])
         dct = {'avgcpu': preds[:, 0],

@@ -102,6 +102,7 @@ class ModelInterface:
         :return: boolean: 1 if loading operating is successful, 0 otherwise
         """
         self.model = pickle.load(self.model_path + self.name + '_model.pkl')
+        return 1
 
     def hyperparametrization(self):
         """

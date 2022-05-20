@@ -136,7 +136,8 @@ class DatasetInterface:
 
         # unidimensional dataset creation
         self.X_array = df[self.target_name].to_numpy()
-        self.X_array = self.X_array.reshape(-1, 1)
+        if len(self.target_name) == 1:
+            self.X_array = self.X_array.reshape(-1, 1)
         split_value = int(self.X_array.shape[0] * self.train_split_factor)
         self.y_train_array = self.X_array[self.horizon:self.horizon+split_value-1]
         self.y_test_array = self.X_array[self.horizon+split_value:]

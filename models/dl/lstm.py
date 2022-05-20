@@ -1,3 +1,8 @@
+"""
+LSTM-based model
+Inherits from ModelInterfaceDL class
+"""
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
@@ -9,9 +14,14 @@ from datetime import datetime
 import pickle
 
 
-class LSTMPredictor(ModelInterfaceDL):
-    def __init__(self):
-        ModelInterfaceDL.__init__(self, "LSTMPredictor")
+class LSTM(ModelInterfaceDL):
+    def __init__(self, name):
+        """
+        Constructor of the Model Interface class
+        :param name: string: name of the model
+        """
+        super().__init__(name)
+
         self.parameter_list = {'first_conv_dim': [32, 64, 128],
                                'first_conv_kernel': [3, 5, 7, 11],
                                'first_conv_activation': ['relu', 'tanh'],
@@ -27,6 +37,8 @@ class LSTMPredictor(ModelInterfaceDL):
                                'momentum': [0.9, 0.99],
                                'decay': [1E-3, 1E-4, 1E-5],
                                }
+        """dict: Dictionary of hyperparameters search space"""
+
         self.p = {'first_conv_dim': 32,
                   'first_conv_kernel': 5,
                   'first_conv_activation': 'relu',
@@ -42,16 +54,23 @@ class LSTMPredictor(ModelInterfaceDL):
                   'momentum': 0.9,
                   'decay': 1E-4,
                   }
+        """dict: Dictionary of hyperparameter configuration of the model"""
 
     def create_model(self):
+        """
+        Create an instance of the model. This function contains the definition and the library of the model
+        :return: None
+        """
+        input_shape = self.ds.X_train.shape[1:]
+
         self.temp_model = Sequential([
             tf.keras.layers.Conv1D(filters=self.p['first_conv_dim'], kernel_size=self.p['first_conv_kernel'],
                                    strides=1, padding="causal",
                                    activation=self.p['first_conv_activation'],
-                                   input_shape=self.input_shape),
-            tf.keras.layers.LSTM(self.p['second_lstm_dim']),
+                                   input_shape=input_shape),
+            tf.keras.layers.LSTM(self.p['first_lstm_dim']),
             tf.keras.layers.Dense(self.p['first_dense_dim'], activation=self.p['first_dense_activation']),
-            tf.keras.layers.Dense(1),
+            tf.keras.layers.Dense(self.ds.y_train.shape[2]),
         ])
 
         if self.p['optimizer'] == 'adam':
@@ -65,35 +84,3 @@ class LSTMPredictor(ModelInterfaceDL):
         self.temp_model.compile(loss='mean_squared_error',
                                 optimizer=opt,
                                 metrics=["mse", "mae"])
-        self.save_check = custom_keras.CustomSaveCheckpoint(self)
-        self.es = EarlyStopping(monitor='val_loss', mode='min', verbose=self.verbose, patience=self.p['patience'])
-
-    def fit(self):
-        fit_start = datetime.now()
-        history = self.temp_model.fit(self.ds.X_train, self.ds.y_train, epochs=self.p['epochs'],
-                                      batch_size=self.p['batch_size'],
-                                      validation_split=0.2, verbose=2, callbacks=[self.es, self.save_check])
-
-        self.model = self.save_check.dnn.model
-
-        fit_time = datetime.now() - fit_start
-        return fit_time
-
-    def tuning(self, X, y):
-        tuning_start = datetime.now()
-        self.temp_model.fit(X, y, epochs=self.p['epochs'], batch_size=self.p['batch_size'],
-                            validation_split=0.2, verbose=2, callbacks=[self.es, self.save_check])
-
-        tuning_time = datetime.now() - tuning_start
-        self.model = self.save_check.dnn.model
-
-        return self.model, tuning_time
-
-    def predict(self, X):
-        predict_start = datetime.now()
-        prediction = self.model.predict(X)
-        prediction = prediction[:, -1]
-        prediction = prediction[~np.isnan(prediction)]
-        predict_time = datetime.now() - predict_start
-
-        return prediction, predict_time

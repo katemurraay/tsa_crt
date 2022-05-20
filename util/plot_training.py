@@ -13,12 +13,20 @@ def plot_loss(history, title):
     plt.savefig("img/loss/loss_" + title + ".png")
 
 
-def plot_series(time, series, series2, start=0, end=None, label1="", label2="", title="output"):
+def plot_series(time, series, series2, format="-", start=0, end=None, label1="", label2="", title="output",
+                bivariate=False):
     plt.figure(figsize=(10, 6))
-    plt.plot(series[start:end], label=label1)
-    plt.plot(series2[start:end], 'o', label=label2)
+    if bivariate:
+        plt.plot(series[start:end, 0], label=label1+'CPU')
+        plt.plot(series2[start:end, 0], 'o', label=label2+'CPU')
+        plt.plot(series[start:end, 1], label=label1+'MEM')
+        plt.plot(series2[start:end, 1], 'o', label=label2+'MEM')
+    else:
+
+        plt.plot(series[start:end], label=label1)
+        plt.plot(series2[start:end], 'o', label=label2)
     plt.xlabel("Time")
-    plt.ylabel("Value")
+    plt.ylabel("Resource unit")
     plt.legend()
     plt.grid(True)
     plt.savefig("img/preds/" + title + ".png")
