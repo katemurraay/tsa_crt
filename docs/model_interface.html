@@ -219,13 +219,14 @@ model_interface    </h1>
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">        :return: boolean: 1 if loading operating is successful, 0 otherwise</span>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_model.pkl&#39;</span><span class="p">)</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="k">def</span> <span class="nf">hyperparametrization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        Search the best parameter configuration</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        :return: None</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>        <span class="k">pass</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="k">return</span> <span class="mi">1</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>    <span class="k">def</span> <span class="nf">hyperparametrization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        Search the best parameter configuration</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        :return: None</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -338,13 +339,14 @@ model_interface    </h1>
 </span><span id="ModelInterface-103"><a href="#ModelInterface-103"><span class="linenos">103</span></a><span class="sd">        :return: boolean: 1 if loading operating is successful, 0 otherwise</span>
 </span><span id="ModelInterface-104"><a href="#ModelInterface-104"><span class="linenos">104</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="ModelInterface-105"><a href="#ModelInterface-105"><span class="linenos">105</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_model.pkl&#39;</span><span class="p">)</span>
-</span><span id="ModelInterface-106"><a href="#ModelInterface-106"><span class="linenos">106</span></a>
-</span><span id="ModelInterface-107"><a href="#ModelInterface-107"><span class="linenos">107</span></a>    <span class="k">def</span> <span class="nf">hyperparametrization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelInterface-108"><a href="#ModelInterface-108"><span class="linenos">108</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelInterface-109"><a href="#ModelInterface-109"><span class="linenos">109</span></a><span class="sd">        Search the best parameter configuration</span>
-</span><span id="ModelInterface-110"><a href="#ModelInterface-110"><span class="linenos">110</span></a><span class="sd">        :return: None</span>
-</span><span id="ModelInterface-111"><a href="#ModelInterface-111"><span class="linenos">111</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelInterface-112"><a href="#ModelInterface-112"><span class="linenos">112</span></a>        <span class="k">pass</span>
+</span><span id="ModelInterface-106"><a href="#ModelInterface-106"><span class="linenos">106</span></a>        <span class="k">return</span> <span class="mi">1</span>
+</span><span id="ModelInterface-107"><a href="#ModelInterface-107"><span class="linenos">107</span></a>
+</span><span id="ModelInterface-108"><a href="#ModelInterface-108"><span class="linenos">108</span></a>    <span class="k">def</span> <span class="nf">hyperparametrization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ModelInterface-109"><a href="#ModelInterface-109"><span class="linenos">109</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ModelInterface-110"><a href="#ModelInterface-110"><span class="linenos">110</span></a><span class="sd">        Search the best parameter configuration</span>
+</span><span id="ModelInterface-111"><a href="#ModelInterface-111"><span class="linenos">111</span></a><span class="sd">        :return: None</span>
+</span><span id="ModelInterface-112"><a href="#ModelInterface-112"><span class="linenos">112</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ModelInterface-113"><a href="#ModelInterface-113"><span class="linenos">113</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -771,6 +773,7 @@ model_interface    </h1>
 </span><span id="ModelInterface.load_model-103"><a href="#ModelInterface.load_model-103"><span class="linenos">103</span></a><span class="sd">        :return: boolean: 1 if loading operating is successful, 0 otherwise</span>
 </span><span id="ModelInterface.load_model-104"><a href="#ModelInterface.load_model-104"><span class="linenos">104</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="ModelInterface.load_model-105"><a href="#ModelInterface.load_model-105"><span class="linenos">105</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_model.pkl&#39;</span><span class="p">)</span>
+</span><span id="ModelInterface.load_model-106"><a href="#ModelInterface.load_model-106"><span class="linenos">106</span></a>        <span class="k">return</span> <span class="mi">1</span>
 </span></pre></div>
 
 
@@ -796,12 +799,12 @@ model_interface    </h1>
 
     </div>
     <a class="headerlink" href="#ModelInterface.hyperparametrization"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelInterface.hyperparametrization-107"><a href="#ModelInterface.hyperparametrization-107"><span class="linenos">107</span></a>    <span class="k">def</span> <span class="nf">hyperparametrization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ModelInterface.hyperparametrization-108"><a href="#ModelInterface.hyperparametrization-108"><span class="linenos">108</span></a>        <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ModelInterface.hyperparametrization-109"><a href="#ModelInterface.hyperparametrization-109"><span class="linenos">109</span></a><span class="sd">        Search the best parameter configuration</span>
-</span><span id="ModelInterface.hyperparametrization-110"><a href="#ModelInterface.hyperparametrization-110"><span class="linenos">110</span></a><span class="sd">        :return: None</span>
-</span><span id="ModelInterface.hyperparametrization-111"><a href="#ModelInterface.hyperparametrization-111"><span class="linenos">111</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ModelInterface.hyperparametrization-112"><a href="#ModelInterface.hyperparametrization-112"><span class="linenos">112</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelInterface.hyperparametrization-108"><a href="#ModelInterface.hyperparametrization-108"><span class="linenos">108</span></a>    <span class="k">def</span> <span class="nf">hyperparametrization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="ModelInterface.hyperparametrization-109"><a href="#ModelInterface.hyperparametrization-109"><span class="linenos">109</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ModelInterface.hyperparametrization-110"><a href="#ModelInterface.hyperparametrization-110"><span class="linenos">110</span></a><span class="sd">        Search the best parameter configuration</span>
+</span><span id="ModelInterface.hyperparametrization-111"><a href="#ModelInterface.hyperparametrization-111"><span class="linenos">111</span></a><span class="sd">        :return: None</span>
+</span><span id="ModelInterface.hyperparametrization-112"><a href="#ModelInterface.hyperparametrization-112"><span class="linenos">112</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ModelInterface.hyperparametrization-113"><a href="#ModelInterface.hyperparametrization-113"><span class="linenos">113</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 

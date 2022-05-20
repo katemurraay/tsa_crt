@@ -28,6 +28,28 @@
 
 
 
+        <h2>API Documentation</h2>
+            <ul class="memberlist">
+            <li>
+                    <a class="class" href="#LSTMD">LSTMD</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#LSTMD.__init__">LSTMD</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LSTMD.parameter_list">parameter_list</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#LSTMD.p">p</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#LSTMD.create_model">create_model</a>
+                        </li>
+                </ul>
+
+            </li>
+    </ul>
+
 
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
@@ -42,11 +64,418 @@
                     <h1 class="modulename">
 <a href="./../dl.html">dl</a><wbr>.lstmd    </h1>
 
-                
-                
-                
-                
+                        <div class="docstring"><p>LSTMD(istribution) model
+Inherits from ModelProbabilisticDL class</p>
+</div>
+
+                        <input id="lstmd-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+
+                        <label class="view-source-button" for="lstmd-view-source"><span>View Source</span></label>
+
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">LSTMD(istribution) model</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">Inherits from ModelProbabilisticDL class</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">tensorflow</span> <span class="kn">import</span> <span class="n">keras</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">import</span> <span class="nn">talos</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">layers</span><span class="p">,</span> <span class="n">Model</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">LSTM</span><span class="p">,</span> <span class="n">Conv1D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Activation</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">BatchNormalization</span><span class="p">,</span> <span class="n">Input</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span> <span class="nn">tensorflow.keras.optimizers</span> <span class="kn">import</span> <span class="n">RMSprop</span><span class="p">,</span> <span class="n">Adam</span><span class="p">,</span> <span class="n">Nadam</span><span class="p">,</span> <span class="n">SGD</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span> <span class="nn">tensorflow.keras.callbacks</span> <span class="kn">import</span> <span class="n">EarlyStopping</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span> <span class="nn">util</span> <span class="kn">import</span> <span class="n">custom_keras</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">from</span> <span class="nn">models.dl.model_probabilistic_dl</span> <span class="kn">import</span> <span class="n">ModelProbabilisticDL</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="kn">from</span> <span class="nn">util</span> <span class="kn">import</span> <span class="n">plot_training</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="kn">import</span> <span class="nn">tensorflow_probability</span> <span class="k">as</span> <span class="nn">tfp</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="kn">import</span> <span class="nn">os</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="kn">import</span> <span class="nn">pickle</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="kn">from</span> <span class="nn">models.model_probabilistic</span> <span class="kn">import</span> <span class="n">ModelProbabilistic</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="k">class</span> <span class="nc">LSTMD</span><span class="p">(</span><span class="n">ModelProbabilisticDL</span><span class="p">):</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">        Constructor of the Model Interface class</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">        :param name: string: name of the model</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_list</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;first_conv_dim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>                               <span class="s1">&#39;first_conv_kernel&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>                               <span class="s1">&#39;first_conv_activation&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;relu&#39;</span><span class="p">],</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>                               <span class="s1">&#39;second_lstm_dim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">],</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>                               <span class="s1">&#39;first_dense_dim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">],</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>                               <span class="s1">&#39;first_dense_activation&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">relu</span><span class="p">],</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>                               <span class="s1">&#39;dense_kernel_init&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;he_normal&#39;</span><span class="p">,</span> <span class="s1">&#39;glorot_uniform&#39;</span><span class="p">],</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>                               <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1024</span><span class="p">],</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>                               <span class="s1">&#39;epochs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2000</span><span class="p">],</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>                               <span class="s1">&#39;patience&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">],</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>                               <span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="s1">&#39;rmsprop&#39;</span><span class="p">],</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>                               <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1E-3</span><span class="p">,</span> <span class="mf">1E-4</span><span class="p">,</span> <span class="mf">1E-5</span><span class="p">],</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>                               <span class="s1">&#39;momentum&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">],</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>                               <span class="s1">&#39;decay&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1E-3</span><span class="p">,</span> <span class="mf">1E-4</span><span class="p">]</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>                               <span class="p">}</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of hyperparameters search space&quot;&quot;&quot;</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;first_conv_dim&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>                  <span class="s1">&#39;first_conv_activation&#39;</span><span class="p">:</span> <span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>                  <span class="s1">&#39;first_conv_kernel&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>                  <span class="s1">&#39;first_lstm_dim&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>                  <span class="s1">&#39;first_dense_dim&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>                  <span class="s1">&#39;first_dense_activation&#39;</span><span class="p">:</span> <span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>                  <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>                  <span class="s1">&#39;epochs&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>                  <span class="s1">&#39;patience&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>                  <span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="s1">&#39;adam&#39;</span><span class="p">,</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>                  <span class="s1">&#39;batch_normalization&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>                  <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1E-4</span><span class="p">,</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>                  <span class="s1">&#39;momentum&#39;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>                  <span class="s1">&#39;decay&#39;</span><span class="p">:</span> <span class="mf">1E-4</span><span class="p">,</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>                  <span class="p">}</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of hyperparameter configuration of the model&quot;&quot;&quot;</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">        Create an instance of the model. This function contains the definition and the library of the model</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">        :return: None</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">clear_session</span><span class="p">()</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>        <span class="n">input_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>        <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">Conv1D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_conv_dim&#39;</span><span class="p">],</span> <span class="n">kernel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_conv_kernel&#39;</span><span class="p">],</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>                   <span class="n">strides</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;causal&quot;</span><span class="p">,</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>                   <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_conv_activation&#39;</span><span class="p">],</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>                   <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)(</span><span class="n">input_tensor</span><span class="p">)</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">LSTM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_lstm_dim&#39;</span><span class="p">])(</span><span class="n">x</span><span class="p">)</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_dense_dim&#39;</span><span class="p">],</span> <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_dense_activation&#39;</span><span class="p">])(</span><span class="n">x</span><span class="p">)</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="n">distribution_params</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])(</span><span class="n">x</span><span class="p">)</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="n">outputs</span> <span class="o">=</span> <span class="n">tfp</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">IndependentNormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])(</span><span class="n">distribution_params</span><span class="p">)</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_tensor</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;adam&#39;</span><span class="p">:</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">],</span> <span class="n">decay</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;decay&#39;</span><span class="p">])</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;rmsprop&#39;</span><span class="p">:</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">RMSprop</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">])</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;nadam&#39;</span><span class="p">:</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">Nadam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">])</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">SGD</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">],</span> <span class="n">momentum</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;momentum&#39;</span><span class="p">])</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__negative_loglikelihood</span><span class="p">,</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>                                <span class="n">optimizer</span><span class="o">=</span><span class="n">opt</span><span class="p">,</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>                                <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span> <span class="s2">&quot;mae&quot;</span><span class="p">])</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="k">def</span> <span class="nf">__negative_loglikelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">estimated_distribution</span><span class="p">):</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        Negative log-likelihood custom function</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        :param targets: np.array: labels</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        :param estimated_distribution: np.array: prediction</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        :return:</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="o">-</span><span class="n">estimated_distribution</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+</span></pre></div>
+
+
             </section>
+                <section id="LSTMD">
+                            <input id="LSTMD-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">LSTMD</span><wbr>(<span class="base">models.dl.model_probabilistic_dl.ModelProbabilisticDL</span>):
+
+                <label class="view-source-button" for="LSTMD-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#LSTMD"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LSTMD-29"><a href="#LSTMD-29"><span class="linenos"> 29</span></a><span class="k">class</span> <span class="nc">LSTMD</span><span class="p">(</span><span class="n">ModelProbabilisticDL</span><span class="p">):</span>
+</span><span id="LSTMD-30"><a href="#LSTMD-30"><span class="linenos"> 30</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span id="LSTMD-31"><a href="#LSTMD-31"><span class="linenos"> 31</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="LSTMD-32"><a href="#LSTMD-32"><span class="linenos"> 32</span></a><span class="sd">        Constructor of the Model Interface class</span>
+</span><span id="LSTMD-33"><a href="#LSTMD-33"><span class="linenos"> 33</span></a><span class="sd">        :param name: string: name of the model</span>
+</span><span id="LSTMD-34"><a href="#LSTMD-34"><span class="linenos"> 34</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LSTMD-35"><a href="#LSTMD-35"><span class="linenos"> 35</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span id="LSTMD-36"><a href="#LSTMD-36"><span class="linenos"> 36</span></a>
+</span><span id="LSTMD-37"><a href="#LSTMD-37"><span class="linenos"> 37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="LSTMD-38"><a href="#LSTMD-38"><span class="linenos"> 38</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_list</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;first_conv_dim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span>
+</span><span id="LSTMD-39"><a href="#LSTMD-39"><span class="linenos"> 39</span></a>                               <span class="s1">&#39;first_conv_kernel&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>
+</span><span id="LSTMD-40"><a href="#LSTMD-40"><span class="linenos"> 40</span></a>                               <span class="s1">&#39;first_conv_activation&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;relu&#39;</span><span class="p">],</span>
+</span><span id="LSTMD-41"><a href="#LSTMD-41"><span class="linenos"> 41</span></a>                               <span class="s1">&#39;second_lstm_dim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">],</span>
+</span><span id="LSTMD-42"><a href="#LSTMD-42"><span class="linenos"> 42</span></a>                               <span class="s1">&#39;first_dense_dim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">],</span>
+</span><span id="LSTMD-43"><a href="#LSTMD-43"><span class="linenos"> 43</span></a>                               <span class="s1">&#39;first_dense_activation&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">relu</span><span class="p">],</span>
+</span><span id="LSTMD-44"><a href="#LSTMD-44"><span class="linenos"> 44</span></a>                               <span class="s1">&#39;dense_kernel_init&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;he_normal&#39;</span><span class="p">,</span> <span class="s1">&#39;glorot_uniform&#39;</span><span class="p">],</span>
+</span><span id="LSTMD-45"><a href="#LSTMD-45"><span class="linenos"> 45</span></a>                               <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1024</span><span class="p">],</span>
+</span><span id="LSTMD-46"><a href="#LSTMD-46"><span class="linenos"> 46</span></a>                               <span class="s1">&#39;epochs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2000</span><span class="p">],</span>
+</span><span id="LSTMD-47"><a href="#LSTMD-47"><span class="linenos"> 47</span></a>                               <span class="s1">&#39;patience&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">],</span>
+</span><span id="LSTMD-48"><a href="#LSTMD-48"><span class="linenos"> 48</span></a>                               <span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="s1">&#39;rmsprop&#39;</span><span class="p">],</span>
+</span><span id="LSTMD-49"><a href="#LSTMD-49"><span class="linenos"> 49</span></a>                               <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1E-3</span><span class="p">,</span> <span class="mf">1E-4</span><span class="p">,</span> <span class="mf">1E-5</span><span class="p">],</span>
+</span><span id="LSTMD-50"><a href="#LSTMD-50"><span class="linenos"> 50</span></a>                               <span class="s1">&#39;momentum&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">],</span>
+</span><span id="LSTMD-51"><a href="#LSTMD-51"><span class="linenos"> 51</span></a>                               <span class="s1">&#39;decay&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1E-3</span><span class="p">,</span> <span class="mf">1E-4</span><span class="p">]</span>
+</span><span id="LSTMD-52"><a href="#LSTMD-52"><span class="linenos"> 52</span></a>                               <span class="p">}</span>
+</span><span id="LSTMD-53"><a href="#LSTMD-53"><span class="linenos"> 53</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of hyperparameters search space&quot;&quot;&quot;</span>
+</span><span id="LSTMD-54"><a href="#LSTMD-54"><span class="linenos"> 54</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;first_conv_dim&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+</span><span id="LSTMD-55"><a href="#LSTMD-55"><span class="linenos"> 55</span></a>                  <span class="s1">&#39;first_conv_activation&#39;</span><span class="p">:</span> <span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+</span><span id="LSTMD-56"><a href="#LSTMD-56"><span class="linenos"> 56</span></a>                  <span class="s1">&#39;first_conv_kernel&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+</span><span id="LSTMD-57"><a href="#LSTMD-57"><span class="linenos"> 57</span></a>                  <span class="s1">&#39;first_lstm_dim&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+</span><span id="LSTMD-58"><a href="#LSTMD-58"><span class="linenos"> 58</span></a>                  <span class="s1">&#39;first_dense_dim&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+</span><span id="LSTMD-59"><a href="#LSTMD-59"><span class="linenos"> 59</span></a>                  <span class="s1">&#39;first_dense_activation&#39;</span><span class="p">:</span> <span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span>
+</span><span id="LSTMD-60"><a href="#LSTMD-60"><span class="linenos"> 60</span></a>                  <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
+</span><span id="LSTMD-61"><a href="#LSTMD-61"><span class="linenos"> 61</span></a>                  <span class="s1">&#39;epochs&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span><span id="LSTMD-62"><a href="#LSTMD-62"><span class="linenos"> 62</span></a>                  <span class="s1">&#39;patience&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+</span><span id="LSTMD-63"><a href="#LSTMD-63"><span class="linenos"> 63</span></a>                  <span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="s1">&#39;adam&#39;</span><span class="p">,</span>
+</span><span id="LSTMD-64"><a href="#LSTMD-64"><span class="linenos"> 64</span></a>                  <span class="s1">&#39;batch_normalization&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="LSTMD-65"><a href="#LSTMD-65"><span class="linenos"> 65</span></a>                  <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1E-4</span><span class="p">,</span>
+</span><span id="LSTMD-66"><a href="#LSTMD-66"><span class="linenos"> 66</span></a>                  <span class="s1">&#39;momentum&#39;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span>
+</span><span id="LSTMD-67"><a href="#LSTMD-67"><span class="linenos"> 67</span></a>                  <span class="s1">&#39;decay&#39;</span><span class="p">:</span> <span class="mf">1E-4</span><span class="p">,</span>
+</span><span id="LSTMD-68"><a href="#LSTMD-68"><span class="linenos"> 68</span></a>                  <span class="p">}</span>
+</span><span id="LSTMD-69"><a href="#LSTMD-69"><span class="linenos"> 69</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of hyperparameter configuration of the model&quot;&quot;&quot;</span>
+</span><span id="LSTMD-70"><a href="#LSTMD-70"><span class="linenos"> 70</span></a>
+</span><span id="LSTMD-71"><a href="#LSTMD-71"><span class="linenos"> 71</span></a>    <span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="LSTMD-72"><a href="#LSTMD-72"><span class="linenos"> 72</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="LSTMD-73"><a href="#LSTMD-73"><span class="linenos"> 73</span></a><span class="sd">        Create an instance of the model. This function contains the definition and the library of the model</span>
+</span><span id="LSTMD-74"><a href="#LSTMD-74"><span class="linenos"> 74</span></a><span class="sd">        :return: None</span>
+</span><span id="LSTMD-75"><a href="#LSTMD-75"><span class="linenos"> 75</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LSTMD-76"><a href="#LSTMD-76"><span class="linenos"> 76</span></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">clear_session</span><span class="p">()</span>
+</span><span id="LSTMD-77"><a href="#LSTMD-77"><span class="linenos"> 77</span></a>        <span class="n">input_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span><span id="LSTMD-78"><a href="#LSTMD-78"><span class="linenos"> 78</span></a>
+</span><span id="LSTMD-79"><a href="#LSTMD-79"><span class="linenos"> 79</span></a>        <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)</span>
+</span><span id="LSTMD-80"><a href="#LSTMD-80"><span class="linenos"> 80</span></a>
+</span><span id="LSTMD-81"><a href="#LSTMD-81"><span class="linenos"> 81</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">Conv1D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_conv_dim&#39;</span><span class="p">],</span> <span class="n">kernel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_conv_kernel&#39;</span><span class="p">],</span>
+</span><span id="LSTMD-82"><a href="#LSTMD-82"><span class="linenos"> 82</span></a>                   <span class="n">strides</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;causal&quot;</span><span class="p">,</span>
+</span><span id="LSTMD-83"><a href="#LSTMD-83"><span class="linenos"> 83</span></a>                   <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_conv_activation&#39;</span><span class="p">],</span>
+</span><span id="LSTMD-84"><a href="#LSTMD-84"><span class="linenos"> 84</span></a>                   <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)(</span><span class="n">input_tensor</span><span class="p">)</span>
+</span><span id="LSTMD-85"><a href="#LSTMD-85"><span class="linenos"> 85</span></a>
+</span><span id="LSTMD-86"><a href="#LSTMD-86"><span class="linenos"> 86</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">LSTM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_lstm_dim&#39;</span><span class="p">])(</span><span class="n">x</span><span class="p">)</span>
+</span><span id="LSTMD-87"><a href="#LSTMD-87"><span class="linenos"> 87</span></a>
+</span><span id="LSTMD-88"><a href="#LSTMD-88"><span class="linenos"> 88</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_dense_dim&#39;</span><span class="p">],</span> <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_dense_activation&#39;</span><span class="p">])(</span><span class="n">x</span><span class="p">)</span>
+</span><span id="LSTMD-89"><a href="#LSTMD-89"><span class="linenos"> 89</span></a>
+</span><span id="LSTMD-90"><a href="#LSTMD-90"><span class="linenos"> 90</span></a>        <span class="n">distribution_params</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])(</span><span class="n">x</span><span class="p">)</span>
+</span><span id="LSTMD-91"><a href="#LSTMD-91"><span class="linenos"> 91</span></a>        <span class="n">outputs</span> <span class="o">=</span> <span class="n">tfp</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">IndependentNormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])(</span><span class="n">distribution_params</span><span class="p">)</span>
+</span><span id="LSTMD-92"><a href="#LSTMD-92"><span class="linenos"> 92</span></a>
+</span><span id="LSTMD-93"><a href="#LSTMD-93"><span class="linenos"> 93</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_tensor</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span>
+</span><span id="LSTMD-94"><a href="#LSTMD-94"><span class="linenos"> 94</span></a>
+</span><span id="LSTMD-95"><a href="#LSTMD-95"><span class="linenos"> 95</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;adam&#39;</span><span class="p">:</span>
+</span><span id="LSTMD-96"><a href="#LSTMD-96"><span class="linenos"> 96</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">],</span> <span class="n">decay</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;decay&#39;</span><span class="p">])</span>
+</span><span id="LSTMD-97"><a href="#LSTMD-97"><span class="linenos"> 97</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;rmsprop&#39;</span><span class="p">:</span>
+</span><span id="LSTMD-98"><a href="#LSTMD-98"><span class="linenos"> 98</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">RMSprop</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">])</span>
+</span><span id="LSTMD-99"><a href="#LSTMD-99"><span class="linenos"> 99</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;nadam&#39;</span><span class="p">:</span>
+</span><span id="LSTMD-100"><a href="#LSTMD-100"><span class="linenos">100</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">Nadam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">])</span>
+</span><span id="LSTMD-101"><a href="#LSTMD-101"><span class="linenos">101</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span>
+</span><span id="LSTMD-102"><a href="#LSTMD-102"><span class="linenos">102</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">SGD</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">],</span> <span class="n">momentum</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;momentum&#39;</span><span class="p">])</span>
+</span><span id="LSTMD-103"><a href="#LSTMD-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__negative_loglikelihood</span><span class="p">,</span>
+</span><span id="LSTMD-104"><a href="#LSTMD-104"><span class="linenos">104</span></a>                                <span class="n">optimizer</span><span class="o">=</span><span class="n">opt</span><span class="p">,</span>
+</span><span id="LSTMD-105"><a href="#LSTMD-105"><span class="linenos">105</span></a>                                <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span> <span class="s2">&quot;mae&quot;</span><span class="p">])</span>
+</span><span id="LSTMD-106"><a href="#LSTMD-106"><span class="linenos">106</span></a>
+</span><span id="LSTMD-107"><a href="#LSTMD-107"><span class="linenos">107</span></a>    <span class="k">def</span> <span class="nf">__negative_loglikelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">estimated_distribution</span><span class="p">):</span>
+</span><span id="LSTMD-108"><a href="#LSTMD-108"><span class="linenos">108</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="LSTMD-109"><a href="#LSTMD-109"><span class="linenos">109</span></a><span class="sd">        Negative log-likelihood custom function</span>
+</span><span id="LSTMD-110"><a href="#LSTMD-110"><span class="linenos">110</span></a><span class="sd">        :param targets: np.array: labels</span>
+</span><span id="LSTMD-111"><a href="#LSTMD-111"><span class="linenos">111</span></a><span class="sd">        :param estimated_distribution: np.array: prediction</span>
+</span><span id="LSTMD-112"><a href="#LSTMD-112"><span class="linenos">112</span></a><span class="sd">        :return:</span>
+</span><span id="LSTMD-113"><a href="#LSTMD-113"><span class="linenos">113</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LSTMD-114"><a href="#LSTMD-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="o">-</span><span class="n">estimated_distribution</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+</span></pre></div>
+
+
+    
+
+                            <div id="LSTMD.__init__" class="classattr">
+                                        <input id="LSTMD.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">LSTMD</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">name</span></span>)</span>
+
+                <label class="view-source-button" for="LSTMD.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#LSTMD.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LSTMD.__init__-30"><a href="#LSTMD.__init__-30"><span class="linenos">30</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span id="LSTMD.__init__-31"><a href="#LSTMD.__init__-31"><span class="linenos">31</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="LSTMD.__init__-32"><a href="#LSTMD.__init__-32"><span class="linenos">32</span></a><span class="sd">        Constructor of the Model Interface class</span>
+</span><span id="LSTMD.__init__-33"><a href="#LSTMD.__init__-33"><span class="linenos">33</span></a><span class="sd">        :param name: string: name of the model</span>
+</span><span id="LSTMD.__init__-34"><a href="#LSTMD.__init__-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LSTMD.__init__-35"><a href="#LSTMD.__init__-35"><span class="linenos">35</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span id="LSTMD.__init__-36"><a href="#LSTMD.__init__-36"><span class="linenos">36</span></a>
+</span><span id="LSTMD.__init__-37"><a href="#LSTMD.__init__-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="LSTMD.__init__-38"><a href="#LSTMD.__init__-38"><span class="linenos">38</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_list</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;first_conv_dim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-39"><a href="#LSTMD.__init__-39"><span class="linenos">39</span></a>                               <span class="s1">&#39;first_conv_kernel&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-40"><a href="#LSTMD.__init__-40"><span class="linenos">40</span></a>                               <span class="s1">&#39;first_conv_activation&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;relu&#39;</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-41"><a href="#LSTMD.__init__-41"><span class="linenos">41</span></a>                               <span class="s1">&#39;second_lstm_dim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-42"><a href="#LSTMD.__init__-42"><span class="linenos">42</span></a>                               <span class="s1">&#39;first_dense_dim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-43"><a href="#LSTMD.__init__-43"><span class="linenos">43</span></a>                               <span class="s1">&#39;first_dense_activation&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">relu</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-44"><a href="#LSTMD.__init__-44"><span class="linenos">44</span></a>                               <span class="s1">&#39;dense_kernel_init&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;he_normal&#39;</span><span class="p">,</span> <span class="s1">&#39;glorot_uniform&#39;</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-45"><a href="#LSTMD.__init__-45"><span class="linenos">45</span></a>                               <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1024</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-46"><a href="#LSTMD.__init__-46"><span class="linenos">46</span></a>                               <span class="s1">&#39;epochs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2000</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-47"><a href="#LSTMD.__init__-47"><span class="linenos">47</span></a>                               <span class="s1">&#39;patience&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-48"><a href="#LSTMD.__init__-48"><span class="linenos">48</span></a>                               <span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="s1">&#39;rmsprop&#39;</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-49"><a href="#LSTMD.__init__-49"><span class="linenos">49</span></a>                               <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1E-3</span><span class="p">,</span> <span class="mf">1E-4</span><span class="p">,</span> <span class="mf">1E-5</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-50"><a href="#LSTMD.__init__-50"><span class="linenos">50</span></a>                               <span class="s1">&#39;momentum&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">],</span>
+</span><span id="LSTMD.__init__-51"><a href="#LSTMD.__init__-51"><span class="linenos">51</span></a>                               <span class="s1">&#39;decay&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1E-3</span><span class="p">,</span> <span class="mf">1E-4</span><span class="p">]</span>
+</span><span id="LSTMD.__init__-52"><a href="#LSTMD.__init__-52"><span class="linenos">52</span></a>                               <span class="p">}</span>
+</span><span id="LSTMD.__init__-53"><a href="#LSTMD.__init__-53"><span class="linenos">53</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of hyperparameters search space&quot;&quot;&quot;</span>
+</span><span id="LSTMD.__init__-54"><a href="#LSTMD.__init__-54"><span class="linenos">54</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;first_conv_dim&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-55"><a href="#LSTMD.__init__-55"><span class="linenos">55</span></a>                  <span class="s1">&#39;first_conv_activation&#39;</span><span class="p">:</span> <span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-56"><a href="#LSTMD.__init__-56"><span class="linenos">56</span></a>                  <span class="s1">&#39;first_conv_kernel&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-57"><a href="#LSTMD.__init__-57"><span class="linenos">57</span></a>                  <span class="s1">&#39;first_lstm_dim&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-58"><a href="#LSTMD.__init__-58"><span class="linenos">58</span></a>                  <span class="s1">&#39;first_dense_dim&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-59"><a href="#LSTMD.__init__-59"><span class="linenos">59</span></a>                  <span class="s1">&#39;first_dense_activation&#39;</span><span class="p">:</span> <span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-60"><a href="#LSTMD.__init__-60"><span class="linenos">60</span></a>                  <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-61"><a href="#LSTMD.__init__-61"><span class="linenos">61</span></a>                  <span class="s1">&#39;epochs&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-62"><a href="#LSTMD.__init__-62"><span class="linenos">62</span></a>                  <span class="s1">&#39;patience&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-63"><a href="#LSTMD.__init__-63"><span class="linenos">63</span></a>                  <span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="s1">&#39;adam&#39;</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-64"><a href="#LSTMD.__init__-64"><span class="linenos">64</span></a>                  <span class="s1">&#39;batch_normalization&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-65"><a href="#LSTMD.__init__-65"><span class="linenos">65</span></a>                  <span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1E-4</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-66"><a href="#LSTMD.__init__-66"><span class="linenos">66</span></a>                  <span class="s1">&#39;momentum&#39;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-67"><a href="#LSTMD.__init__-67"><span class="linenos">67</span></a>                  <span class="s1">&#39;decay&#39;</span><span class="p">:</span> <span class="mf">1E-4</span><span class="p">,</span>
+</span><span id="LSTMD.__init__-68"><a href="#LSTMD.__init__-68"><span class="linenos">68</span></a>                  <span class="p">}</span>
+</span><span id="LSTMD.__init__-69"><a href="#LSTMD.__init__-69"><span class="linenos">69</span></a>        <span class="sd">&quot;&quot;&quot;dict: Dictionary of hyperparameter configuration of the model&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Constructor of the Model Interface class</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>name: string</strong>:  name of the model</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="LSTMD.parameter_list" class="classattr">
+                                <div class="attr variable">
+            <span class="name">parameter_list</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LSTMD.parameter_list"></a>
+    
+            <div class="docstring"><p>dict: Dictionary of hyperparameters search space</p>
+</div>
+
+
+                            </div>
+                            <div id="LSTMD.p" class="classattr">
+                                <div class="attr variable">
+            <span class="name">p</span>
+
+        
+    </div>
+    <a class="headerlink" href="#LSTMD.p"></a>
+    
+            <div class="docstring"><p>dict: Dictionary of hyperparameter configuration of the model</p>
+</div>
+
+
+                            </div>
+                            <div id="LSTMD.create_model" class="classattr">
+                                        <input id="LSTMD.create_model-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">create_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
+
+                <label class="view-source-button" for="LSTMD.create_model-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#LSTMD.create_model"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LSTMD.create_model-71"><a href="#LSTMD.create_model-71"><span class="linenos"> 71</span></a>    <span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="LSTMD.create_model-72"><a href="#LSTMD.create_model-72"><span class="linenos"> 72</span></a>        <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="LSTMD.create_model-73"><a href="#LSTMD.create_model-73"><span class="linenos"> 73</span></a><span class="sd">        Create an instance of the model. This function contains the definition and the library of the model</span>
+</span><span id="LSTMD.create_model-74"><a href="#LSTMD.create_model-74"><span class="linenos"> 74</span></a><span class="sd">        :return: None</span>
+</span><span id="LSTMD.create_model-75"><a href="#LSTMD.create_model-75"><span class="linenos"> 75</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LSTMD.create_model-76"><a href="#LSTMD.create_model-76"><span class="linenos"> 76</span></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">clear_session</span><span class="p">()</span>
+</span><span id="LSTMD.create_model-77"><a href="#LSTMD.create_model-77"><span class="linenos"> 77</span></a>        <span class="n">input_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span><span id="LSTMD.create_model-78"><a href="#LSTMD.create_model-78"><span class="linenos"> 78</span></a>
+</span><span id="LSTMD.create_model-79"><a href="#LSTMD.create_model-79"><span class="linenos"> 79</span></a>        <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)</span>
+</span><span id="LSTMD.create_model-80"><a href="#LSTMD.create_model-80"><span class="linenos"> 80</span></a>
+</span><span id="LSTMD.create_model-81"><a href="#LSTMD.create_model-81"><span class="linenos"> 81</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">Conv1D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_conv_dim&#39;</span><span class="p">],</span> <span class="n">kernel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_conv_kernel&#39;</span><span class="p">],</span>
+</span><span id="LSTMD.create_model-82"><a href="#LSTMD.create_model-82"><span class="linenos"> 82</span></a>                   <span class="n">strides</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;causal&quot;</span><span class="p">,</span>
+</span><span id="LSTMD.create_model-83"><a href="#LSTMD.create_model-83"><span class="linenos"> 83</span></a>                   <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_conv_activation&#39;</span><span class="p">],</span>
+</span><span id="LSTMD.create_model-84"><a href="#LSTMD.create_model-84"><span class="linenos"> 84</span></a>                   <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)(</span><span class="n">input_tensor</span><span class="p">)</span>
+</span><span id="LSTMD.create_model-85"><a href="#LSTMD.create_model-85"><span class="linenos"> 85</span></a>
+</span><span id="LSTMD.create_model-86"><a href="#LSTMD.create_model-86"><span class="linenos"> 86</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">LSTM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_lstm_dim&#39;</span><span class="p">])(</span><span class="n">x</span><span class="p">)</span>
+</span><span id="LSTMD.create_model-87"><a href="#LSTMD.create_model-87"><span class="linenos"> 87</span></a>
+</span><span id="LSTMD.create_model-88"><a href="#LSTMD.create_model-88"><span class="linenos"> 88</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_dense_dim&#39;</span><span class="p">],</span> <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;first_dense_activation&#39;</span><span class="p">])(</span><span class="n">x</span><span class="p">)</span>
+</span><span id="LSTMD.create_model-89"><a href="#LSTMD.create_model-89"><span class="linenos"> 89</span></a>
+</span><span id="LSTMD.create_model-90"><a href="#LSTMD.create_model-90"><span class="linenos"> 90</span></a>        <span class="n">distribution_params</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])(</span><span class="n">x</span><span class="p">)</span>
+</span><span id="LSTMD.create_model-91"><a href="#LSTMD.create_model-91"><span class="linenos"> 91</span></a>        <span class="n">outputs</span> <span class="o">=</span> <span class="n">tfp</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">IndependentNormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])(</span><span class="n">distribution_params</span><span class="p">)</span>
+</span><span id="LSTMD.create_model-92"><a href="#LSTMD.create_model-92"><span class="linenos"> 92</span></a>
+</span><span id="LSTMD.create_model-93"><a href="#LSTMD.create_model-93"><span class="linenos"> 93</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_tensor</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span>
+</span><span id="LSTMD.create_model-94"><a href="#LSTMD.create_model-94"><span class="linenos"> 94</span></a>
+</span><span id="LSTMD.create_model-95"><a href="#LSTMD.create_model-95"><span class="linenos"> 95</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;adam&#39;</span><span class="p">:</span>
+</span><span id="LSTMD.create_model-96"><a href="#LSTMD.create_model-96"><span class="linenos"> 96</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">],</span> <span class="n">decay</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;decay&#39;</span><span class="p">])</span>
+</span><span id="LSTMD.create_model-97"><a href="#LSTMD.create_model-97"><span class="linenos"> 97</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;rmsprop&#39;</span><span class="p">:</span>
+</span><span id="LSTMD.create_model-98"><a href="#LSTMD.create_model-98"><span class="linenos"> 98</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">RMSprop</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">])</span>
+</span><span id="LSTMD.create_model-99"><a href="#LSTMD.create_model-99"><span class="linenos"> 99</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;nadam&#39;</span><span class="p">:</span>
+</span><span id="LSTMD.create_model-100"><a href="#LSTMD.create_model-100"><span class="linenos">100</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">Nadam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">])</span>
+</span><span id="LSTMD.create_model-101"><a href="#LSTMD.create_model-101"><span class="linenos">101</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span>
+</span><span id="LSTMD.create_model-102"><a href="#LSTMD.create_model-102"><span class="linenos">102</span></a>            <span class="n">opt</span> <span class="o">=</span> <span class="n">SGD</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">],</span> <span class="n">momentum</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;momentum&#39;</span><span class="p">])</span>
+</span><span id="LSTMD.create_model-103"><a href="#LSTMD.create_model-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__negative_loglikelihood</span><span class="p">,</span>
+</span><span id="LSTMD.create_model-104"><a href="#LSTMD.create_model-104"><span class="linenos">104</span></a>                                <span class="n">optimizer</span><span class="o">=</span><span class="n">opt</span><span class="p">,</span>
+</span><span id="LSTMD.create_model-105"><a href="#LSTMD.create_model-105"><span class="linenos">105</span></a>                                <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span> <span class="s2">&quot;mae&quot;</span><span class="p">])</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Create an instance of the model. This function contains the definition and the library of the model</p>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>None</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>models.model_interface.ModelInterface</dt>
+                                <dd id="LSTMD.temp_model" class="variable">temp_model</dd>
+                <dd id="LSTMD.name" class="variable">name</dd>
+                <dd id="LSTMD.model" class="variable">model</dd>
+                <dd id="LSTMD.ds" class="variable">ds</dd>
+                <dd id="LSTMD.model_path" class="variable">model_path</dd>
+                <dd id="LSTMD.verbose" class="variable">verbose</dd>
+
+            </div>
+            <div><dt>models.dl.model_probabilistic_dl.ModelProbabilisticDL</dt>
+                                <dd id="LSTMD.predict" class="function">predict</dd>
+                <dd id="LSTMD.fit_predict" class="function">fit_predict</dd>
+                <dd id="LSTMD.evaluate" class="function">evaluate</dd>
+                <dd id="LSTMD.save_model" class="function">save_model</dd>
+                <dd id="LSTMD.load_model" class="function">load_model</dd>
+
+            </div>
+            <div><dt>models.model_probabilistic.ModelProbabilistic</dt>
+                                <dd id="LSTMD.is_probabilistic" class="variable">is_probabilistic</dd>
+
+            </div>
+            <div><dt>models.dl.model_interface_dl.ModelInterfaceDL</dt>
+                                <dd id="LSTMD.count_save" class="variable">count_save</dd>
+                <dd id="LSTMD.best_val_loss" class="variable">best_val_loss</dd>
+                <dd id="LSTMD.fit" class="function">fit</dd>
+                <dd id="LSTMD.tune" class="function">tune</dd>
+                <dd id="LSTMD.hyperparametrization" class="function">hyperparametrization</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
     </main>
 <script>
     function escapeHTML(html) {
