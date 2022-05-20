@@ -8,16 +8,17 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from math import sqrt
 import pandas as pd
 from arch import arch_model
-from models.model_interface import ModelInterface
+from models.model_probabilistic import ModelProbabilistic
 
 
-class GARCH(ModelInterface):
+class GARCH(ModelProbabilistic):
     def __init__(self, name):
         """
         Constructor of the Model Interface class
         :param name: string: name of the model
         """
         super().__init__(name)
+        self.__temp_model = None
         self.parameter_list = {'p': 1,
                                'q': 1,
                                'loop': 1,
@@ -92,7 +93,8 @@ class GARCH(ModelInterface):
             print("ERROR: the model needs to be trained before predict")
             return
         self.__history = pd.DataFrame(self.ds.X_train_array)
-
+        if np.array_equal(X, self.ds.X_test):
+            X = self.ds.X_test_array
         predicted_mean, predicted_std = list(), list()
         if self.p['loop'] == 0:
             steps = X.shape[0]
@@ -109,7 +111,8 @@ class GARCH(ModelInterface):
                                     q=self.p['q'])
 
             self.__temp_model = self.model.fit(disp='off',
-                                               show_warning=False)  # retrain the model at each step prediction
+                                               show_warning=False)
+            # retrain the model at each step prediction
             output = self.__temp_model.forecast(horizon=steps + self.ds.horizon, reindex=False)
             [predicted_mean.append(em) for em in output.mean.iloc[-1]]
             [predicted_std.append(em) for em in np.sqrt(output.variance.iloc[-1])]
@@ -120,12 +123,9 @@ class GARCH(ModelInterface):
             if self.sliding_window:
                 self.__history = self.__history.iloc[-self.sliding_window:]
 
-        # evaluate forecasts
-        X = np.concatenate(X, axis=0)
-        mse = mean_squared_error(X[:len(predicted_mean)], predicted_mean)
-        mae = mean_absolute_error(X[:len(predicted_mean)], predicted_mean)
-
         if self.verbose:
+            mse = mean_squared_error(X, predicted_mean)
+            mae = mean_absolute_error(X, predicted_mean)
             print('MSE: %.3f' % mse)
             print('MAE: %.3f' % mae)
         self.__history = list(self.__history.values)

@@ -11,6 +11,9 @@ from models.dl.lstm import LSTM
 from models.dl.lstmd import LSTMD
 from models.stats.arima import ARIMA
 from models.stats.garch import GARCH
+from models.model_probabilistic import ModelProbabilistic
+from models.dl.model_probabilistic_dl import ModelProbabilisticDL
+from models.dl.model_interface_dl import ModelInterfaceDL
 from models.ml.svr import SVR
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from tensorflow import keras
@@ -21,7 +24,9 @@ wins = [288]
 hs = [0]
 resources = ['cpu']  # , 'mem']
 clusters = ['a']  # , 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-model_name = 'ARIMA'
+model_name = 'LSTMD'
+# if model_name in ['ARIMA', 'GARCH', 'SVR']:
+#     wins = [1]
 
 for win in wins:
     for res in resources:
@@ -40,7 +45,7 @@ for win in wins:
                                               target_name=['avg' + res], train_split_factor=0.8)
 
                 ds.dataset_creation()
-                ds.dataset_normalization(['standard'])#, 'minmax', 'minmax'])
+                ds.dataset_normalization(['standard'])  # , 'minmax', 'minmax'])
 
                 # ds = dataset.DatasetInterface(filename='res_task_' + c + '.csv', input_window=1, output_window=1,
                 #                               horizon=h, training_features=['avgcpu'],
@@ -92,11 +97,11 @@ for win in wins:
                          'horizon': 2,
                          }
                 elif model_name == 'GARCH':
-                # # GARCH
+                    # # GARCH
                     p = {'p': 1,
                          'q': 1,
-                         'loop': 1,
-                         'horizon': 0,
+                         'loop': 0,
+                         'horizon': 2,
                          'mean': 'LS',
                          }
                 elif model_name == 'SVR':
@@ -131,11 +136,13 @@ for win in wins:
                 if model_name == 'LSTM' or model_name == 'SVR' or model_name == 'KNN' or model_name == 'RF':
                     train_mean = model.evaluate()
                     preds = model.predict(ds.X_test)
+
                     if h > 0:
                         preds = preds[:-h]
 
                     if len(ds.target_name) <= 1:
                         labels = ds.y_test_array[h:len(preds) + h].reshape(-1, 1)
+                        train_labels = ds.y_train_array[h:len(train_mean) + h].reshape(-1, 1)
                     else:
                         labels = ds.y_test_array[h:len(preds) + h]
                         train_labels = ds.y_train_array[h:len(train_mean) + h]
@@ -145,13 +152,17 @@ for win in wins:
 
                     plot_training.plot_series(np.arange(0, len(preds)), labels, preds, label1="ground truth",
                                               label2="prediction", title=model.name, bivariate=len(ds.target_name) > 1)
+
                     if len(ds.target_name) <= 1:
-                        preds = np.array(preds).reshape(-1, 1)
-                        preds = np.concatenate(preds, axis=0)
-                        labels = np.concatenate(labels, axis=0)
                         train_mean = np.array(train_mean).reshape(-1, 1)
                         train_mean = np.concatenate(train_mean, axis=0)
-                        train_labels = np.concatenate(ds.y_train.reshape(-1, 1), axis=0)
+                        # train_labels = np.concatenate(ds.y_train.reshape(-1, 1), axis=0)
+                        if isinstance(model, ModelInterfaceDL):
+                            preds = np.array(preds).reshape(-1, 1)
+                            preds = np.concatenate(preds, axis=0)
+                            labels = np.concatenate(labels, axis=0)
+
+
 
                     save_results.save_output_csv(preds, labels, 'avg' + res, model.name,
                                                  bivariate=len(ds.target_name) > 1)
@@ -163,20 +174,21 @@ for win in wins:
                 else:
 
                     train_mean, train_std = model.evaluate()
+                    prediction_mean, prediction_std = model.predict(ds.X_test)
+
                     if len(ds.target_name) <= 1:
                         a = np.concatenate(ds.y_train[:len(train_mean)], axis=0).reshape(-1, 1)
+                        b = np.concatenate(ds.y_test[:len(prediction_mean)], axis=0).reshape(-1, 1)
+                        if isinstance(model, ModelProbabilistic) and not isinstance(model, ModelProbabilisticDL):
+                            a = ds.y_train_array
+                            b = ds.y_test_array
                     else:
                         a = ds.y_train[:len(train_mean)]
-                    save_results.save_uncertainty_csv(train_mean, train_std,
-                                                      a,
+                        b = ds.y_test[:len(prediction_mean)]
+                    save_results.save_uncertainty_csv(train_mean, train_std, a,
                                                       'avg' + res,
                                                       'train-' + model.name, bivariate=len(ds.target_name) > 1)
-
-                    prediction_mean, prediction_std = model.predict(ds.X_test)
-                    save_results.save_uncertainty_csv(prediction_mean, prediction_std,
-                                                      np.concatenate(ds.y_test[:len(prediction_mean)], axis=0).reshape(
-                                                          -1,
-                                                          1),
+                    save_results.save_uncertainty_csv(prediction_mean, prediction_std, b,
                                                       'avg' + res,
                                                       model.name, bivariate=len(ds.target_name) > 1)
 
@@ -185,6 +197,7 @@ for win in wins:
                                                        label1="ground truth",
                                                        label2="prediction", title=model.name,
                                                        bivariate=len(ds.target_name) > 1)
-
-                    plot_model(model.model, to_file='img/models/model_plot_' + model.name + '.png', show_shapes=True,
-                               show_layer_names=True)
+                    if model_name in ['LSTM', 'LSTMD', 'HBNN']:
+                        plot_model(model.model, to_file='img/models/model_plot_' + model.name + '.png',
+                                   show_shapes=True,
+                                   show_layer_names=True)

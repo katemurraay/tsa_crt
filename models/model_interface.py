@@ -83,7 +83,7 @@ class ModelInterface:
         Evaluate the model on the training set ds.X_train
         :return: np.array: predictions: predictions of the trained model on the ds.X_train set
         """
-        return self.predict(self.ds.X_train)
+        return self.predict(self.ds.X_train_array)
 
     def save_model(self):
         """

@@ -4,7 +4,6 @@ import numpy as np
 
 def save_output_csv(preds, labels, feature, filename, bivariate=False):
     PATH = "res/output_" + filename + ".csv"
-    print(preds.shape, labels.shape)
 
     if bivariate:
         labels = labels.reshape(-1, preds.shape[1])
@@ -14,8 +13,11 @@ def save_output_csv(preds, labels, feature, filename, bivariate=False):
                'labelsavgmem': labels[:, 1]
                }
     else:
-        # try:
-        #     labels = labels.reshape(-1, 1)
+        try:
+            labels = np.concatenate(list(labels), axis=0)
+        except:
+            pass
+
         dct = {feature: preds,
                'labels': labels}
         # except:
@@ -28,8 +30,6 @@ def save_output_csv(preds, labels, feature, filename, bivariate=False):
 
 def save_uncertainty_csv(preds, std, labels, feature, filename, bivariate=False):
     PATH = "res/output_" + filename + ".csv"
-    print(type(preds), type(std), type(labels))
-    print(len(preds), len(std), labels.shape)
     if bivariate:
         labels = labels.reshape(-1, preds.shape[1])
         dct = {'avgcpu': preds[:, 0],

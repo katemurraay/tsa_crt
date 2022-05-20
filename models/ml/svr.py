@@ -77,8 +77,6 @@ class SVR(ModelInterface):
             return
         if np.array_equal(X, self.ds.X_test):
             X = self.ds.X_test_array
-        else:
-            X = X.reshape(-1, 1)
 
         predictions = self.model.predict(X)
         mse = mean_squared_error(X[:len(predictions)], predictions)
