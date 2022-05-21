@@ -29,7 +29,7 @@ class GARCH(ModelProbabilistic):
         """dict: Dictionary of hyperparameters search space"""
         self.p = {'p': 1,
                   'q': 1,
-                  'loop': 1,
+                  'loop': 17*131,
                   'horizon': 0,
                   'mean': 'LS',
                   'sliding_window': 288
@@ -105,7 +105,7 @@ class GARCH(ModelProbabilistic):
         iterations = X.shape[0] // steps + 1 * (X.shape[0] % steps != 0)
         for j in range(iterations):
             # last iterations predict over the last remaining steps
-            if steps != X.shape[0] and j == iterations - 1:
+            if X.shape[0] % steps != 0 and j == iterations - 1:
                 steps = X.shape[0] % steps
             self.model = arch_model(self.__history, mean=self.p['mean'], p=self.p['p'],
                                     q=self.p['q'])

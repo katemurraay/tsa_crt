@@ -11,6 +11,8 @@ from models.dl.lstm import LSTM
 from models.dl.lstmd import LSTMD
 from models.stats.arima import ARIMA
 from models.stats.garch import GARCH
+from models.ml.rf import RF
+from models.ml.knn import KNN
 from models.model_probabilistic import ModelProbabilistic
 from models.dl.model_probabilistic_dl import ModelProbabilisticDL
 from models.dl.model_interface_dl import ModelInterfaceDL
@@ -24,7 +26,7 @@ wins = [288]
 hs = [0]
 resources = ['cpu']  # , 'mem']
 clusters = ['a']  # , 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-model_name = 'LSTMD'
+model_name = 'GARCH'
 # if model_name in ['ARIMA', 'GARCH', 'SVR']:
 #     wins = [1]
 
@@ -111,6 +113,13 @@ for win in wins:
                          'tol': 0.001,
                          'C': 1.0,
                          }
+                elif model_name == 'RF':
+                    p = {'n_estimators': 100,
+                         'criterion': "mse",
+                         'max_depth': None,
+                         'max_features': "sqrt",
+                         'bootstrap': True,
+                         }
 
                 print("RESOURCE:", res, "CLUSTER:", c, "HORIZON:", h, "WIN:", win)
                 if model_name == 'HBNN':
@@ -125,9 +134,13 @@ for win in wins:
                     model = GARCH(experiment_name)
                 elif model_name == 'SVR':
                     model = SVR(experiment_name)
+                elif model_name == 'RF':
+                    model = RF(experiment_name)
+                elif model_name == 'KNN':
+                    model = KNN(experiment_name)
 
                 model.ds = ds
-                model.p = p
+                # model.p = p
                 model.create_model()
 
                 model.fit()
@@ -162,14 +175,12 @@ for win in wins:
                             preds = np.concatenate(preds, axis=0)
                             labels = np.concatenate(labels, axis=0)
 
-
-
                     save_results.save_output_csv(preds, labels, 'avg' + res, model.name,
                                                  bivariate=len(ds.target_name) > 1)
                     save_results.save_output_csv(train_mean, train_labels, 'avg' + res, 'train-' + model.name,
                                                  bivariate=len(ds.target_name) > 1)
 
-                    save_results.save_params_csv(p, model.name)
+                    save_results.save_params_csv(model.p, model.name)
 
                 else:
 

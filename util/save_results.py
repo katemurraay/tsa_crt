@@ -4,7 +4,6 @@ import numpy as np
 
 def save_output_csv(preds, labels, feature, filename, bivariate=False):
     PATH = "res/output_" + filename + ".csv"
-
     if bivariate:
         labels = labels.reshape(-1, preds.shape[1])
         dct = {'avgcpu': preds[:, 0],
@@ -14,15 +13,19 @@ def save_output_csv(preds, labels, feature, filename, bivariate=False):
                }
     else:
         try:
+            preds = np.concatenate(list(preds), axis=0)
+        except:
+            pass
+        try:
             labels = np.concatenate(list(labels), axis=0)
         except:
             pass
-
+        # try:
+        #     dct = {feature: np.concatenate(list(preds), axis=0),
+        #            'labels': np.concatenate(list(labels), axis=0)}
+        # except:
         dct = {feature: preds,
                'labels': labels}
-        # except:
-        #     dct = {feature: preds,
-        #            'labels': labels}
         #     df = pd.DataFrame(dct)
     df = pd.DataFrame(dct)
     df.to_csv(PATH)

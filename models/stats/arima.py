@@ -114,7 +114,7 @@ class ARIMA(ModelProbabilistic):
         iterations = X.shape[0] // steps + 1 * (X.shape[0] % steps != 0)
         for j in range(iterations):
             # last iterations predict over the last remaining steps
-            if steps != X.shape[0] and j == iterations - 1:
+            if X.shape[0] % steps != 0 and j == iterations - 1:
                 steps = X.shape[0] % steps
             self.model = arima.model.ARIMA(self.__history, order=(self.p['p'], self.p['d'],
                                                                   self.p['q']),

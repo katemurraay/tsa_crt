@@ -1,5 +1,5 @@
 """
-Interface of a predictive model with shared functionalities
+Suppor Vector Regressor (SVR) predictive model with shared functionalities
 """
 
 import numpy as np
@@ -25,10 +25,11 @@ class SVR(ModelInterface):
                   'C': 1.0,
                   'sliding_window': 288
                   }
+        """dict: Dictionary of Hyperparameter configuration of the model"""
         self.parameter_list = {'kernel': ('linear', 'poly', 'rbf', 'sigmoid'),
                                'degree': [2, 3, 4, 5, 6, 7, 8, 9, 10],
                                }
-
+        """dict: Dictionary of hyperparameters search space"""
         self.sliding_window = 0
         """int: sliding window to apply in the training phase"""
 
