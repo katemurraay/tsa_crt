@@ -5,7 +5,7 @@ Inherits from ModelInterfaceDL class
 
 import numpy as np
 import tensorflow as tf
-from keras.models import Sequential
+from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import RMSprop, Adam, Nadam, SGD
 from tensorflow.keras.callbacks import EarlyStopping
 from util import custom_keras
@@ -61,7 +61,6 @@ class GRU(ModelInterfaceDL):
 
         self.temp_model = Sequential([
             tf.keras.layers.GRU(self.p['first_gru_dim'], activation = self.p['gru_activation'], input_shape = input_shape),
-            tf.keras.layers.BatchNormalisation(),
             tf.keras.layers.Dense(self.p['first_dense_dim'], activation=self.p['first_dense_activation']),
             tf.keras.layers.Dense(self.ds.y_train.shape[2]),
         ])
