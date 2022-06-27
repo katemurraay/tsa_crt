@@ -26,7 +26,7 @@ wins = [288]
 hs = [0]
 resources = ['cpu']  # , 'mem']
 clusters = ['a']  # , 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-model_name = 'GARCH'
+model_name = 'LSTM'
 # if model_name in ['ARIMA', 'GARCH', 'SVR']:
 #     wins = [1]
 
@@ -145,7 +145,7 @@ for win in wins:
 
                 model.fit()
                 print("Training complete")
-                # model.hyperparametrization()
+                model.hyperparametrization()
                 if model_name == 'LSTM' or model_name == 'SVR' or model_name == 'KNN' or model_name == 'RF':
                     train_mean = model.evaluate()
                     preds = model.predict(ds.X_test)
