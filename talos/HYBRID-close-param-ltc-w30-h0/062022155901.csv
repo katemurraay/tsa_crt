@@ -1,0 +1,2 @@
+round_epochs,loss,mse,mae,val_loss,val_mse,val_mae,lstm_dim_1,lstm_activation,dropout_rate_1,lstm_dim_2,dense_dim_1,dense_activation,gru_dim,gru_activation,dropout_rate_2,dense_dim_2,epochs,batch_size,optimizer,lr
+5,0.03716735541820526,0.03716735541820526,0.14148595929145813,0.03481831029057503,0.03481831029057503,0.13729679584503174,75,relu,0.1,50,64,relu,50,relu,0.1,32,100,256,adam,0.001
