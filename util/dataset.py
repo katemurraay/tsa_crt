@@ -7,7 +7,10 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import tensorflow as tf
 import pickle
-
+from datetime import datetime
+from darts import TimeSeries, concatenate
+from darts.dataprocessing.transformers import Scaler
+from darts.utils.timeseries_generation import datetime_attribute_timeseries
 
 class DatasetInterface:
     def __init__(self, filename="", input_window=10, output_window=1, horizon=0, training_features=[], target_name=[],
@@ -49,7 +52,14 @@ class DatasetInterface:
         """list: Test features in series format"""
         self.y_test_array = []
         """list: Test labels in series format"""
-
+        self.ts_test = None
+        """timeseries: test time series"""
+        self.ts_train = None
+        """timeseries: train time series"""
+        self.tcov = None 
+        """timeseries: future covariates"""
+        self.train_cov = None
+        """timeseries: training covariates"""
         self.training_features = training_features
         """list of strings: columns names of the features for the training"""
         self.target_name = target_name
@@ -72,7 +82,6 @@ class DatasetInterface:
         """dict: dictionary of scaler used for the features"""
         self.y_scalers = {}
         """dict: dictionary of scaler used for the labels"""
-
         self.input_window = input_window
         """int:  input sequence, number of timestamps of the time series used for training the model"""
         self.stride = 1
@@ -84,7 +93,7 @@ class DatasetInterface:
 
         self.verbose = 1
         """int: level of verbosity of the dataset operations"""
-
+        
     def data_save(self, name):
         """
         Save the dataset using pickle package
@@ -133,20 +142,20 @@ class DatasetInterface:
         self.y_test = self.y[split_value:]
         self.X_train = self.X[:split_value]
         self.X_test = self.X[split_value:]
-
+        self.ts_train, self.ts_test, self.train_cov, self.cov =self.__ts_dataset(df=df)
         # unidimensional dataset creation
         self.X_array = df[self.target_name].to_numpy()
         if len(self.target_name) == 1:
             self.X_array = self.X_array.reshape(-1, 1)
-        split_value = int(self.X_array.shape[0] * self.train_split_factor)
-        self.X_train_array = self.X_array[:split_value]
-        self.y_train_array = self.X_array[self.horizon + 1:self.horizon + split_value + 1]
+        self.split_value = int(self.X_array.shape[0] * self.train_split_factor)
+        self.X_train_array = self.X_array[:self.split_value]
+        self.y_train_array = self.X_array[self.horizon + 1:self.horizon + self.split_value + 1]
 
         if self.horizon:
-            self.X_test_array = self.X_array[split_value: -self.horizon - 1]
+            self.X_test_array = self.X_array[self.split_value: -self.horizon - 1]
         else:
-            self.X_test_array = self.X_array[split_value:-1]
-        self.y_test_array = self.X_array[self.horizon + split_value + 1:]
+            self.X_test_array = self.X_array[self.split_value:-1]
+        self.y_test_array = self.X_array[self.horizon + self.split_value + 1:]
 
         if self.verbose:
             print("Data size ", self.X.shape)
@@ -180,12 +189,16 @@ class DatasetInterface:
                     if self.normalization[i] == "standard":
                         self.X_scalers[i] = StandardScaler()
                         self.y_scalers[i] = StandardScaler()
+                        
                     elif self.normalization[i] == "minmax":
                         self.X_scalers[i] = MinMaxScaler(scale_range)
                         self.y_scalers[i] = MinMaxScaler(scale_range)
-                    # window dataset
+                    #time series dataset
+                    self.__ts_normalisation(method = self.normalization[i], range = scale_range)
+                    # window dataset    
                     self.X_train[:, :, i] = self.X_scalers[i].fit_transform(self.X_train[:, :, i])
                     self.X_test[:, :, i] = self.X_scalers[i].transform(self.X_test[:, :, i])
+                    
                     for j, feature in enumerate(self.target_name):
                         if i == self.training_features.index(feature):
                             self.y_train[:, :, j] = self.y_scalers[i].fit_transform(self.y_train[:, :, j])
@@ -202,6 +215,71 @@ class DatasetInterface:
         :return: None
         """
         pass
+    def __ts_dataset(self, df):
+        """
+
+        :param df: dataframe: features of the dataset
+        :return: ts_train: Time Series array
+                 ts_test: Time Series array
+                 train_cov: Training Set covariates
+                 cov: Static Covariates
+        """
+        #Setting the Daily Frequency of the Dataset
+        df_col = self.target_name[0]
+        df[df_col] = df[df_col].astype(np.float32)
+        split_at = int(df.shape[0] * self.train_split_factor)
+        print(split_at)
+        #Converting DataFrame to Series
+        start_date = datetime.fromtimestamp(df['timestamp'].iloc[0]).strftime('%m/%d/%y')
+        end_date = datetime.fromtimestamp(df['timestamp'].iloc[-1]).strftime('%m/%d/%y')
+        split_date = datetime.fromtimestamp(df['timestamp'].iloc[split_at]).strftime('%Y%m%d')
+        
+        series_ts = pd.Series(data = df[df_col].values, index = pd.date_range(start_date, end_date, freq = 'D'))
+        #Converting Series to DataFrame with DatetimeIndex
+        df.index = pd.DatetimeIndex(np.hstack([series_ts.index[:-1],
+                                               series_ts.index[-1:]]), freq='D')
+        df_ts = df[self.target_name].copy()
+        #Converting the DatatimeIndex DataFrame to timeseries 
+        ts = TimeSeries.from_series(df_ts[df_col])
+
+        #Splitting data into train and test
+        if isinstance(split_date, str):
+            split = pd.Timestamp(split_date)
+        else:
+            split = split_date
+       
+        ts_train, ts_test = ts.split_after(split)
+        #Creating Covariates 
+        cov = datetime_attribute_timeseries(ts, attribute="year", one_hot=False)
+        cov = cov.stack(datetime_attribute_timeseries(ts, attribute="month", one_hot=False))
+        cov = cov.stack(TimeSeries.from_times_and_values(
+                                    times=ts.time_index, 
+                                    values=np.arange(len(ts)), 
+                                    columns=["linear_increase"]))
+
+       
+        
+        cov = cov.astype(np.float32)
+        #Splitting covariates into train and test
+        train_cov, test_cov = cov.split_after(split)
+        
+        return ts_train, ts_test, train_cov, cov
+
+
+    def __ts_normalisation(self, method="minmax", range=(0, 1)):
+        if method =='minmax':
+            scale_method = MinMaxScaler()
+        else: 
+            scale_method = StandardScaler()
+        scaler =Scaler(scaler=scale_method)
+        self.ts_train = scaler.fit_transform(self.ts_train)
+        self.ts_test = scaler.transform(self.ts_test)
+        #self.ts_t = scaler.transform(self.ts)
+        covScaler = Scaler(scaler= scale_method)
+        covScaler.fit(self.train_cov)
+        self.tcov = covScaler.transform(self.cov)
+        
+
 
     def __windowed_dataset(self, dataset):
         """
