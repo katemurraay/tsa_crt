@@ -147,15 +147,15 @@ class DatasetInterface:
         self.X_array = df[self.target_name].to_numpy()
         if len(self.target_name) == 1:
             self.X_array = self.X_array.reshape(-1, 1)
-        self.split_value = int(self.X_array.shape[0] * self.train_split_factor)
-        self.X_train_array = self.X_array[:self.split_value]
-        self.y_train_array = self.X_array[self.horizon + 1:self.horizon + self.split_value + 1]
+        split_value = int(self.X_array.shape[0] * self.train_split_factor)
+        self.X_train_array = self.X_array[:split_value]
+        self.y_train_array = self.X_array[self.horizon + 1:self.horizon + split_value + 1]
 
         if self.horizon:
-            self.X_test_array = self.X_array[self.split_value: -self.horizon - 1]
+            self.X_test_array = self.X_array[split_value: -self.horizon - 1]
         else:
-            self.X_test_array = self.X_array[self.split_value:-1]
-        self.y_test_array = self.X_array[self.horizon + self.split_value + 1:]
+            self.X_test_array = self.X_array[split_value:-1]
+        self.y_test_array = self.X_array[self.horizon + split_value + 1:]
 
         if self.verbose:
             print("Data size ", self.X.shape)
