@@ -72,9 +72,11 @@ def save_bayes_csv(preds, min, max, labels, feature, filename):
     df.to_csv(PATH)
 
 
-def save_metrics_csv(mses, maes, filename):
+def save_metrics_csv(mses, maes, rmse, mape, filename):
     PATH = "res/metrics_" + filename + ".csv"
     dct = {'MSE': mses,
-           'MAE': maes}
+           'MAE': maes, 
+           'RMSE': rmse,
+           'MAPE': mape}
     df = pd.DataFrame(dct)
     df.to_csv(PATH)

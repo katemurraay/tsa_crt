@@ -20,6 +20,7 @@ class CustomSaveCheckpoint(tf.keras.callbacks.Callback):
         self.dnn = model
         """keras model: best model found"""
 
+
     def on_epoch_end(self, epoch, logs=None):
         """
         Check the validation loss at the end of the training epoch and save the model if the validation loss

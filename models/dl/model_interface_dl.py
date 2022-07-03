@@ -3,6 +3,8 @@ Interface of a predictive DL model with shared functionalities
 Inherits from ModelInterface class
 """
 
+from socket import AF_KEY
+from sklearn import metrics
 from models.model_interface import ModelInterface
 import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping
@@ -79,14 +81,20 @@ class ModelInterfaceDL(ModelInterface):
         :return: None
         """
         tf.keras.backend.clear_session()
-        talos.Scan(x=self.ds.X_train,
+        t = talos.Scan(x=self.ds.X_train,
                    y=self.ds.y_train,
                    model=self.__talos_model,
                    experiment_name='talos/' + self.name,
                    params=self.parameter_list,
                    clear_session=True,
-                   print_params=True,
-                   round_limit=5)
+                   print_params=True, round_limit=100)
+      
+        a = talos.Analyze(t)
+        a_table = a.table('val_loss', [], sort_by= 'val_mse', ascending= True)
+        print('BEST PARAMS \n{}'.format(a_table.iloc[0]))
+     
+    
+      
 
     def __talos_model(self, X_train, y_train, x_val, y_val, p):
         """
