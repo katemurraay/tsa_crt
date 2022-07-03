@@ -19,7 +19,7 @@ class CustomSaveCheckpoint(tf.keras.callbacks.Callback):
         """string: metric to monitor"""
         self.dnn = model
         """keras model: best model found"""
-       
+
 
     def on_epoch_end(self, epoch, logs=None):
         """
@@ -30,6 +30,7 @@ class CustomSaveCheckpoint(tf.keras.callbacks.Callback):
         :return: None
         """
         # print("LOGS", logs)
+        print("BEST VALLOSS", self.dnn.best_val_loss, logs['val_loss'])
         if logs['val_loss'] < self.dnn.best_val_loss:
             print('New best validation loss at epoch ', epoch, ' :', logs['val_loss'])
             self.dnn.best_val_loss = logs['val_loss']
