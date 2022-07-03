@@ -35,7 +35,6 @@ class BinanceDataset(DatasetInterface):
         df = df.iloc[:,0:9]
         """columns returned by binance """
         df.columns = ['OpenTime', 'Open', 'High', 'Low', 'Close', 'Volume', 'CloseTime', 'QuoteAssetVolume', 'NumTrades']
-        
         """float: open price"""
         df.Open = df.Open.astype(float)
         """float: close price"""
@@ -76,7 +75,7 @@ class BinanceDataset(DatasetInterface):
     Saves DataFrame to .csv file witin the saved_data folder
     """
     def save_to_csv(self, df):
-        df.columns = ['date', 'open', 'high', 'low', 'close']
+        df.columns = ['date', 'open', 'high', 'low', 'close', 'timestamp']
         save_name = self.data_path + self.data_file
         df.to_csv(save_name)
 
@@ -104,5 +103,6 @@ class BinanceDataset(DatasetInterface):
         list_combine.extend(df_b.values)
         #convert list to a dataframe
         df_combined = pd.DataFrame(list_combine, columns=['date', 'open', 'high', 'low', 'close'])
+        df_combined['timestamp'] =  pd.to_datetime(df_combined['date']).view(int) // 10 ** 9
         self.save_to_csv(df= df_combined)
   

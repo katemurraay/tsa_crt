@@ -19,8 +19,7 @@ class CustomSaveCheckpoint(tf.keras.callbacks.Callback):
         """string: metric to monitor"""
         self.dnn = model
         """keras model: best model found"""
-        self.dnn.best_val_loss = np.inf
-        """float: best validation loss found"""
+       
 
     def on_epoch_end(self, epoch, logs=None):
         """
