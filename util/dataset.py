@@ -142,7 +142,7 @@ class DatasetInterface:
         self.y_test = self.y[split_value:]
         self.X_train = self.X[:split_value]
         self.X_test = self.X[split_value:]
-        self.ts_train, self.ts_test, self.train_cov, self.cov =self.__ts_dataset(df=df)
+        self.ts_train, self.ts_val, self.ts_test, self.train_cov, self.cov =self.__ts_dataset(df=df)
         # unidimensional dataset creation
         self.X_array = df[self.target_name].to_numpy()
         if len(self.target_name) == 1:
@@ -163,8 +163,11 @@ class DatasetInterface:
         if self.verbose:
             print("Training size ", self.X_train.shape, self.X_train_array.shape)
             print("Training labels size", self.y_train.shape, self.y_train_array.shape)
+            print("Training Time Series size ", self.ts_train._xa.shape)
+            print("Validation Time Series size ", self.ts_val._xa.shape)
             print("Test size ", self.X_test.shape, self.X_test_array.shape)
             print("Test labels size", self.y_test.shape, self.y_test_array.shape)
+            print("Test Time Series size ", self.ts_test._xa.shape)
 
     def dataset_normalization(self, methods=["minmax"], scale_range=(0, 1)):
         """
@@ -227,13 +230,13 @@ class DatasetInterface:
         #Setting the Daily Frequency of the Dataset
         df_col = self.target_name[0]
         df[df_col] = df[df_col].astype(np.float32)
-        split_at = int(df.shape[0] * self.train_split_factor)
-        print(split_at)
+        test_split = int(df.shape[0] * self.train_split_factor)
+        val_split = int(test_split * 0.8)
         #Converting DataFrame to Series
         start_date = datetime.fromtimestamp(df['timestamp'].iloc[0]).strftime('%m/%d/%y')
         end_date = datetime.fromtimestamp(df['timestamp'].iloc[-1]).strftime('%m/%d/%y')
-        split_date = datetime.fromtimestamp(df['timestamp'].iloc[split_at]).strftime('%Y%m%d')
-        
+        test_split_date = datetime.fromtimestamp(df['timestamp'].iloc[test_split]).strftime('%Y%m%d')
+        val_split_date = datetime.fromtimestamp(df['timestamp'].iloc[val_split]).strftime('%Y%m%d')
         series_ts = pd.Series(data = df[df_col].values, index = pd.date_range(start_date, end_date, freq = 'D'))
         #Converting Series to DataFrame with DatetimeIndex
         df.index = pd.DatetimeIndex(np.hstack([series_ts.index[:-1],
@@ -243,12 +246,17 @@ class DatasetInterface:
         ts = TimeSeries.from_series(df_ts[df_col])
 
         #Splitting data into train and test
-        if isinstance(split_date, str):
-            split = pd.Timestamp(split_date)
+        if isinstance(test_split_date, str):
+            split = pd.Timestamp(test_split_date)
         else:
-            split = split_date
+            split = test_split_date
        
-        ts_train, ts_test = ts.split_after(split)
+        ts_ttrain, ts_test = ts.split_after(split)
+        if isinstance(val_split_date, str):
+            split = pd.Timestamp(val_split_date)
+        else:
+            split = val_split_date
+        ts_train, ts_val = ts_ttrain.split_after(split)
         #Creating Covariates 
         cov = datetime_attribute_timeseries(ts, attribute="year", one_hot=False)
         cov = cov.stack(datetime_attribute_timeseries(ts, attribute="month", one_hot=False))
@@ -263,16 +271,17 @@ class DatasetInterface:
         #Splitting covariates into train and test
         train_cov, test_cov = cov.split_after(split)
         
-        return ts_train, ts_test, train_cov, cov
+        return ts_train, ts_val, ts_test, train_cov, cov
 
 
     def __ts_normalisation(self, method="minmax", range=(0, 1)):
         if method =='minmax':
-            scale_method = MinMaxScaler()
+            scale_method = MinMaxScaler(feature_range=range)
         else: 
             scale_method = StandardScaler()
         scaler =Scaler(scaler=scale_method)
         self.ts_train = scaler.fit_transform(self.ts_train)
+        self.ts_val = scaler.transform(self.ts_val)
         self.ts_test = scaler.transform(self.ts_test)
         #self.ts_t = scaler.transform(self.ts)
         covScaler = Scaler(scaler= scale_method)
