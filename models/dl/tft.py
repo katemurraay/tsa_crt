@@ -136,7 +136,6 @@ class TFT(ModelInterfaceDL):
         return mse(self.ds.ts_val, preds)
  
     def hyperparametrization(self):
-       
         study = optuna.create_study(study_name="TFT_Optimization", direction="minimize", sampler= optuna.samplers.TPESampler())
         study.optimize(self.__optuna_objective, n_trials=100, show_progress_bar=True)
         print('\nBEST PARAMS: \n{}'.format(study.best_params))
@@ -146,12 +145,12 @@ class TFT(ModelInterfaceDL):
         df.to_csv(filename)
     
     def save_model(self):
-        if self.model != None:
-            path = (self.model_path + self.name + str(self.count_save).zfill(4) + '_model.pth.tar')
-            self.model.save_model(path)
-            self.count_save += 1
-        else:
-            print('Model is Void')
+        if self.model is None:
+            print("ERROR: the model must be available before saving it")
+            return
+        path = (self.model_path + self.name + str(self.count_save).zfill(4) + '_model.pth.tar')
+        self.model.save_model(path)
+        self.count_save += 1
      
     def load_model(self):
         path = (self.model_path + self.name + str(self.count_save).zfill(4) + '_model.pth.tar')
