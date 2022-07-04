@@ -116,14 +116,7 @@ class TFT(ModelInterfaceDL):
         epochs = trial.suggest_categorical('epochs', self.parameter_list['n_epochs'])
         
         print('Trial Params: {}'.format(trial.params))
-        my_stopper = EarlyStopping(
-                                    monitor="val_loss",
-                                    patience=self.p['patience'],
-                                    min_delta=0.00,
-                                    verbose= 0,
-                                    mode='min',
-                                )
-       
+               
         self.temp_model = TFTModel(input_chunk_length=input_chunk,
                     output_chunk_length=output_chunk,
                     hidden_size= hidden_size,
