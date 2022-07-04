@@ -7,6 +7,7 @@ class CustomPytorchModelCheckpoint(Callback):
     def __init__(self, model) -> None:
         super().__init__()
         self.dnn = model
+        self.monitor = 'val_loss'
         self.counter = 0 
 
     def on_validation_epoch_end(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule"):

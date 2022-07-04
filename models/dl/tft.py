@@ -1,28 +1,17 @@
-from tabnanny import verbose
-import eagerpy as ep
-from idna import check_label
-import torch
 import numpy as np
 import pandas as pd
-import pickle
 import matplotlib.pyplot as plt
-from sklearn.model_selection import GridSearchCV
-import warnings
-warnings.filterwarnings("ignore")
-import logging
-logging.disable(logging.CRITICAL)
 import optuna
-from optuna.trial import TrialState
-import eagerpy as ep
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 import torch
 from darts.models import TFTModel
 from darts.metrics import mse
 from models.dl.model_interface_dl import ModelInterfaceDL
-from util import custom_keras
 from torchmetrics import MeanSquaredError
 from darts.metrics import mse
 from util import custom_pytorch
+import warnings
+warnings.filterwarnings("ignore")
 
 class TFT(ModelInterfaceDL):
     def __init__(self, name):
@@ -39,7 +28,7 @@ class TFT(ModelInterfaceDL):
         }
         self.parameter_list=  {
                 "input_chunk_length":[30], 
-                "hidden_size":[32, 64, 100, 128], 
+                "hidden_size":[32, 64, 128], 
                 "lstm_layers":[2, 3, 4, 5], 
                 "num_attention_heads":[2, 3, 5, 7], 
                 "dropout":[0.0, 0.05, 0.1], 
@@ -47,12 +36,18 @@ class TFT(ModelInterfaceDL):
                 'output_chunk_length': [1],
                 "n_epochs":[1000]
                 }
-
+        self.pl_trainer_kwargs = {"enable_model_summary":False, "enable_checkpointing": False, "logger": False, "weights_summary" : None}
        
         self.RAND = 42           
         self.N_JOBS = 3
         use_cuda = torch.cuda.is_available()
-        self.use_device = "cuda:0" if use_cuda else "cpu"
+        if use_cuda:
+            self.pl_trainer_kwargs["accelerator"]= "gpu"
+            self.pl_trainer_kwargs["gpus"] = -1
+            self.pl_trainer_kwargs["auto_select_gpus"] = True
+        else:
+            self.pl_trainer_kwargs["accelerator"]= "cpu"
+
     
     def create_model(self):
        
@@ -69,8 +64,8 @@ class TFT(ModelInterfaceDL):
                     loss_fn= torch.nn.MSELoss(),
                     torch_metrics = MeanSquaredError(),
                     random_state= self.RAND, 
-                    torch_device_str = self.use_device,
                     force_reset=True,
+                    pl_trainer_kwargs = self.pl_trainer_kwargs,
                     )
         
     def fit(self):
@@ -82,7 +77,8 @@ class TFT(ModelInterfaceDL):
                                     mode='min',
                                 )
         checkpoint = custom_pytorch.CustomPytorchModelCheckpoint(self)
-        self.temp_model.trainer_params ={"callbacks": [my_stopper, checkpoint]}
+        self.pl_trainer_kwargs["callbacks"] = [my_stopper, checkpoint]
+        self.temp_model.trainer_params =self.pl_trainer_kwargs
         self.temp_model.fit(self.ds.ts_train, future_covariates=self.ds.tcov,  val_series =self.ds.ts_val, val_future_covariates=self.ds.tcov, verbose= 1)   
     def fit_predict(self, X):
         my_stopper = EarlyStopping(
@@ -93,7 +89,8 @@ class TFT(ModelInterfaceDL):
                                     mode='min',
                                 )
         checkpoint = custom_pytorch.CustomPytorchModelCheckpoint(self)
-        self.temp_model.trainer_params ={"callbacks": [my_stopper, checkpoint]}
+        self.pl_trainer_kwargs["callbacks"] = [my_stopper, checkpoint]
+        self.temp_model.trainer_params =self.pl_trainer_kwargs
         self.temp_model.fit(self.ds.ts_train, future_covariates=self.ds.tcov,  val_series =self.ds.ts_val, val_future_covariates=self.ds.tcov, verbose = 1) 
         predictions = self.temp_model.predict(n=len(X))
         return predictions
@@ -139,9 +136,8 @@ class TFT(ModelInterfaceDL):
                     loss_fn= torch.nn.MSELoss(),
                     torch_metrics = MeanSquaredError(),
                     random_state= self.RAND, 
-                    torch_device_str = self.use_device,
                     force_reset=True,
-                    
+                    pl_trainer_kwargs = self.pl_trainer_kwargs,
                     )
         preds = self.fit_predict(self.ds.ts_val)
         return mse(self.ds.ts_val, preds)
