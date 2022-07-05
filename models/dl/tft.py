@@ -18,11 +18,11 @@ class TFT(ModelInterfaceDL):
         super().__init__(name)
         self.p ={ 'epochs': 500, 
                 'input_chunk_length': 30,
-                'hidden_layer_dim': 64,
+                'hidden_layer_dim': 128,
                 'num_lstm_layers' : 4,
-                'num_attention_heads': 2,
-                'dropout_rate': 0.0,
-                'batch_size': 64,
+                'num_attention_heads': 5,
+                'dropout_rate': 0.05,
+                'batch_size': 32,
                 'output_chunk_length': 1,
                 'patience': 50,
         }
@@ -36,22 +36,23 @@ class TFT(ModelInterfaceDL):
                 'output_chunk_length': [1],
                 "n_epochs":[1000]
                 }
-        self.pl_trainer_kwargs = {"enable_model_summary":False, "enable_checkpointing": False, "logger": False, "weights_summary" : None}
-       
+        self.pl_trainer_kwargs = self.__set_pl_trainer_kwargs()
         self.RAND = 42           
         self.N_JOBS = 3
+        
+
+    def __set_pl_trainer_kwargs(self):
+       
+        pl_trainer_kwargs = {"enable_model_summary":False, "enable_checkpointing": False, "logger": False, "weights_summary" : None}
         use_cuda = torch.cuda.is_available()
         if use_cuda:
-            self.pl_trainer_kwargs["accelerator"]= "gpu"
-            self.pl_trainer_kwargs["gpus"] = -1
-            self.pl_trainer_kwargs["auto_select_gpus"] = True
+            pl_trainer_kwargs["accelerator"]= "gpu"
+            pl_trainer_kwargs["gpus"] = -1
+            pl_trainer_kwargs["auto_select_gpus"] = True
         else:
-            self.pl_trainer_kwargs["accelerator"]= "cpu"
-
-    
+            pl_trainer_kwargs["accelerator"]= "cpu"
+        return pl_trainer_kwargs
     def create_model(self):
-       
-       
         self.temp_model = TFTModel(input_chunk_length=self.p['input_chunk_length'],
                     output_chunk_length= self.p['output_chunk_length'],
                     hidden_size=self.p['hidden_layer_dim'],
@@ -61,8 +62,8 @@ class TFT(ModelInterfaceDL):
                     batch_size= self.p['batch_size'],
                     n_epochs= self.p['epochs'],
                     likelihood=None, 
-                    loss_fn= torch.nn.MSELoss(),
-                    torch_metrics = MeanSquaredError(),
+                    loss_fn= torch.nn.MSELoss(reduction='mean'),
+                    torch_metrics = MeanSquaredError(squared=True),
                     random_state= self.RAND, 
                     force_reset=True,
                     pl_trainer_kwargs = self.pl_trainer_kwargs,
@@ -116,7 +117,7 @@ class TFT(ModelInterfaceDL):
         epochs = trial.suggest_categorical('epochs', self.parameter_list['n_epochs'])
         
         print('Trial Params: {}'.format(trial.params))
-               
+        self.pl_trainer_kwargs = self.__set_pl_trainer_kwargs()
         self.temp_model = TFTModel(input_chunk_length=input_chunk,
                     output_chunk_length=output_chunk,
                     hidden_size= hidden_size,
