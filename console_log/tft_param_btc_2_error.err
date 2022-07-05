@@ -1,0 +1,742 @@
+nohup: ignoring input
+2022-07-05 00:33:09.183084: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.1
+Using TensorFlow backend.
+2022-07-05 00:33:12 prophet.plot ERROR: Importing plotly failed. Interactive plots will not work.
+2022-07-05 00:33:12.320068: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2022-07-05 00:33:12.320810: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcuda.so.1
+2022-07-05 00:33:12.333095: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
+pciBusID: 0000:03:00.0 name: GeForce GTX 1080 computeCapability: 6.1
+coreClock: 1.7335GHz coreCount: 20 deviceMemorySize: 7.93GiB deviceMemoryBandwidth: 298.32GiB/s
+2022-07-05 00:33:12.333140: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.1
+2022-07-05 00:33:12.334692: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.10
+2022-07-05 00:33:12.334754: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.10
+2022-07-05 00:33:12.335997: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcufft.so.10
+2022-07-05 00:33:12.336245: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcurand.so.10
+2022-07-05 00:33:12.337690: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusolver.so.10
+2022-07-05 00:33:12.338471: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusparse.so.10
+2022-07-05 00:33:12.341434: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.7
+2022-07-05 00:33:12.342787: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1862] Adding visible gpu devices: 0
+2022-07-05 00:33:12.343064: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  SSE4.1 SSE4.2 AVX AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2022-07-05 00:33:12.343653: I tensorflow/compiler/jit/xla_gpu_device.cc:99] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2022-07-05 00:33:12.344366: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
+pciBusID: 0000:03:00.0 name: GeForce GTX 1080 computeCapability: 6.1
+coreClock: 1.7335GHz coreCount: 20 deviceMemorySize: 7.93GiB deviceMemoryBandwidth: 298.32GiB/s
+2022-07-05 00:33:12.344397: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.1
+2022-07-05 00:33:12.344421: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.10
+2022-07-05 00:33:12.344443: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.10
+2022-07-05 00:33:12.344465: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcufft.so.10
+2022-07-05 00:33:12.344487: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcurand.so.10
+2022-07-05 00:33:12.344508: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusolver.so.10
+2022-07-05 00:33:12.344529: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusparse.so.10
+2022-07-05 00:33:12.344551: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.7
+2022-07-05 00:33:12.345789: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1862] Adding visible gpu devices: 0
+2022-07-05 00:33:12.345841: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.1
+2022-07-05 00:33:12.868970: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1261] Device interconnect StreamExecutor with strength 1 edge matrix:
+2022-07-05 00:33:12.869036: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1267]      0 
+2022-07-05 00:33:12.869046: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 0:   N 
+2022-07-05 00:33:12.870531: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 7320 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080, pci bus id: 0000:03:00.0, compute capability: 6.1)
+2022-07-05 00:33:12.939153: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:116] None of the MLIR optimization passes are enabled (registered 2)
+2022-07-05 00:33:12.957161: I tensorflow/core/platform/profile_utils/cpu_utils.cc:112] CPU Frequency: 3391860000 Hz
+[32m[I 2022-07-05 00:33:14,000][0m A new study created in memory with name: TFT_Optimization[0m
+  0%|          | 0/100 [00:00<?, ?it/s]2022-07-05 00:33:14 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 00:33:14 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                         0%|          | 0/100 [10:43<?, ?it/s]  1%|          | 1/100 [10:43<17:42:18, 643.82s/it]2022-07-05 00:43:57 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 00:43:57 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                     1%|          | 1/100 [21:49<17:42:18, 643.82s/it]  2%|▏         | 2/100 [21:49<17:52:45, 656.79s/it]2022-07-05 00:55:03 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 00:55:03 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                     2%|▏         | 2/100 [33:25<17:52:45, 656.79s/it]  3%|▎         | 3/100 [33:25<18:10:43, 674.67s/it]2022-07-05 01:06:39 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 01:06:39 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                     3%|▎         | 3/100 [42:44<18:10:43, 674.67s/it]  4%|▍         | 4/100 [42:44<16:46:28, 629.05s/it]2022-07-05 01:15:58 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 01:15:58 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                     4%|▍         | 4/100 [52:31<16:46:28, 629.05s/it]  5%|▌         | 5/100 [52:31<16:12:05, 613.95s/it]2022-07-05 01:25:45 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 01:25:45 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                     5%|▌         | 5/100 [1:05:48<16:12:05, 613.95s/it]  6%|▌         | 6/100 [1:05:48<17:38:56, 675.92s/it]2022-07-05 01:39:02 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 01:39:02 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       6%|▌         | 6/100 [1:13:51<17:38:56, 675.92s/it]  7%|▋         | 7/100 [1:13:51<15:50:04, 612.95s/it]2022-07-05 01:47:05 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 01:47:05 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       7%|▋         | 7/100 [1:19:49<15:50:04, 612.95s/it]  8%|▊         | 8/100 [1:19:49<13:35:35, 531.91s/it]2022-07-05 01:53:03 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 01:53:03 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       8%|▊         | 8/100 [1:28:24<13:35:35, 531.91s/it]  9%|▉         | 9/100 [1:28:24<13:18:46, 526.67s/it]2022-07-05 02:01:38 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 02:01:39 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       9%|▉         | 9/100 [1:33:17<13:18:46, 526.67s/it] 10%|█         | 10/100 [1:33:17<11:21:36, 454.41s/it]2022-07-05 02:06:31 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 02:06:31 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       10%|█         | 10/100 [1:39:13<11:21:36, 454.41s/it] 11%|█         | 11/100 [1:39:13<10:29:12, 424.19s/it]2022-07-05 02:12:27 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 02:12:27 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       11%|█         | 11/100 [1:48:27<10:29:12, 424.19s/it] 12%|█▏        | 12/100 [1:48:27<11:19:57, 463.61s/it]2022-07-05 02:21:41 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 02:21:41 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       12%|█▏        | 12/100 [1:53:43<11:19:57, 463.61s/it] 13%|█▎        | 13/100 [1:53:43<10:07:30, 418.97s/it]2022-07-05 02:26:57 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 02:26:57 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       13%|█▎        | 13/100 [2:00:59<10:07:30, 418.97s/it] 14%|█▍        | 14/100 [2:00:59<10:07:46, 424.03s/it]2022-07-05 02:34:13 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 02:34:13 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       14%|█▍        | 14/100 [2:04:53<10:07:46, 424.03s/it] 15%|█▌        | 15/100 [2:04:53<8:39:44, 366.88s/it] 2022-07-05 02:38:07 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 02:38:07 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      15%|█▌        | 15/100 [2:10:28<8:39:44, 366.88s/it] 16%|█▌        | 16/100 [2:10:28<8:20:18, 357.37s/it]2022-07-05 02:43:42 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 02:43:42 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      16%|█▌        | 16/100 [2:15:24<8:20:18, 357.37s/it] 17%|█▋        | 17/100 [2:15:24<7:48:50, 338.92s/it]2022-07-05 02:48:38 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 02:48:38 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      17%|█▋        | 17/100 [2:23:05<7:48:50, 338.92s/it] 18%|█▊        | 18/100 [2:23:05<8:33:20, 375.62s/it]2022-07-05 02:56:19 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 02:56:19 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      18%|█▊        | 18/100 [2:28:05<8:33:20, 375.62s/it] 19%|█▉        | 19/100 [2:28:05<7:56:24, 352.90s/it]2022-07-05 03:01:19 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 03:01:19 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      19%|█▉        | 19/100 [2:34:18<7:56:24, 352.90s/it] 20%|██        | 20/100 [2:34:18<7:58:22, 358.79s/it]2022-07-05 03:07:32 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 03:07:32 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      20%|██        | 20/100 [2:43:08<7:58:22, 358.79s/it] 21%|██        | 21/100 [2:43:08<9:00:04, 410.19s/it]2022-07-05 03:16:22 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 03:16:22 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      21%|██        | 21/100 [2:49:30<9:00:04, 410.19s/it] 22%|██▏       | 22/100 [2:49:30<8:42:13, 401.71s/it]2022-07-05 03:22:44 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 03:22:44 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      22%|██▏       | 22/100 [3:01:44<8:42:13, 401.71s/it] 23%|██▎       | 23/100 [3:01:44<10:43:36, 501.52s/it]2022-07-05 03:34:58 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 03:34:58 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       23%|██▎       | 23/100 [3:10:59<10:43:36, 501.52s/it] 24%|██▍       | 24/100 [3:10:59<10:55:31, 517.52s/it]2022-07-05 03:44:13 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 03:44:13 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       24%|██▍       | 24/100 [3:23:52<10:55:31, 517.52s/it] 25%|██▌       | 25/100 [3:23:52<12:22:48, 594.25s/it]2022-07-05 03:57:06 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 03:57:06 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       25%|██▌       | 25/100 [3:30:02<12:22:48, 594.25s/it] 26%|██▌       | 26/100 [3:30:02<10:49:45, 526.83s/it]2022-07-05 04:03:16 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 04:03:16 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       26%|██▌       | 26/100 [3:39:13<10:49:45, 526.83s/it] 27%|██▋       | 27/100 [3:39:13<10:49:58, 534.22s/it]2022-07-05 04:12:27 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 04:12:27 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       27%|██▋       | 27/100 [3:46:24<10:49:58, 534.22s/it] 28%|██▊       | 28/100 [3:46:24<10:03:58, 503.32s/it]2022-07-05 04:19:38 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 04:19:38 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       28%|██▊       | 28/100 [3:53:07<10:03:58, 503.32s/it] 29%|██▉       | 29/100 [3:53:07<9:19:50, 473.11s/it] 2022-07-05 04:26:21 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 04:26:21 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      29%|██▉       | 29/100 [4:10:33<9:19:50, 473.11s/it] 30%|███       | 30/100 [4:10:33<12:32:21, 644.88s/it]2022-07-05 04:43:47 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 04:43:47 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       30%|███       | 30/100 [4:17:07<12:32:21, 644.88s/it] 31%|███       | 31/100 [4:17:07<10:55:08, 569.69s/it]2022-07-05 04:50:21 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 04:50:21 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       31%|███       | 31/100 [4:24:41<10:55:08, 569.69s/it] 32%|███▏      | 32/100 [4:24:41<10:06:13, 534.91s/it]2022-07-05 04:57:55 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 04:57:55 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       32%|███▏      | 32/100 [4:32:51<10:06:13, 534.91s/it] 33%|███▎      | 33/100 [4:32:51<9:42:21, 521.51s/it] 2022-07-05 05:06:05 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 05:06:05 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      33%|███▎      | 33/100 [4:39:39<9:42:21, 521.51s/it] 34%|███▍      | 34/100 [4:39:39<8:56:10, 487.43s/it]2022-07-05 05:12:53 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 05:12:53 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      34%|███▍      | 34/100 [4:50:21<8:56:10, 487.43s/it] 35%|███▌      | 35/100 [4:50:21<9:38:23, 533.90s/it]2022-07-05 05:23:35 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 05:23:35 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      35%|███▌      | 35/100 [5:01:41<9:38:23, 533.90s/it] 36%|███▌      | 36/100 [5:01:41<10:16:11, 577.67s/it]2022-07-05 05:34:55 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 05:34:55 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       36%|███▌      | 36/100 [5:07:57<10:16:11, 577.67s/it] 37%|███▋      | 37/100 [5:07:57<9:03:00, 517.16s/it] 2022-07-05 05:41:11 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 05:41:11 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      37%|███▋      | 37/100 [5:22:45<9:03:00, 517.16s/it] 38%|███▊      | 38/100 [5:22:45<10:49:19, 628.38s/it]2022-07-05 05:55:59 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 05:55:59 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       38%|███▊      | 38/100 [5:29:28<10:49:19, 628.38s/it] 39%|███▉      | 39/100 [5:29:28<9:30:14, 560.90s/it] 2022-07-05 06:02:42 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 06:02:42 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      39%|███▉      | 39/100 [5:37:42<9:30:14, 560.90s/it] 40%|████      | 40/100 [5:37:42<9:00:44, 540.74s/it]2022-07-05 06:10:56 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 06:10:56 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      40%|████      | 40/100 [5:48:30<9:00:44, 540.74s/it] 41%|████      | 41/100 [5:48:30<9:23:24, 572.96s/it]2022-07-05 06:21:44 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 06:21:44 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      41%|████      | 41/100 [5:53:43<9:23:24, 572.96s/it] 42%|████▏     | 42/100 [5:53:43<7:58:35, 495.09s/it]2022-07-05 06:26:58 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 06:26:58 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      42%|████▏     | 42/100 [5:58:58<7:58:35, 495.09s/it] 43%|████▎     | 43/100 [5:58:58<6:58:57, 441.01s/it]2022-07-05 06:32:12 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 06:32:12 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      43%|████▎     | 43/100 [6:04:14<6:58:57, 441.01s/it] 44%|████▍     | 44/100 [6:04:14<6:16:39, 403.56s/it]2022-07-05 06:37:28 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 06:37:29 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      44%|████▍     | 44/100 [6:09:12<6:16:39, 403.56s/it] 45%|████▌     | 45/100 [6:09:12<5:40:44, 371.72s/it]2022-07-05 06:42:26 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 06:42:26 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      45%|████▌     | 45/100 [6:14:28<5:40:44, 371.72s/it] 46%|████▌     | 46/100 [6:14:28<5:19:25, 354.93s/it]2022-07-05 06:47:42 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 06:47:42 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      46%|████▌     | 46/100 [6:20:24<5:19:25, 354.93s/it] 47%|████▋     | 47/100 [6:20:24<5:13:47, 355.24s/it]2022-07-05 06:53:38 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 06:53:38 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      47%|████▋     | 47/100 [6:30:12<5:13:47, 355.24s/it] 48%|████▊     | 48/100 [6:30:12<6:08:30, 425.20s/it]2022-07-05 07:03:26 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 07:03:26 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      48%|████▊     | 48/100 [6:38:36<6:08:30, 425.20s/it] 49%|████▉     | 49/100 [6:38:36<6:21:22, 448.67s/it]2022-07-05 07:11:50 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 07:11:50 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      49%|████▉     | 49/100 [6:45:04<6:21:22, 448.67s/it] 50%|█████     | 50/100 [6:45:04<5:58:49, 430.59s/it]2022-07-05 07:18:18 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 07:18:18 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      50%|█████     | 50/100 [6:53:20<5:58:49, 430.59s/it] 51%|█████     | 51/100 [6:53:20<6:07:45, 450.32s/it]2022-07-05 07:26:34 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 07:26:34 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      51%|█████     | 51/100 [7:01:38<6:07:45, 450.32s/it] 52%|█████▏    | 52/100 [7:01:38<6:11:32, 464.42s/it]2022-07-05 07:34:52 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 07:34:52 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      52%|█████▏    | 52/100 [7:09:54<6:11:32, 464.42s/it] 53%|█████▎    | 53/100 [7:09:54<6:11:22, 474.09s/it]2022-07-05 07:43:08 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 07:43:08 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      53%|█████▎    | 53/100 [7:18:11<6:11:22, 474.09s/it] 54%|█████▍    | 54/100 [7:18:11<6:08:39, 480.85s/it]2022-07-05 07:51:25 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 07:51:25 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      54%|█████▍    | 54/100 [7:27:14<6:08:39, 480.85s/it] 55%|█████▌    | 55/100 [7:27:14<6:14:40, 499.56s/it]2022-07-05 08:00:28 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 08:00:28 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      55%|█████▌    | 55/100 [7:36:24<6:14:40, 499.56s/it] 56%|█████▌    | 56/100 [7:36:24<6:17:25, 514.66s/it]2022-07-05 08:09:38 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 08:09:38 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      56%|█████▌    | 56/100 [7:44:52<6:17:25, 514.66s/it] 57%|█████▋    | 57/100 [7:44:52<6:07:25, 512.69s/it]2022-07-05 08:18:06 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 08:18:06 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      57%|█████▋    | 57/100 [7:53:19<6:07:25, 512.69s/it] 58%|█████▊    | 58/100 [7:53:19<5:57:41, 510.98s/it]2022-07-05 08:26:33 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 08:26:33 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      58%|█████▊    | 58/100 [8:01:39<5:57:41, 510.98s/it] 59%|█████▉    | 59/100 [8:01:39<5:46:52, 507.61s/it]2022-07-05 08:34:53 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 08:34:53 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      59%|█████▉    | 59/100 [8:10:43<5:46:52, 507.61s/it] 60%|██████    | 60/100 [8:10:43<5:45:45, 518.65s/it]2022-07-05 08:43:57 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 08:43:57 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      60%|██████    | 60/100 [8:18:55<5:45:45, 518.65s/it] 61%|██████    | 61/100 [8:18:55<5:31:57, 510.70s/it]2022-07-05 08:52:09 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 08:52:09 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      61%|██████    | 61/100 [8:27:12<5:31:57, 510.70s/it] 62%|██████▏   | 62/100 [8:27:12<5:20:47, 506.51s/it]2022-07-05 09:00:26 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 09:00:26 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      62%|██████▏   | 62/100 [8:35:25<5:20:47, 506.51s/it] 63%|██████▎   | 63/100 [8:35:25<5:09:53, 502.52s/it]2022-07-05 09:08:39 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 09:08:39 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      63%|██████▎   | 63/100 [8:41:05<5:09:53, 502.52s/it] 64%|██████▍   | 64/100 [8:41:05<4:32:15, 453.77s/it]2022-07-05 09:14:19 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 09:14:19 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      64%|██████▍   | 64/100 [8:52:00<4:32:15, 453.77s/it] 65%|██████▌   | 65/100 [8:52:00<4:59:48, 513.94s/it]2022-07-05 09:25:14 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 09:25:14 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      65%|██████▌   | 65/100 [9:00:18<4:59:48, 513.94s/it] 66%|██████▌   | 66/100 [9:00:18<4:48:36, 509.32s/it]2022-07-05 09:33:32 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 09:33:32 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      66%|██████▌   | 66/100 [9:12:02<4:48:36, 509.32s/it] 67%|██████▋   | 67/100 [9:12:02<5:12:09, 567.55s/it]2022-07-05 09:45:16 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 09:45:16 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      67%|██████▋   | 67/100 [9:20:00<5:12:09, 567.55s/it] 68%|██████▊   | 68/100 [9:20:00<4:48:25, 540.78s/it]2022-07-05 09:53:14 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 09:53:14 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      68%|██████▊   | 68/100 [9:28:53<4:48:25, 540.78s/it] 69%|██████▉   | 69/100 [9:28:53<4:38:15, 538.58s/it]2022-07-05 10:02:07 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 10:02:07 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      69%|██████▉   | 69/100 [9:37:11<4:38:15, 538.58s/it] 70%|███████   | 70/100 [9:37:11<4:23:05, 526.17s/it]2022-07-05 10:10:25 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 10:10:25 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      70%|███████   | 70/100 [9:42:20<4:23:05, 526.17s/it] 71%|███████   | 71/100 [9:42:20<3:42:55, 461.23s/it]2022-07-05 10:15:34 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 10:15:34 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      71%|███████   | 71/100 [9:48:33<3:42:55, 461.23s/it] 72%|███████▏  | 72/100 [9:48:33<3:22:49, 434.63s/it]2022-07-05 10:21:47 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 10:21:47 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      72%|███████▏  | 72/100 [9:55:03<3:22:49, 434.63s/it] 73%|███████▎  | 73/100 [9:55:03<3:09:34, 421.27s/it]2022-07-05 10:28:17 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 10:28:17 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                      73%|███████▎  | 73/100 [10:01:01<3:09:34, 421.27s/it] 74%|███████▍  | 74/100 [10:01:01<2:54:18, 402.24s/it]2022-07-05 10:34:15 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 10:34:15 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       74%|███████▍  | 74/100 [10:09:18<2:54:18, 402.24s/it] 75%|███████▌  | 75/100 [10:09:18<2:59:29, 430.77s/it]2022-07-05 10:42:32 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 10:42:32 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       75%|███████▌  | 75/100 [10:15:37<2:59:29, 430.77s/it] 76%|███████▌  | 76/100 [10:15:37<2:46:04, 415.17s/it]2022-07-05 10:48:51 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 10:48:51 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       76%|███████▌  | 76/100 [10:21:53<2:46:04, 415.17s/it] 77%|███████▋  | 77/100 [10:21:53<2:34:37, 403.37s/it]2022-07-05 10:55:07 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 10:55:07 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       77%|███████▋  | 77/100 [10:30:10<2:34:37, 403.37s/it] 78%|███████▊  | 78/100 [10:30:10<2:38:15, 431.60s/it]2022-07-05 11:03:24 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 11:03:24 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       78%|███████▊  | 78/100 [10:37:12<2:38:15, 431.60s/it] 79%|███████▉  | 79/100 [10:37:12<2:30:01, 428.65s/it]2022-07-05 11:10:26 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 11:10:26 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       79%|███████▉  | 79/100 [10:45:02<2:30:01, 428.65s/it] 80%|████████  | 80/100 [10:45:02<2:27:03, 441.20s/it]2022-07-05 11:18:17 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 11:18:17 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       80%|████████  | 80/100 [10:58:08<2:27:03, 441.20s/it] 81%|████████  | 81/100 [10:58:08<2:52:25, 544.51s/it]2022-07-05 11:31:22 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 11:31:22 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       81%|████████  | 81/100 [11:08:17<2:52:25, 544.51s/it] 82%|████████▏ | 82/100 [11:08:17<2:49:08, 563.81s/it]2022-07-05 11:41:31 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 11:41:31 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       82%|████████▏ | 82/100 [11:18:13<2:49:08, 563.81s/it] 83%|████████▎ | 83/100 [11:18:13<2:42:31, 573.59s/it]2022-07-05 11:51:27 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 11:51:27 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       83%|████████▎ | 83/100 [11:28:12<2:42:31, 573.59s/it] 84%|████████▍ | 84/100 [11:28:12<2:34:57, 581.07s/it]2022-07-05 12:01:26 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 12:01:26 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       84%|████████▍ | 84/100 [11:36:10<2:34:57, 581.07s/it] 85%|████████▌ | 85/100 [11:36:10<2:17:33, 550.22s/it]2022-07-05 12:09:24 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 12:09:24 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       85%|████████▌ | 85/100 [11:49:31<2:17:33, 550.22s/it] 86%|████████▌ | 86/100 [11:49:31<2:25:56, 625.49s/it]2022-07-05 12:22:45 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 12:22:45 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       86%|████████▌ | 86/100 [12:05:06<2:25:56, 625.49s/it] 87%|████████▋ | 87/100 [12:05:06<2:35:37, 718.26s/it]2022-07-05 12:38:20 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 12:38:20 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       87%|████████▋ | 87/100 [12:17:57<2:35:37, 718.26s/it] 88%|████████▊ | 88/100 [12:17:57<2:26:50, 734.19s/it]2022-07-05 12:51:11 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 12:51:11 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       88%|████████▊ | 88/100 [12:22:02<2:26:50, 734.19s/it] 89%|████████▉ | 89/100 [12:22:02<1:47:41, 587.40s/it]2022-07-05 12:55:16 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 12:55:16 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       89%|████████▉ | 89/100 [12:27:58<1:47:41, 587.40s/it] 90%|█████████ | 90/100 [12:27:58<1:26:18, 517.84s/it]2022-07-05 13:01:12 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 13:01:12 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       90%|█████████ | 90/100 [12:35:03<1:26:18, 517.84s/it] 91%|█████████ | 91/100 [12:35:03<1:13:31, 490.22s/it]2022-07-05 13:08:17 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 13:08:17 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       91%|█████████ | 91/100 [12:47:48<1:13:31, 490.22s/it] 92%|█████████▏| 92/100 [12:47:48<1:16:20, 572.59s/it]2022-07-05 13:21:02 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 13:21:02 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       92%|█████████▏| 92/100 [13:00:32<1:16:20, 572.59s/it] 93%|█████████▎| 93/100 [13:00:32<1:13:28, 629.83s/it]2022-07-05 13:33:46 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 13:33:46 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       93%|█████████▎| 93/100 [13:13:28<1:13:28, 629.83s/it] 94%|█████████▍| 94/100 [13:13:28<1:07:22, 673.78s/it]2022-07-05 13:46:42 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 13:46:42 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                       94%|█████████▍| 94/100 [13:26:10<1:07:22, 673.78s/it] 95%|█████████▌| 95/100 [13:26:10<58:21, 700.29s/it]  2022-07-05 13:59:24 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 13:59:24 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                     95%|█████████▌| 95/100 [13:38:47<58:21, 700.29s/it] 96%|█████████▌| 96/100 [13:38:47<47:49, 717.40s/it]2022-07-05 14:12:01 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 14:12:01 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                     96%|█████████▌| 96/100 [13:51:31<47:49, 717.40s/it] 97%|█████████▋| 97/100 [13:51:31<36:33, 731.26s/it]2022-07-05 14:24:45 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 14:24:45 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                     97%|█████████▋| 97/100 [14:04:14<36:33, 731.26s/it] 98%|█████████▊| 98/100 [14:04:14<24:41, 740.87s/it]2022-07-05 14:37:28 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 14:37:28 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                     98%|█████████▊| 98/100 [14:16:54<24:41, 740.87s/it] 99%|█████████▉| 99/100 [14:16:54<12:26, 746.64s/it]2022-07-05 14:50:08 darts.models.forecasting.torch_forecasting_model INFO: Train dataset contains 2031 samples.
+2022-07-05 14:50:08 darts.models.forecasting.torch_forecasting_model INFO: Time series values are 32-bits; casting model to float32.
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+                                                     99%|█████████▉| 99/100 [14:24:58<12:26, 746.64s/it]100%|██████████| 100/100 [14:24:58<00:00, 667.82s/it]100%|██████████| 100/100 [14:24:58<00:00, 518.99s/it]
