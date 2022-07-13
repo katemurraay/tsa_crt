@@ -22,9 +22,11 @@ class TFT(ModelInterfaceDL):
                 'num_lstm_layers' : 4,
                 'num_attention_heads': 5,
                 'dropout_rate': 0.05,
-                'batch_size': 32,
+                'batch_size': 128,
                 'output_chunk_length': 1,
                 'patience': 50,
+                'lr': 1e-4,
+                'optimizer': 'adam',
         }
         self.parameter_list=  {
                 "input_chunk_length":[30], 
@@ -32,13 +34,15 @@ class TFT(ModelInterfaceDL):
                 "lstm_layers":[2, 3, 4, 5], 
                 "num_attention_heads":[2, 3, 5, 7], 
                 "dropout":[0.0, 0.05, 0.1], 
-                "batch_size":[32, 64], 
+                "batch_size":[256], 
                 'output_chunk_length': [1],
-                "n_epochs":[1000]
+                "n_epochs":[1000],
+                 "lr": [1e-3, 1e-4, 1e-5],
+                'optimizer': ['adam', 'nadam', 'rmsprop'],
                 }
         self.pl_trainer_kwargs = self.__set_pl_trainer_kwargs()
         self.RAND = 42           
-        self.N_JOBS = 3
+
         
 
     def __set_pl_trainer_kwargs(self):
@@ -62,25 +66,37 @@ class TFT(ModelInterfaceDL):
                     batch_size= self.p['batch_size'],
                     n_epochs= self.p['epochs'],
                     likelihood=None, 
-                    loss_fn= torch.nn.MSELoss(reduction='mean'),
+                    loss_fn= torch.nn.MSELoss(),
+                    optimizer_kwargs={"lr": self.p['lr']}, 
                     torch_metrics = MeanSquaredError(squared=True),
                     random_state= self.RAND, 
                     force_reset=True,
                     pl_trainer_kwargs = self.pl_trainer_kwargs,
+                    lr_scheduler_cls = torch.optim.lr_scheduler.ReduceLROnPlateau,
                     )
+        if self.p['optimizer'] =='rmsprop':
+            opt = torch.optim.RMSprop
+        elif self.p['optimizer'] =='nadam':
+            opt = torch.optim.NAdam
+        else:
+            opt = torch.optim.Adam
+        
+        self.temp_model.optimizer_cls = opt
         
     def fit(self):
         my_stopper = EarlyStopping(
                                     monitor="val_loss",
                                     patience=self.p['patience'],
-                                    min_delta=0.00,
                                     verbose= 0,
                                     mode='min',
                                 )
         checkpoint = custom_pytorch.CustomPytorchModelCheckpoint(self)
         self.pl_trainer_kwargs["callbacks"] = [my_stopper, checkpoint]
         self.temp_model.trainer_params =self.pl_trainer_kwargs
-        self.temp_model.fit(self.ds.ts_train, future_covariates=self.ds.tcov,  val_series =self.ds.ts_val, val_future_covariates=self.ds.tcov, verbose= 1)   
+        #self.temp_model.fit(self.ds.ts_train, past_covariates = self.ds.p_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_past_covariates=self.ds.p_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
+        self.temp_model.fit(self.ds.ts_train,  future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val,  val_future_covariates=self.ds.f_cov, verbose= 1)   
+        
+        self.model = checkpoint.dnn.model
     def fit_predict(self, X):
         my_stopper = EarlyStopping(
                                     monitor="val_loss",
@@ -92,7 +108,8 @@ class TFT(ModelInterfaceDL):
         checkpoint = custom_pytorch.CustomPytorchModelCheckpoint(self)
         self.pl_trainer_kwargs["callbacks"] = [my_stopper, checkpoint]
         self.temp_model.trainer_params =self.pl_trainer_kwargs
-        self.temp_model.fit(self.ds.ts_train, future_covariates=self.ds.tcov,  val_series =self.ds.ts_val, val_future_covariates=self.ds.tcov, verbose = 1) 
+        self.temp_model.fit(self.ds.ts_train, past_covariates = self.ds.p_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_past_covariates=self.ds.p_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
+        #self.temp_model.fit(self.ds.ts_train, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_future_covariates=self.ds.f_cov, verbose= 1)   
         predictions = self.temp_model.predict(n=len(X))
         return predictions
         
@@ -115,7 +132,8 @@ class TFT(ModelInterfaceDL):
         dropout = trial.suggest_categorical('dropout_rate', self.parameter_list['dropout'])
         batch_size = trial.suggest_categorical('batch_size', self.parameter_list['batch_size'])
         epochs = trial.suggest_categorical('epochs', self.parameter_list['n_epochs'])
-        
+        learning_rate = trial.suggest_categorical('learning_rate', self.parameter_list['lr'])
+        optimizer = trial.suggest_categorical('optimizer', self.parameter_list['optimizer'])
         print('Trial Params: {}'.format(trial.params))
         self.pl_trainer_kwargs = self.__set_pl_trainer_kwargs()
         self.temp_model = TFTModel(input_chunk_length=input_chunk,
@@ -128,11 +146,20 @@ class TFT(ModelInterfaceDL):
                     n_epochs= epochs,
                     likelihood=None, 
                     loss_fn= torch.nn.MSELoss(),
+                    optimizer_kwargs={"lr": learning_rate}, 
                     torch_metrics = MeanSquaredError(),
                     random_state= self.RAND, 
                     force_reset=True,
                     pl_trainer_kwargs = self.pl_trainer_kwargs,
                     )
+        if optimizer =='rmsprop':
+            opt = torch.optim.RMSprop
+        elif optimizer =='nadam':
+            opt = torch.optim.NAdam
+        else:
+            opt = torch.optim.Adam
+        
+        self.temp_model.optimizer_cls = opt
         preds = self.fit_predict(self.ds.ts_val)
         return mse(self.ds.ts_val, preds)
  
