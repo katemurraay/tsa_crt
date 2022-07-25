@@ -80,3 +80,18 @@ def save_metrics_csv(mses, maes, rmse, mape, filename):
            'MAPE': mape}
     df = pd.DataFrame(dct)
     df.to_csv(PATH)
+
+def save_ensemble_prediction_csv(models, cluster, target, filename):
+    el_df = pd.DataFrame(columns= models)
+    for m in models: 
+            path = 'res/output_' + filename + '.csv'
+            df = pd.read_csv(path)
+            labels = df['labels'].values
+            target_col = 'avg' + target
+            target_v = df[target_col].values
+            el_df[m] = target_v
+    el_df['ACTUAL'] = labels
+    el_df['PREDICTED'] = el_df[models].mean(axis=1)
+    file_name = 'res/ensemble_learning-' + cluster + '.csv'
+    el_df.to_csv(file_name)
+    return el_df
