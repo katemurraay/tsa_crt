@@ -81,11 +81,14 @@ def save_metrics_csv(mses, maes, rmse, mape, filename):
     df = pd.DataFrame(dct)
     df.to_csv(PATH)
 
-def save_ensemble_prediction_csv(models, cluster, target, filename):
+def save_ensemble_prediction_csv(models, cluster, target, filename, train = False):
     el_df = pd.DataFrame(columns= models)
+    PATH = 'res/output_'
+    if train:
+        PATH = 'res/output_train-' 
     for m in models: 
-            path = 'res/output_' + filename + '.csv'
-            df = pd.read_csv(path)
+            m_path = PATH +  m.upper() + '-' +filename + '.csv'
+            df = pd.read_csv(m_path)
             labels = df['labels'].values
             target_col = 'avg' + target
             target_v = df[target_col].values
