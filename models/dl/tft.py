@@ -10,24 +10,25 @@ from models.dl.model_interface_dl import ModelInterfaceDL
 from torchmetrics import MeanSquaredError
 from darts.metrics import mse
 from util import custom_pytorch
-import warnings
-warnings.filterwarnings("ignore")
+
 
 class TFT(ModelInterfaceDL):
     def __init__(self, name):
         super().__init__(name)
-        self.p ={ 'epochs': 500, 
+        self.p ={
+                'epochs': 200, 
                 'input_chunk_length': 30,
                 'hidden_layer_dim': 128,
-                'num_lstm_layers' : 4,
+                'num_lstm_layers' : 5,
                 'num_attention_heads': 5,
                 'dropout_rate': 0.05,
-                'batch_size': 128,
-                'output_chunk_length': 1,
-                'patience': 50,
-                'lr': 1e-4,
+                'batch_size': 256,
+                 'output_chunk_length': 1,
+                 'patience': 50,
+                 'lr': 1e-3,
                 'optimizer': 'adam',
-        }
+                    }
+                
         self.parameter_list=  {
                 "input_chunk_length":[30], 
                 "hidden_size":[32, 64, 128], 
@@ -41,7 +42,7 @@ class TFT(ModelInterfaceDL):
                 'optimizer': ['adam', 'nadam', 'rmsprop'],
                 }
         self.pl_trainer_kwargs = self.__set_pl_trainer_kwargs()
-        self.RAND = 42           
+        self.RAND =43     
 
         
 
@@ -56,6 +57,7 @@ class TFT(ModelInterfaceDL):
         else:
             pl_trainer_kwargs["accelerator"]= "cpu"
         return pl_trainer_kwargs
+   
     def create_model(self):
         self.temp_model = TFTModel(input_chunk_length=self.p['input_chunk_length'],
                     output_chunk_length= self.p['output_chunk_length'],
@@ -69,10 +71,10 @@ class TFT(ModelInterfaceDL):
                     loss_fn= torch.nn.MSELoss(),
                     optimizer_kwargs={"lr": self.p['lr']}, 
                     torch_metrics = MeanSquaredError(squared=True),
-                    random_state= self.RAND, 
-                    force_reset=True,
+                    random_state= self.RAND, #controls randomness of weight initialisation
+                    force_reset= True,
                     pl_trainer_kwargs = self.pl_trainer_kwargs,
-                    lr_scheduler_cls = torch.optim.lr_scheduler.ReduceLROnPlateau,
+                    #add_relative_index= True,
                     )
         if self.p['optimizer'] =='rmsprop':
             opt = torch.optim.RMSprop
@@ -82,6 +84,7 @@ class TFT(ModelInterfaceDL):
             opt = torch.optim.Adam
         
         self.temp_model.optimizer_cls = opt
+        self.temp_model.lr_scheduler_cls = torch.optim.lr_scheduler.ReduceLROnPlateau
         
     def fit(self):
         my_stopper = EarlyStopping(
@@ -93,9 +96,9 @@ class TFT(ModelInterfaceDL):
         checkpoint = custom_pytorch.CustomPytorchModelCheckpoint(self)
         self.pl_trainer_kwargs["callbacks"] = [my_stopper, checkpoint]
         self.temp_model.trainer_params =self.pl_trainer_kwargs
-        #self.temp_model.fit(self.ds.ts_train, past_covariates = self.ds.p_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_past_covariates=self.ds.p_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
-        self.temp_model.fit(self.ds.ts_train,  future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val,  val_future_covariates=self.ds.f_cov, verbose= 1)   
-        
+        #self.temp_model.fit(self.ds.ts_train, val_series = self.ds.ts_val, verbose= 1)
+        self.temp_model.fit(self.ds.ts_train, past_covariates = self.ds.p_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_past_covariates=self.ds.p_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
+        #self.temp_model.fit(self.ds.ts_train,  future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val,  val_future_covariates=self.ds.f_cov, verbose= 1)   
         self.model = checkpoint.dnn.model
     def fit_predict(self, X):
         my_stopper = EarlyStopping(
@@ -108,8 +111,8 @@ class TFT(ModelInterfaceDL):
         checkpoint = custom_pytorch.CustomPytorchModelCheckpoint(self)
         self.pl_trainer_kwargs["callbacks"] = [my_stopper, checkpoint]
         self.temp_model.trainer_params =self.pl_trainer_kwargs
-        self.temp_model.fit(self.ds.ts_train, past_covariates = self.ds.p_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_past_covariates=self.ds.p_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
-        #self.temp_model.fit(self.ds.ts_train, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_future_covariates=self.ds.f_cov, verbose= 1)   
+        #self.temp_model.fit(self.ds.ts_train, past_covariates = self.ds.p_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_past_covariates=self.ds.p_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
+        self.temp_model.fit(self.ds.ts_train,  future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val,  val_future_covariates=self.ds.f_cov, verbose= 1)   
         predictions = self.temp_model.predict(n=len(X))
         return predictions
         
@@ -127,12 +130,12 @@ class TFT(ModelInterfaceDL):
         input_chunk = trial.suggest_categorical('input_chunk_length', self.parameter_list['input_chunk_length'])
         output_chunk =trial.suggest_categorical('output_chunk_length', self.parameter_list['output_chunk_length'])
         hidden_size = trial.suggest_categorical('hidden_size', self.parameter_list['hidden_size'])
-        attention_heads = trial.suggest_categorical('num_attentions_heads',self.parameter_list['num_attention_heads'])
         lstm_layers = trial.suggest_categorical('lstm_layers', self.parameter_list['lstm_layers'])
-        dropout = trial.suggest_categorical('dropout_rate', self.parameter_list['dropout'])
+        attention_heads = trial.suggest_categorical('num_attention_heads',self.parameter_list['num_attention_heads'])
+        dropout = trial.suggest_categorical('dropout', self.parameter_list['dropout'])
         batch_size = trial.suggest_categorical('batch_size', self.parameter_list['batch_size'])
-        epochs = trial.suggest_categorical('epochs', self.parameter_list['n_epochs'])
-        learning_rate = trial.suggest_categorical('learning_rate', self.parameter_list['lr'])
+        epochs = trial.suggest_categorical('n_epochs', self.parameter_list['n_epochs'])
+        learning_rate = trial.suggest_categorical('lr', self.parameter_list['lr'])
         optimizer = trial.suggest_categorical('optimizer', self.parameter_list['optimizer'])
         print('Trial Params: {}'.format(trial.params))
         self.pl_trainer_kwargs = self.__set_pl_trainer_kwargs()
@@ -160,16 +163,18 @@ class TFT(ModelInterfaceDL):
             opt = torch.optim.Adam
         
         self.temp_model.optimizer_cls = opt
+        self.temp_model.lr_scheduler_cls = torch.optim.lr_scheduler.ReduceLROnPlateau
+       
         preds = self.fit_predict(self.ds.ts_val)
         return mse(self.ds.ts_val, preds)
  
     def hyperparametrization(self):
-        study = optuna.create_study(study_name="TFT_Optimization", direction="minimize", sampler= optuna.samplers.TPESampler())
-        study.optimize(self.__optuna_objective, n_trials=100, show_progress_bar=True)
+        study = optuna.create_study(study_name="TFT_Optimization", direction="minimize", sampler= optuna.samplers.GridSampler(self.parameter_list))
+        study.optimize(self.__optuna_objective, n_trials=200, show_progress_bar=True)
         print('\nBEST PARAMS: \n{}'.format(study.best_params))
         print('\nBEST VALUE:\n{}'.format(study.best_value))
         df = study.trials_dataframe()
-        filename = 'talos/' + self.name +'.csv'
+        filename = 'talos/' + self.name +'_2.csv'
         df.to_csv(filename)
     
     def save_model(self):
@@ -183,7 +188,13 @@ class TFT(ModelInterfaceDL):
     def load_model(self):
         path = (self.model_path + self.name + str(self.count_save).zfill(4) + '_model.pth.tar')
         self.temp_model = self.model.load_model(path)
-       
+    
+    def evaluate(self):
+        """
+        Evaluate the model on the training set ds.X_train
+        :return: np.array: predictions: predictions of the trained model on the ds.X_train set
+        """
+        return self.predict(self.ds.ts_train)
 
     
    
