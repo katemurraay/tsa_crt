@@ -113,15 +113,12 @@ class BinanceDataset(DatasetInterface):
         df_combined['timestamp'] =  pd.to_datetime(df_combined['date']).view(int) // 10 ** 9
         self.save_to_csv(df= df_combined)
     
-    def inverse_transform_predictions(self, preds, windowed = False, X = 0, method="minmax", scale_range=(0, 1)):
+    def inverse_transform_predictions(self, preds, X = 0, method="minmax", scale_range=(0, 1)):
      
         if isinstance(preds, (np.ndarray)):
 
             for i in range(self.channels):
-                if windowed: 
-                    inverse_preds[:, :, i] = self.X_scalers[i].inverse_transform(preds[:,:, i])
-                else: 
-                    inverse_preds = self.y_scalers[i].inverse_transform(preds)
+                inverse_preds = self.y_scalers[i].inverse_transform(preds)
         else: 
             if method =='minmax':
                 scale_method = MinMaxScaler(feature_range=scale_range)
