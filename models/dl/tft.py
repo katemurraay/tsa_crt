@@ -27,6 +27,7 @@ class TFT(ModelInterfaceDL):
                  'patience': 50,
                  'lr': 1e-3,
                 'optimizer': 'adam',
+                'feed_forward': 'GatedResidualNetwork'
                     }
                 
         self.parameter_list=  {
@@ -40,6 +41,7 @@ class TFT(ModelInterfaceDL):
                 "n_epochs":[1000],
                  "lr": [1e-3, 1e-4, 1e-5],
                 'optimizer': ['adam', 'nadam', 'rmsprop'],
+                'feed_forward': ['GatedResidualNetwork', 'GLU', 'Bilinear', 'ReGLU', 'GEGLU', 'SwiGLU', 'ReLU', 'GELU'],
                 }
         self.pl_trainer_kwargs = self.__set_pl_trainer_kwargs()
         self.RAND =43     
@@ -69,10 +71,11 @@ class TFT(ModelInterfaceDL):
                     n_epochs= self.p['epochs'],
                     likelihood=None, 
                     loss_fn= torch.nn.MSELoss(),
-                    optimizer_kwargs={"lr": self.p['lr']}, 
-                    torch_metrics = MeanSquaredError(squared=True),
+                    full_attention=False,
+                    torch_metrics = MeanSquaredError(),
                     random_state= self.RAND, #controls randomness of weight initialisation
                     force_reset= True,
+                    feed_forward=self.p['feed_forward'],
                     pl_trainer_kwargs = self.pl_trainer_kwargs,
                     #add_relative_index= True,
                     )
@@ -84,6 +87,7 @@ class TFT(ModelInterfaceDL):
             opt = torch.optim.Adam
         
         self.temp_model.optimizer_cls = opt
+        self.temp_model.optimizer_kwargs={"lr": self.p['lr']}
         self.temp_model.lr_scheduler_cls = torch.optim.lr_scheduler.ReduceLROnPlateau
         
     def fit(self):
@@ -97,8 +101,10 @@ class TFT(ModelInterfaceDL):
         self.pl_trainer_kwargs["callbacks"] = [my_stopper, checkpoint]
         self.temp_model.trainer_params =self.pl_trainer_kwargs
         #self.temp_model.fit(self.ds.ts_train, val_series = self.ds.ts_val, verbose= 1)
-        self.temp_model.fit(self.ds.ts_train, past_covariates = self.ds.p_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_past_covariates=self.ds.p_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
-        #self.temp_model.fit(self.ds.ts_train,  future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val,  val_future_covariates=self.ds.f_cov, verbose= 1)   
+        #self.temp_model.fit(self.ds.ts_train, past_covariates = self.ds.p_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_past_covariates=self.ds.p_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
+        #self.temp_model.fit(self.ds.ts_train,  past_covariates = self.ds.f_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val,  val_past_covariates=self.ds.f_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
+        self.temp_model.fit(self.ds.ts_train,  future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_future_covariates=self.ds.f_cov, verbose= 1)   
+        
         self.model = checkpoint.dnn.model
     def fit_predict(self, X):
         my_stopper = EarlyStopping(
@@ -137,6 +143,7 @@ class TFT(ModelInterfaceDL):
         epochs = trial.suggest_categorical('n_epochs', self.parameter_list['n_epochs'])
         learning_rate = trial.suggest_categorical('lr', self.parameter_list['lr'])
         optimizer = trial.suggest_categorical('optimizer', self.parameter_list['optimizer'])
+        feed_forward  = trial.suggest_categorical('feed_forward', self.parameter_list['feed_forward'])
         print('Trial Params: {}'.format(trial.params))
         self.pl_trainer_kwargs = self.__set_pl_trainer_kwargs()
         self.temp_model = TFTModel(input_chunk_length=input_chunk,
@@ -149,11 +156,12 @@ class TFT(ModelInterfaceDL):
                     n_epochs= epochs,
                     likelihood=None, 
                     loss_fn= torch.nn.MSELoss(),
-                    optimizer_kwargs={"lr": learning_rate}, 
+                   # optimizer_kwargs={"lr": learning_rate}, 
                     torch_metrics = MeanSquaredError(),
                     random_state= self.RAND, 
                     force_reset=True,
                     pl_trainer_kwargs = self.pl_trainer_kwargs,
+                    feed_forward= feed_forward
                     )
         if optimizer =='rmsprop':
             opt = torch.optim.RMSprop
@@ -163,6 +171,7 @@ class TFT(ModelInterfaceDL):
             opt = torch.optim.Adam
         
         self.temp_model.optimizer_cls = opt
+        self.temp_model.optimizer_kwargs={"lr": learning_rate}
         self.temp_model.lr_scheduler_cls = torch.optim.lr_scheduler.ReduceLROnPlateau
        
         preds = self.fit_predict(self.ds.ts_val)
@@ -170,7 +179,7 @@ class TFT(ModelInterfaceDL):
  
     def hyperparametrization(self):
         study = optuna.create_study(study_name="TFT_Optimization", direction="minimize", sampler= optuna.samplers.GridSampler(self.parameter_list))
-        study.optimize(self.__optuna_objective, n_trials=200, show_progress_bar=True)
+        study.optimize(self.__optuna_objective, n_trials=300, show_progress_bar=True)
         print('\nBEST PARAMS: \n{}'.format(study.best_params))
         print('\nBEST VALUE:\n{}'.format(study.best_value))
         df = study.trials_dataframe()

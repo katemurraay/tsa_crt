@@ -33,7 +33,6 @@ class ModelInterfaceDL(ModelInterface):
         """
         save_check = custom_keras.CustomSaveCheckpoint(self)
         es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=self.p['patience'])
-
         history = self.temp_model.fit(self.ds.X_train, self.ds.y_train, epochs=self.p['epochs'],
                                       batch_size=self.p['batch_size'],
                                       validation_split=0.2, verbose=2, callbacks=[es, save_check])

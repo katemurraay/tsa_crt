@@ -9,7 +9,9 @@ import torch
 import pandas as pd
 import pickle
 import tensorflow as tf
+
 from keras.utils.vis_utils import plot_model
+from api_key_binance import API_SECURITY, API_KEY
 from models.dl.hbnn import HBNN
 from models.dl.lstm import LSTM
 from models.dl.lstmd import LSTMD
@@ -33,8 +35,8 @@ from models.dl.tft import TFT
 
 
 
-apiKey = ""
-apiSecurity = ""
+apiKey = API_KEY
+apiSecurity = API_SECURITY
 
 
 def dataset_test(wins, horizons, resources, clusters):
@@ -232,7 +234,7 @@ def total_test(wins, horizons, resources, clusters, model_name, scaling, output 
                             'weights': 'uniform',
                             'algorithm': 'auto',
                             'p': 1,
-                            'sliding_window': 288
+                            
                             }
                     elif model_name == 'RF':
                         p = {'n_estimators': 500,
@@ -514,24 +516,25 @@ def tft_test(wins, horizons, resources, clusters, model_name, scaling, output = 
                     if output > 0:
                         n = len(ds.ts_test) - output
                         labels = labels[n:]
-                    print(labels)
+                    
                     if model_name =='TFT':
                         model = TFT(experiment_name)
                         model.p = {
                             'epochs': 200, 
                             'input_chunk_length': 30,
                             'hidden_layer_dim': 64,
-                            'num_lstm_layers' : 5,
-                            'num_attention_heads': 2,
+                            'num_lstm_layers' : 3,
+                            'num_attention_heads': 7,
                             'dropout_rate': 0.0,
                             'batch_size': 256,
                             'output_chunk_length': 1,
                             'patience': 50,
-                            'lr': 1e-3,
+                            'lr': 1e-5,
                             'optimizer': 'adam',
+                            'feed_forward': 'GatedResidualNetwork',
                     
                     }
-                
+                    print('PARAMS: ', model.p)
                     model.create_model()
                     model.ds = ds
                     model.fit()
@@ -662,7 +665,7 @@ def tft_hyperparam_test(wins, horizons, resources, clusters, model_name, scaling
 
                     ds = dataset.DatasetInterface(filename='crypto_task_' + c + '.csv', input_window=win, output_window=1,
                                                 horizon=h, training_features=['close'],
-                                                target_name=['close'], train_split_factor=0.8)
+                                                target_name=['close'], train_split_factor=0.9)
 
                     ds.dataset_creation()
                     ds.dataset_normalization(scaling)
@@ -670,15 +673,16 @@ def tft_hyperparam_test(wins, horizons, resources, clusters, model_name, scaling
                     model = TFT(experiment_name)
                     model.parameter_list = {
                                         "input_chunk_length":[30], 
-                                        "hidden_size":[32, 64, 128], 
-                                        "lstm_layers":[2, 3, 4, 5], 
-                                        "num_attention_heads":[2, 3, 5, 7], 
+                                        "hidden_size":[16, 32, 64, 128], 
+                                        "lstm_layers":[1, 2, 3, 4], 
+                                        "num_attention_heads":[4, 5, 6, 7], 
                                         "dropout":[0.0, 0.05, 0.1], 
                                         "batch_size":[256], 
                                         'output_chunk_length': [1],
                                         "n_epochs":[1000],
                                         "lr": [1e-3, 1e-4, 1e-5],
-                                        'optimizer': ['adam'],          
+                                        'optimizer': ['adam'],      
+                                        "feed_forward": ['GatedResidualNetwork']  , 
                                             }
                     model.ds = ds
                     model.create_model()
@@ -1008,6 +1012,340 @@ def detrended_data_tft_test(wins, horizons, resources, clusters, model_name, sca
 
                     save_results.save_params_csv(model.p, model.name)"""
 
+def first_diff_dataset_test(wins, horizons, resources, clusters, model_name, scaling):
+       for win in wins:
+        for res in resources:
+            for h in horizons:
+                for c in clusters:
+                    mses, maes = [], []
+                    #experiment_name = model_name + '-' + res + '-' + c + '-w' + str(win) + '-h' + str(h)
+
+                    # Data creation and load
+                   
+                    ds = dataset_binance.BinanceDataset(filename='crypto_task_' + c + '.csv', input_window=win, output_window=1,
+                                                horizon=h, training_features=['close'],
+                                                target_name=['close'], train_split_factor=0.9, apiKey= apiKey, apiSecurity= apiSecurity)
+                    df, diff_df = ds.differenced_dataset()
+                    ds.df = diff_df
+                    print(ds.df)
+                    ds.dataset_creation(detrended=True)
+                    ds.dataset_normalization(['minmax'])  # , 'standard'])
+                    ds.data_summary()
+                    #invert scaling
+                    #invert ts
+                    labels = ds.ts_test.pd_dataframe()
+                    labels = np.array(labels.values).reshape(-1, 1)
+                    ts_train, ts_val, ts_test, strain_cov, cov, past_cov, train_past_cov, ts_ttrain =ds.ts_dataset(df=df)
+                    preds = ds.inverse_transform_predictions(preds= labels, method=scaling[0], X= ts_ttrain)
+                    invert_preds = ds.inverse_differenced_dataset(df=df, diff=preds)
+                    print(invert_preds)
+                    #invert np arrays
+                    np_labels = ds.y_test_array
+                    np_labels = np.array(np_labels).reshape(-1, 1)
+                    np_preds =  ds.inverse_transform_predictions(preds = np_labels)
+                    invert_np_preds = ds.inverse_differenced_dataset(df=df, diff = np_preds)
+                    print(invert_np_preds)
+def first_diff_tft_test(wins, horizons, resources, clusters, model_name, scaling):
+    for win in wins:
+        for res in resources:
+            for h in horizons:
+                for c in clusters:
+                    mses, maes, rmses, mapes = [], [], [], []
+                    experiment_name = model_name + '-' + res + '-' + c + '-w' + str(win) + '-h' + str(h)
+                    ds = dataset_binance.BinanceDataset(filename='crypto_task_' + c + '.csv', input_window=win, output_window=1,
+                                                                horizon=h, training_features=['close'],
+                                                                target_name=['close'], train_split_factor=0.9, apiKey= apiKey, apiSecurity= apiSecurity)
+                    df, diff_df = ds.differenced_dataset()
+                    ds.df = diff_df
+                                  
+                    ds.dataset_creation(detrended=True)
+                    ds.dataset_normalization(scaling)  # , 'standard'])
+                    ds.data_summary()
+                    if model_name =='TFT':
+                        model = TFT(experiment_name)
+                        model.p = {
+                                            'epochs': 200, 
+                                            'input_chunk_length': 30,
+                                            'hidden_layer_dim': 64,
+                                            'num_lstm_layers' : 3,
+                                            'num_attention_heads': 7,
+                                            'dropout_rate': 0.0,
+                                            'batch_size': 256,
+                                            'output_chunk_length': 1,
+                                            'patience': 50,
+                                            'lr': 1e-5,
+                                            'optimizer': 'adam',
+                                            'feed_forward': 'GatedResidualNetwork',
+                                    
+                                    }
+                        print('PARAMS: ', model.p)
+                        model.create_model()
+                        model.ds = ds
+                        model.fit()
+                        
+                        to_predict= ds.ts_test.pd_dataframe()
+                        to_predict= np.array(to_predict.values).reshape(-1, 1)
+                        ts_train, ts_val, ts_test, strain_cov, cov, past_cov, train_past_cov, ts_ttrain =ds.ts_dataset(df=df)            
+                                    
+                                    
+                                        
+                                    
+                        
+                        preds = model.predict(to_predict)
+                        preds = preds.pd_dataframe()
+                        preds = np.array(preds.values).reshape(-1, 1)
+                        
+                        preds = ds.inverse_transform_predictions(preds= preds, method=scaling[0], X= ts_ttrain)
+                        preds= ds.inverse_differenced_dataset(df=df, diff=preds)
+
+                                    
+                        labels = ts_test.pd_dataframe()
+                        labels = np.array(labels.values).reshape(-1, 1)
+                        print("MSE", mean_squared_error(labels, preds))
+                        print("MAE", mean_absolute_error(labels, preds))
+                        print("MAPE", mean_absolute_percentage_error(labels, preds))
+                        print("RMSE", np.sqrt(mean_squared_error(labels, preds)))
+                        rmses.append(np.sqrt(mean_squared_error(labels, preds)))
+                        mapes.append(mean_absolute_percentage_error(labels, preds))
+                        mses.append(mean_squared_error(labels, preds))
+                        maes.append(mean_absolute_error(labels, preds))
+
+                        save_results.save_metrics_csv(mses=mses, maes =  maes,rmse = rmses, mape = mapes, filename = experiment_name)
+                        save_results.save_output_csv(preds, labels, res, model.name,
+                                                    bivariate=len(ds.target_name) > 1)
+def first_diff_total_test(wins, horizons, resources, clusters, model_name, scaling, output = 0):
+     for win in wins:
+        for res in resources:
+            for h in horizons:
+                for c in clusters:
+                    mses, maes, rmses, mapes = [], [], [], []
+                    experiment_name = model_name + '-' + res + '-' + c + '-w' + str(win) + '-h' + str(h)
+
+                    # Data creation and load
+                    # ds = dataset.DatasetInterface(filename='res_task_' + c + '.csv', input_window=win, output_window=1,
+                    #                               horizon=h, training_features=['avgcpu', 'time', 'avgmem'],
+                    #                               target_name=['avg' + res, 'avgmem'], train_split_factor=0.8)
+
+                    ds = dataset_binance.BinanceDataset(filename='crypto_task_' + c + '.csv', input_window=win, output_window=1,
+                                                horizon=h, training_features=['close'],
+                                                target_name=['close'], train_split_factor=0.9, apiKey= apiKey, apiSecurity= apiSecurity)
+                    df, diff_df = ds.differenced_dataset()
+                    ds.df = diff_df
+                    ds.dataset_creation(detrended=True)
+                     
+                    ds.dataset_normalization(scaling)
+                   
+
+                    ds.data_summary()
+                    parameters = pd.read_csv("hyperparams/p_hbnn-" + 'a' + ".csv").iloc[0]
+
+                    files = sorted(
+                        glob.glob("saved_models/talos-HBNN-" + c + "-cpu-w" + str(win) + "-h" + str(h) + "*_weights.tf.i*"))
+
+                    dense_act = 'relu'
+                    if 'relu' in parameters['first_dense_activation']:
+                        dense_act = 'relu'
+                    elif 'tanh' in parameters['first_dense_activation']:
+                        dense_act = 'tanh'
+
+                    # HBNN
+                    
+                    if model_name == 'LSTM':
+                        p =  {'first_conv_dim': 64,
+                            'first_conv_activation': 'relu',
+                            'first_conv_kernel': 5,
+                             'first_lstm_dim': 75,
+                            'first_dense_dim': 16,
+                            'first_dense_activation':'relu',
+                            'batch_size': 256,
+                            'patience': 50,
+                            'epochs': 200,  
+                            'optimizer': 'adam',
+                            'lr':1E-4,
+                            'momentum': 0.9,
+                            'decay': 1E-3,
+                            }
+                    elif model_name == 'GRU':
+                       p = {'first_gru_dim': 75,
+                            'gru_activation': 'relu',
+                            'first_dense_dim': 100,
+                            'first_dense_activation': 'relu',
+                            'dense_kernel_init': 'he_normal',
+                            'batch_size': 256,
+                            'epochs': 200,
+                            'patience': 50,
+                            'optimizer': 'adam',
+                            'lr': 1E-3,
+                            'momentum': 0.9,
+                            'decay': 1E-3,
+                  }
+                    elif model_name =='TCN':
+                        p = {'conv_filter': 32,
+                            'conv_kernel': 16,
+                            'conv_activation': 'relu',
+                            'dropout_rate': 0.05,
+                            'dense_dim': 64,
+                            'dilation_rate': 8,
+                            'dense_activation': 'relu',
+                            'dense_kernel_init': 'he_normal',
+                            'batch_size': 256,
+                            'epochs': 200,
+                            'patience': 50,
+                            'optimizer': 'adam',
+                            'lr': 1E-4,
+                            'momentum': 0.9,
+                            'decay': 1E-4,
+                  }
+                    elif model_name =='HYBRID':
+                        p = {
+                            'lstm_dim_1': 75,
+                            'lstm_activation': 'relu',
+                            'dropout_rate_1': 0.05, 
+                            'lstm_dim_2':  50,
+                            'dense_dim_1':  32,
+                            'dense_activation': 'relu',
+                            'dense_kernel_init': 'he_normal',
+                            'gru_dim':50,
+                            'gru_activation':'relu',
+                            'dropout_rate_2':  0.0,
+                            'dense_dim_2':  64,
+                            'batch_size': 256,
+                            'epochs': 200,
+                            'patience': 50,
+                            'optimizer': 'adam',
+                            'lr': 1E-3,
+                            'momentum': 0.9,
+                            'decay': 1E-4,
+                  }
+                    # # ARIMA
+                    elif model_name == 'ARIMA':
+                        p = {'p': 1,
+                            'd': 0,
+                            'q': 2,
+                            'P': 2,
+                            'Q': 0,
+                            'D': 0,
+                            'S': 12,
+                            'loop': 0,
+                            'horizon': 0,
+                            }
+            
+                    elif model_name == 'GARCH':
+                        # # GARCH
+                        p = {'p': 2,
+                            'q': 1,
+                            'loop': 0,
+                            'horizon': 2,
+                            'mean': 'LS',
+                            }
+                    elif model_name == 'SVR':
+                        # # SVR
+                        p = {'kernel': 'poly',
+                            'degree': 2,
+                            'gamma': 'auto',
+                            'tol': 0.001,
+                            'C': 10,
+                            }
+                    elif model_name =="KNN":
+                        p = {'n_neighbors': 2,
+                            'weights': 'uniform',
+                            'algorithm': 'auto',
+                            'p': 1,
+                            
+                            }
+                    elif model_name == 'RF':
+                        p = {'n_estimators': 500,
+                            'criterion': "mae",
+                            'max_depth': 10,
+                            'max_features': "log2",
+                            'bootstrap': True,
+                            }
+
+                
+                    print("RESOURCE:", res, "CLUSTER:", c, "HORIZON:", h, "WIN:", win)
+                    if model_name == 'HBNN':
+                        model = HBNN(experiment_name)
+                    elif model_name == 'LSTM':
+                        model = LSTM(experiment_name)
+                    elif model_name == 'LSTMD':
+                        model = LSTMD(experiment_name)
+                    elif model_name == 'ARIMA':
+                        model = ARIMA(experiment_name)
+                        #model.sliding_window = win
+                    elif model_name == 'GARCH':
+                        model = GARCH(experiment_name)
+                    elif model_name == 'SVR':
+                        model = SVR(experiment_name)
+                    elif model_name == 'RF':
+                        model = RF(experiment_name)
+                       
+                    elif model_name == 'KNN':
+                        model = KNN(experiment_name)
+                    elif model_name == 'HYBRID':
+                        model = LSTM_GRU(experiment_name)
+                    elif model_name == 'GRU':
+                        model = GRU(experiment_name)
+                    elif model_name == 'TCN':
+                        model = TCN(experiment_name)    
+                    model.ds = ds
+                    model.p = p
+                    model.create_model()
+                    
+                    model.fit()
+                    print("Training complete")
+                    
+                    if output> 0:
+                        n = len(ds.X_test_array) - output
+                        y= len(ds.y_test_array) - output
+                        to_predict = ds.X_test_array[n:]
+                    else:
+                        to_predict = ds.X_test
+                        n = 0
+                        y = 0
+                    
+                    if model_name == 'LSTM' or model_name == 'SVR' or model_name == 'KNN' or model_name == 'RF' or model_name == 'GRU' or model_name == 'HYBRID' or model_name == 'TCN':
+                        train_mean = model.evaluate()
+                        preds = model.predict(to_predict)
+                        preds = np.array(preds).reshape(-1, 1)
+                        np_preds =  ds.inverse_transform_predictions(preds = preds)
+                        preds = ds.inverse_differenced_dataset(df=df, diff = np_preds)
+                        
+                        ds.df = df
+                        ds.dataset_creation(detrended=True)
+                        if h > 0:
+                            preds = preds[:-h]
+
+                        if len(ds.target_name) <= 1:
+                            labels = ds.y_test_array[(h+y):(len(preds)+h+y)].reshape(-1, 1)
+                            train_labels = ds.y_train_array[h:len(train_mean) + h].reshape(-1, 1)
+                        else:
+                            labels = ds.y_test_array[h:len(preds)+h]
+                            train_labels = ds.y_train_array[h:len(train_mean) + h]
+                        print(labels)
+                        print("MSE", mean_squared_error(labels, preds))
+                        print("MAE", mean_absolute_error(labels, preds))
+                        print("MAPE", mean_absolute_percentage_error(labels, preds))
+                        print("RMSE", np.sqrt(mean_squared_error(labels, preds)))
+                        rmses.append(np.sqrt(mean_squared_error(labels, preds)))
+                        mapes.append(mean_absolute_percentage_error(labels, preds))
+                        mses.append(mean_squared_error(labels, preds))
+                        maes.append(mean_absolute_error(labels, preds))
+
+                        save_results.save_metrics_csv(mses=mses, maes =  maes,rmse = rmses, mape = mapes, filename = experiment_name)
+                        plot_training.plot_series(np.arange(0, len(preds)), labels, preds, label1="ground truth",
+                                                label2="prediction", title=model.name, bivariate=len(ds.target_name) > 1)
+
+                        if len(ds.target_name) <= 1:
+                            train_mean = np.array(train_mean).reshape(-1, 1)
+                            train_mean = np.concatenate(train_mean, axis=0)
+                            # train_labels = np.concatenate(ds.y_train.reshape(-1, 1), axis=0)
+                            if isinstance(model, ModelInterfaceDL):
+                                preds = np.array(preds).reshape(-1, 1)
+                                preds = np.concatenate(preds, axis=0)
+                                labels = np.concatenate(labels, axis=0)
+
+                        save_results.save_output_csv(preds, labels, 'avg' + res, model.name,
+                                                    bivariate=len(ds.target_name) > 1)
 def ensemble_test(models, clusters):
     maes, mses, rmses, mapes = [], [], [], []
 
@@ -1042,7 +1380,7 @@ stats_names = ['GARCH', 'ARIMA']
 #ensemble_test(models = dl_names, clusters = ['btc'])
 #for d in ml_names:  total_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = d, scaling=['minmax'], output=180)
 
-tft_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name ='TFT', scaling=['minmax'])
+#tft_test(wins = [30], horizons = [0], resources = ['close'], clusters =['btc','eth','ltc','xrp','xmr'], model_name ='TFT', scaling=['minmax'])
 
 #dataset_test(wins = [1], horizons = [0], resources = ['close'], clusters = ['ltc'])
 #hyper_param_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc'], model_name = 'ARIMA', scaling=['minmax'])
@@ -1055,3 +1393,6 @@ tft_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','
 #clist = ['crypto_task_btc.csv',   'crypto_task_xmr.csv']
 #tft_hyperparam_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc'], model_name ='TFT', scaling=['minmax'])
 #tft_combined_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['ltc','xrp'], model_name ='TFT', scaling=['minmax'], pred_crypto='ltc')
+#first_diff_dataset_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['ltc','xrp'], model_name ='TFT', scaling=['minmax'])
+#first_diff_tft_test(wins = [30], horizons = [0], resources = ['close'], clusters =  ['btc','eth','ltc','xrp','xmr'], model_name ='TFT', scaling=['minmax'])
+for d in ml_names: first_diff_total_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = d, scaling=['minmax'])

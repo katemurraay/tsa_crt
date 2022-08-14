@@ -7,7 +7,7 @@ import pickle
 from models.model_probabilistic import ModelProbabilistic
 import numpy as np
 import itertools
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 from math import sqrt
 import pandas as pd
 import statsmodels.tsa.arima as arima
@@ -60,7 +60,7 @@ class ARIMA(ModelProbabilistic):
         self.__history = list(self.ds.X_train_array)
         if self.sliding_window:
             self.__history = self.__history[-self.sliding_window:]
-        self.model = arima.model.ARIMA(self.ds.X_train_array, order=(self.p['p'], self.p['d'],
+        self.model = arima.model.ARIMA(self.__history, order=(self.p['p'], self.p['d'],
                                                                      self.p['q']),
                                        seasonal_order=(self.p['P'], self.p['D'],
                                                        self.p['Q'], self.p['S']))
@@ -99,7 +99,7 @@ class ARIMA(ModelProbabilistic):
         if self.model is None:
             print("ERROR: the model needs to be trained before predict")
             return
-        self.__history = list(self.ds.X_train_array)
+        self.__history = list(self.__history)
 
         if np.array_equal(X, self.ds.X_test):
             X = self.ds.X_test_array
@@ -136,8 +136,12 @@ class ARIMA(ModelProbabilistic):
         if self.verbose:
             mse = mean_squared_error(X, predicted_mean)
             mae = mean_absolute_error(X, predicted_mean)
-            print('MSE: %.3f' % mse)
-            print('MAE: %.3f' % mae)
+            mape = mean_absolute_percentage_error(X, predicted_mean)
+            rmse = np.sqrt(mean_squared_error(X, predicted_mean))
+            print('MSE: %.7f' % mse)
+            print('MAE: %.7f' % mae)
+            print('RMSE: %.7f' % rmse)
+            print('MAPE: %.7f' % mape)
         self.__history = list(self.__history)
         return predicted_mean, predicted_std
 
@@ -169,7 +173,7 @@ class ARIMA(ModelProbabilistic):
                 #     continue
 
         ans_df = pd.DataFrame(ans, columns=['pdq', 'pdqs', 'aic', 'rmse'])
-
+        
         if self.verbose:
             print(ans_df)
 
@@ -177,6 +181,7 @@ class ARIMA(ModelProbabilistic):
         self.p['p'], self.p['d'], self.p['q'] = best['pdq']
         self.p['P'], self.p['Q'], self.p['D'], self.p['S'] = \
             best['pdqs']
+        print(f"BEST PARAMS: \np: {self.p['p']}, q: {self.p['q']}, d: {self.p['d']}\nP: {self.p['P']}, Q: {self.p['Q']}, D: {self.p['D']}, S: {self.p['S']}")
         ans_df.to_csv("talos/" + self.name + ".csv")
 
     def __evaluate_arima_model(self, X, arima_order, arima_seasonal_order):

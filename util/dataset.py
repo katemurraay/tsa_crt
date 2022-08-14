@@ -334,7 +334,7 @@ class DatasetInterface:
                                 times=cov.time_index, 
                                 values=np.arange(len(ts) + l), 
                                 columns=["linear_increase"]))
-        cov.add_holidays(country_code="UK")
+        cov.add_holidays(country_code="US")
         cov = cov.astype(np.float32)
 
         #Test Split

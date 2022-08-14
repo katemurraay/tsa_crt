@@ -1,11 +1,17 @@
+
 from util.dataset import DatasetInterface
 import pandas as pd
+import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import tensorflow as tf
 from binance.client import Client
 from binance import BinanceSocketManager
 import pickle
-
+from darts import TimeSeries, concatenate
+from scipy import signal
+from statsmodels.tsa.seasonal import seasonal_decompose
+from darts.dataprocessing.transformers import Scaler
+from darts.utils.timeseries_generation import datetime_attribute_timeseries, random_walk_timeseries, gaussian_timeseries, autoregressive_timeseries
 
 class BinanceDataset(DatasetInterface):
     def __init__(self,  filename="", input_window=10, output_window=1, horizon=0, training_features=[], target_name=[],
@@ -85,6 +91,7 @@ class BinanceDataset(DatasetInterface):
     def build_crypto_dataset(self, name, year1, year2, sym, start_date, end_date):
         # get cryptocurrency csv file from github (downloaded from: Investing.com)
         path ='https://github.com/katemurraay/TFT_Data/blob/main/'+name +'_'+year1+'_'+ year2 +'.csv?raw=true'
+        print(path)
         df_git = pd.read_csv(path)
         df_git.Date = pd.to_datetime(df_git.Date, format='%d/%m/%Y')
         # get binance data for cryptocurrency
@@ -105,4 +112,51 @@ class BinanceDataset(DatasetInterface):
         df_combined = pd.DataFrame(list_combine, columns=['date', 'open', 'high', 'low', 'close'])
         df_combined['timestamp'] =  pd.to_datetime(df_combined['date']).view(int) // 10 ** 9
         self.save_to_csv(df= df_combined)
-  
+    
+    def inverse_transform_predictions(self, preds, windowed = False, X = 0, method="minmax", scale_range=(0, 1)):
+     
+        if isinstance(preds, (np.ndarray)):
+
+            for i in range(self.channels):
+                if windowed: 
+                    inverse_preds[:, :, i] = self.X_scalers[i].inverse_transform(preds[:,:, i])
+                else: 
+                    inverse_preds = self.y_scalers[i].inverse_transform(preds)
+        else: 
+            if method =='minmax':
+                scale_method = MinMaxScaler(feature_range=scale_range)
+            else: 
+                scale_method = StandardScaler()
+            
+            scaler = Scaler(scaler=scale_method)
+            scaler.fit(X)
+            inverse_preds = scaler.inverse_transform(preds)
+        return inverse_preds
+    
+    def differenced_dataset(self, interval =1):
+        df = pd.read_csv(self.data_path + self.data_file)
+        df.date = pd.to_datetime(df.date)
+        df = df.set_index('date')
+        target = self.target_name[0] 
+        diff = list()
+        time_steps = list()
+        for i in range(interval, len(df)):
+          value = df[target][i] - df[target][i - 1]
+          time_steps.append(df['timestamp'][i])
+          diff.append(value)
+        diff_df = pd.DataFrame(diff, columns=[target])
+        diff_df['timestamp'] = time_steps
+        return df, diff_df
+
+
+    def inverse_differenced_dataset(self, df, diff):
+        invert = list()
+        target = self.target_name[0] 
+        df_start = len(df) - len(diff) -1
+        for i in range(len(diff)):
+            value =  diff[i] + df[target][df_start + i]
+            invert.append(value)
+        arr = np.array(invert)
+        return arr
+        
+       
