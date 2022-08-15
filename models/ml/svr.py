@@ -55,12 +55,14 @@ class SVR(ModelInterface):
         Training of the model
         :return: None
         """
-        self.__history_X = self.ds.X_train_array  # .reshape(-1, len(self.ds.training_features))
-        self.__history_y = self.ds.y_train_array  # .reshape(-1, len(self.ds.target_name))
+    
 
         if self.sliding_window > 0:
             self.__history_X = self.ds.X_train_array[-self.sliding_window:]
             self.__history_y = self.ds.y_train_array[-self.sliding_window:]
+        else: 
+            self.__history_X = self.ds.X_train_array  # .reshape(-1, len(self.ds.training_features))
+            self.__history_y = self.ds.y_train_array  # .reshape(-1, len(self.ds.target_name))
         self.model = self.model.fit(self.__history_X, self.__history_y)  # .ravel())
 
     def predict(self, X):

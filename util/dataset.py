@@ -5,12 +5,15 @@ Interface of a Dataset class with shared functionalities
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sqlalchemy import false
 import tensorflow as tf
 import pickle
-from datetime import datetime
+from datetime import datetime, timedelta
 from darts import TimeSeries, concatenate
+from scipy import signal
+from statsmodels.tsa.seasonal import seasonal_decompose
 from darts.dataprocessing.transformers import Scaler
-from darts.utils.timeseries_generation import datetime_attribute_timeseries
+from darts.utils.timeseries_generation import datetime_attribute_timeseries, random_walk_timeseries, gaussian_timeseries, autoregressive_timeseries
 
 class DatasetInterface:
     def __init__(self, filename="", input_window=10, output_window=1, horizon=0, training_features=[], target_name=[],
@@ -120,7 +123,7 @@ class DatasetInterface:
         """
         print('Training', self.X_train.shape, 'Testing', self.X_test.shape)
 
-    def dataset_creation(self):
+    def dataset_creation(self, detrended = False):
         """
         Create all the datasets components with the training and test sets split.
         :return: None
@@ -132,19 +135,22 @@ class DatasetInterface:
             print("Data load")
 
         # read the csv file into a pandas dataframe
-        df = pd.read_csv(self.data_path + self.data_file)
+        if not detrended:
+            self.df = pd.read_csv(self.data_path + self.data_file)
 
         # windowed dataset creation
-        columns = df[self.training_features].to_numpy()
+        columns = self.df[self.training_features].to_numpy()
         self.X, self.y = self.__windowed_dataset(columns)
         split_value = int(self.X.shape[0] * self.train_split_factor)
         self.y_train = self.y[:split_value]
         self.y_test = self.y[split_value:]
         self.X_train = self.X[:split_value]
         self.X_test = self.X[split_value:]
-        self.ts_train, self.ts_val, self.ts_test, self.train_cov, self.cov =self.__ts_dataset(df=df)
+        
+        self.ts_train, self.ts_val, self.ts_test, self.train_cov, self.cov, self.past_cov, self.train_past_cov, self.ts_ttrain =self.ts_dataset(df=self.df) 
+       
         # unidimensional dataset creation
-        self.X_array = df[self.target_name].to_numpy()
+        self.X_array = self.df[self.target_name].to_numpy()
         if len(self.target_name) == 1:
             self.X_array = self.X_array.reshape(-1, 1)
         split_value = int(self.X_array.shape[0] * self.train_split_factor)
@@ -218,7 +224,44 @@ class DatasetInterface:
         :return: None
         """
         pass
-    def __ts_dataset(self, df):
+
+
+
+    def detrend_data_creation(self):
+        df = pd.read_csv(self.data_path + self.data_file)
+        df.date = pd.to_datetime(df.date)
+        df = df.set_index('date')
+        #remove seasonality
+        target = self.target_name[0] 
+        res = seasonal_decompose(df[target], model='multiplicative', extrapolate_trend='freq')
+        detrended = df[target] - res.trend
+        detrended_df = pd.DataFrame(detrended, columns=[target])
+        detrended_df['timestamp'] =  df['timestamp']
+        return detrended_df
+
+        
+
+    def __ts_build_timeseries(self, df):
+         #Setting the Daily Frequency of the Dataset
+        df_col = self.target_name[0]
+        df[df_col] = df[df_col].astype(np.float32)
+        
+        #Converting DataFrame to Series
+        start_date = datetime.fromtimestamp(df['timestamp'].iloc[0]).strftime('%m/%d/%y')
+        end_date = datetime.fromtimestamp(df['timestamp'].iloc[-1]).strftime('%m/%d/%y')
+        series_ts = pd.Series(data = df[df_col].values, index = pd.date_range(start_date, end_date, freq = 'D'))
+        #Converting Series to DataFrame with DatetimeIndex
+        df.index = pd.DatetimeIndex(np.hstack([series_ts.index[:-1],
+                                               series_ts.index[-1:]]), freq='D')
+        df_ts = df[self.target_name].copy()
+        #Converting the DatatimeIndex DataFrame to timeseries 
+        ts = TimeSeries.from_series(df_ts[df_col])
+        return ts
+
+ 
+       
+
+    def ts_dataset(self, df):
         """
 
         :param df: dataframe: features of the dataset
@@ -227,67 +270,102 @@ class DatasetInterface:
                  train_cov: Training Set covariates
                  cov: Static Covariates
         """
-        #Setting the Daily Frequency of the Dataset
-        df_col = self.target_name[0]
-        df[df_col] = df[df_col].astype(np.float32)
-        test_split = int(df.shape[0] * self.train_split_factor)
-        val_split = int(test_split * 0.8)
-        #Converting DataFrame to Series
+        ts = self.__ts_build_timeseries(df)
         start_date = datetime.fromtimestamp(df['timestamp'].iloc[0]).strftime('%m/%d/%y')
         end_date = datetime.fromtimestamp(df['timestamp'].iloc[-1]).strftime('%m/%d/%y')
-        test_split_date = datetime.fromtimestamp(df['timestamp'].iloc[test_split]).strftime('%Y%m%d')
-        val_split_date = datetime.fromtimestamp(df['timestamp'].iloc[val_split]).strftime('%Y%m%d')
-        series_ts = pd.Series(data = df[df_col].values, index = pd.date_range(start_date, end_date, freq = 'D'))
-        #Converting Series to DataFrame with DatetimeIndex
-        df.index = pd.DatetimeIndex(np.hstack([series_ts.index[:-1],
-                                               series_ts.index[-1:]]), freq='D')
-        df_ts = df[self.target_name].copy()
-        #Converting the DatatimeIndex DataFrame to timeseries 
-        ts = TimeSeries.from_series(df_ts[df_col])
-
-        #Splitting data into train and test
-        if isinstance(test_split_date, str):
-            split = pd.Timestamp(test_split_date)
-        else:
-            split = test_split_date
        
-        ts_ttrain, ts_test = ts.split_after(split)
-        if isinstance(val_split_date, str):
-            split = pd.Timestamp(val_split_date)
-        else:
-            split = val_split_date
-        ts_train, ts_val = ts_ttrain.split_after(split)
+        
+
+        # Test Split
+        ts_ttrain, ts_test = ts.split_before(self.train_split_factor)
+        # Train and Validation Split
+        ts_train, ts_val = ts_ttrain.split_before(self.train_split_factor)
+        
         #Creating Covariates 
-        cov = datetime_attribute_timeseries(ts, attribute="year", one_hot=False)
-        cov = cov.stack(datetime_attribute_timeseries(ts, attribute="month", one_hot=False))
-        cov = cov.stack(TimeSeries.from_times_and_values(
-                                    times=ts.time_index, 
-                                    values=np.arange(len(ts)), 
-                                    columns=["linear_increase"]))
+        train_cov, cov, p_cov,  past_train_cov = self.__ts_covariates(ts=ts, df = df, start_date= start_date, end_date= end_date, ts_train = ts_train)
 
+        return ts_train, ts_val, ts_test, train_cov, cov, p_cov,  past_train_cov, ts_ttrain
        
-        
-        cov = cov.astype(np.float32)
-        #Splitting covariates into train and test
-        train_cov, test_cov = cov.split_after(split)
-        
-        return ts_train, ts_val, ts_test, train_cov, cov
-
 
     def __ts_normalisation(self, method="minmax", range=(0, 1)):
+        """
+        :param method: string: method of scaling
+               range: set: range of scaling
+        """
         if method =='minmax':
             scale_method = MinMaxScaler(feature_range=range)
         else: 
             scale_method = StandardScaler()
-        scaler =Scaler(scaler=scale_method)
-        self.ts_train = scaler.fit_transform(self.ts_train)
+        scaler = Scaler(scaler=scale_method)
+        scaler.fit(self.ts_ttrain)
+        self.ts_train = scaler.transform(self.ts_train)
         self.ts_val = scaler.transform(self.ts_val)
         self.ts_test = scaler.transform(self.ts_test)
         #self.ts_t = scaler.transform(self.ts)
         covScaler = Scaler(scaler= scale_method)
         covScaler.fit(self.train_cov)
-        self.tcov = covScaler.transform(self.cov)
+        self.f_cov = covScaler.transform(self.cov)
+        covpScaler = Scaler(scaler= scale_method)
+        covpScaler.fit(self.train_past_cov)
+        self.p_cov = covpScaler.transform(self.past_cov)
+                
+
+    def __ts_covariates(self, ts, df, start_date, end_date, ts_train):
+        """
+
+        :param ts: timeseries: time indexed data array
+               df: dataframe: features of the dataset
+               start_date: date: start date of dataset
+               end_date: date: end date of dataset
+        :return: train_cov: timeseries: Training Set of Future Covariates
+                 cov: timeseries: Future Static Covariates
+                 pcov: timeseries: Past Static Covariates
+                 past_train_cov: timeseries: Training Set of Past Covariates
+        """
+        #Future Covariates
+        l = ts_train.n_timesteps
         
+        cov = datetime_attribute_timeseries(ts, attribute="day", one_hot=False, add_length=l)
+        cov = cov.stack(datetime_attribute_timeseries(cov.time_index, attribute="day_of_week"))
+        cov = cov.stack(datetime_attribute_timeseries(cov.time_index, attribute="week"))
+        cov = cov.stack(datetime_attribute_timeseries(cov.time_index, attribute="month"))
+        cov = cov.stack(datetime_attribute_timeseries(cov.time_index, attribute="year"))
+        cov = cov.stack(TimeSeries.from_times_and_values(
+                                times=cov.time_index, 
+                                values=np.arange(len(ts) + l), 
+                                columns=["linear_increase"]))
+        cov.add_holidays(country_code="US")
+        cov = cov.astype(np.float32)
+
+        #Test Split
+        train_cov, test_cov = cov.split_before(self.train_split_factor)
+        
+     
+        
+        # Past Covariate
+        mean = np.mean(df[self.target_name[0]].values)
+        std = np.std(df[self.target_name[0]].values)
+        past_cov = (random_walk_timeseries(mean = mean, std = std, start = df['timestamp'].iloc[0], 
+                              freq="D", 
+                              length = (len(ts) +l),
+                              column_name='random_walk'))
+       #past_cov =  gaussian_timeseries( start = df['timestamp'].iloc[0], length= len(ts), freq="D")
+        series_past_cov = past_cov.pd_series()
+        date_1 = datetime.strptime(start_date, "%m/%d/%y")
+
+        end_p_date = date_1 + timedelta(days=(len(ts) +l - 1))
+        pastcov_ts = pd.Series(data =series_past_cov.values, index = pd.date_range(start_date, end_p_date, freq = 'D'))
+        p_cov = TimeSeries.from_series(pastcov_ts)
+        
+
+        p_cov = p_cov.astype(np.float32)
+
+        #Test Split
+        past_train_cov, past_test_cov = p_cov.split_before(self.train_split_factor)
+
+        
+
+        return train_cov, cov, p_cov, past_train_cov
 
 
     def __windowed_dataset(self, dataset):

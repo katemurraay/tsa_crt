@@ -59,12 +59,14 @@ class KNN(ModelInterface):
         Training of the model
         :return: None
         """
-        self.__history_X = self.ds.X_train_array  # .reshape(-1, len(self.ds.training_features))
-        self.__history_y = self.ds.y_train_array  # .reshape(-1, len(self.ds.target_name))
 
         if self.sliding_window > 0:
             self.__history_X = self.ds.X_train_array[-self.sliding_window:]
             self.__history_y = self.ds.y_train_array[-self.sliding_window:]
+        else: 
+            self.__history_X = self.ds.X_train_array  # .reshape(-1, len(self.ds.training_features))
+            self.__history_y = self.ds.y_train_array  # .reshape(-1, len(self.ds.target_name))
+
         self.model = self.model.fit(self.__history_X, self.__history_y)  # .ravel())
 
     def predict(self, X):
@@ -103,7 +105,7 @@ class KNN(ModelInterface):
         mse_score = make_scorer(mean_squared_error, greater_is_better=False)
 
         knn_gs = GridSearchCV(estimator=self.__temp_model, cv=tscv, param_grid=self.parameter_list, scoring=mse_score)
-        knn_gs.fit(self.ds.X_train_arraya, self.ds.y_train_array)
+        knn_gs.fit(self.ds.X_train_array, self.ds.y_train_array)
 
         print("BEST MODEL", knn_gs.best_estimator_)
         print("BEST PARAMS", knn_gs.best_params_)

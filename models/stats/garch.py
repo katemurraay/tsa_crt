@@ -4,7 +4,7 @@ Interface of a predictive model with shared functionalities
 import pickle
 import numpy as np
 import itertools
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 from math import sqrt
 import pandas as pd
 from arch import arch_model
@@ -18,6 +18,7 @@ class GARCH(ModelProbabilistic):
         :param name: string: name of the model
         """
         super().__init__(name)
+        self.verbose = 1
         self.__temp_model = None
         self.parameter_list = {'p': 1,
                                'q': 1,
@@ -37,7 +38,7 @@ class GARCH(ModelProbabilistic):
         """dict: Dictionary of Hyperparameter configuration of the model"""
         self.__history = None
         """np.array: temporary training set"""
-        self.sliding_window = 288
+        self.sliding_window = 0
         """int: sliding window to apply in the training phase"""
 
     def create_model(self):
@@ -126,8 +127,12 @@ class GARCH(ModelProbabilistic):
         if self.verbose:
             mse = mean_squared_error(X, predicted_mean)
             mae = mean_absolute_error(X, predicted_mean)
-            print('MSE: %.3f' % mse)
-            print('MAE: %.3f' % mae)
+            mape = mean_absolute_percentage_error(X, predicted_mean)
+            rmse = np.sqrt(mean_squared_error(X, predicted_mean))
+            print('MSE: %.7f' % mse)
+            print('MAE: %.7f' % mae)
+            print('RMSE: %.7f' % rmse)
+            print('MAPE: %.7f' % mape)
         self.__history = list(self.__history.values)
         return predicted_mean, predicted_std
 
@@ -155,12 +160,15 @@ class GARCH(ModelProbabilistic):
         best = ans_df.loc[ans_df['rmse'].idxmin()]
         self.p['p'], self.p['q'] = best['pq']
         self.p['mean'] = best['mean']
+
+        print(f"\nBEST PARAMS: \np: {self.p['p']}, q: {self.p['q']}, mean: {self.p['mean']}")
+    
         ans_df.to_csv("talos/" + self.name + ".csv")
 
     def __evaluate_garch_model(self, X, model_param, mean_model):
         # prepare training dataset
         train_size = int(X.shape[0] * 0.8)
-        train, test = X.values[0:train_size], X.values[train_size:]
+        train, test = X[0:train_size], X[train_size:]
         history = [x for x in train]
 
         # make predictions
