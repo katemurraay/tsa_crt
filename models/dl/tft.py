@@ -14,7 +14,12 @@ from util import custom_pytorch
 
 class TFT(ModelInterfaceDL):
     def __init__(self, name):
+        """
+        Constructor of the Model Interface class
+        :param name: string: name of the model
+        """
         super().__init__(name)
+
         self.p ={
                 'epochs': 200, 
                 'input_chunk_length': 30,
@@ -29,7 +34,7 @@ class TFT(ModelInterfaceDL):
                 'optimizer': 'adam',
                 'feed_forward': 'GatedResidualNetwork'
                     }
-                
+        """dict p: Dictionary of hyperparameters search space"""
         self.parameter_list=  {
                 "input_chunk_length":[30], 
                 "hidden_size":[32, 64, 128], 
@@ -43,14 +48,21 @@ class TFT(ModelInterfaceDL):
                 'optimizer': ['adam', 'nadam', 'rmsprop'],
                 'feed_forward': ['GatedResidualNetwork', 'GLU', 'Bilinear', 'ReGLU', 'GEGLU', 'SwiGLU', 'ReLU', 'GELU'],
                 }
+        """dict parameter_list: Dictionary of hyperparameter configuration of the model"""
         self.pl_trainer_kwargs = self.__set_pl_trainer_kwargs()
-        self.RAND =43     
+        """dict pl_trainer_kwargs: Dictionary of PyTorch Lightning Trainer keyword arguments"""
+        self.RAND = 42     
+        """int RAND: Seeds the random initialisation of weights"""
 
         
 
     def __set_pl_trainer_kwargs(self):
-       
+        """
+        Sets the PyTorch Lightning Keyward Arguments
+        :return dict pl_trainer_kwargs: Dictionary of the keyword arguments for the PyTorch Lightning Trainer
+        """
         pl_trainer_kwargs = {"enable_model_summary":False, "enable_checkpointing": False, "logger": False, "weights_summary" : None}
+        
         use_cuda = torch.cuda.is_available()
         if use_cuda:
             pl_trainer_kwargs["accelerator"]= "gpu"
@@ -61,6 +73,10 @@ class TFT(ModelInterfaceDL):
         return pl_trainer_kwargs
    
     def create_model(self):
+        """
+        Create an instance of the model. This function contains the definition and the library of the model
+        :return: None
+        """
         self.temp_model = TFTModel(input_chunk_length=self.p['input_chunk_length'],
                     output_chunk_length= self.p['output_chunk_length'],
                     hidden_size=self.p['hidden_layer_dim'],
@@ -73,11 +89,11 @@ class TFT(ModelInterfaceDL):
                     loss_fn= torch.nn.MSELoss(),
                     full_attention=False,
                     torch_metrics = MeanSquaredError(),
-                    random_state= self.RAND, #controls randomness of weight initialisation
+                    random_state= self.RAND, 
                     force_reset= True,
                     feed_forward=self.p['feed_forward'],
                     pl_trainer_kwargs = self.pl_trainer_kwargs,
-                    #add_relative_index= True,
+                    add_relative_index= False,
                     )
         if self.p['optimizer'] =='rmsprop':
             opt = torch.optim.RMSprop
@@ -91,6 +107,10 @@ class TFT(ModelInterfaceDL):
         self.temp_model.lr_scheduler_cls = torch.optim.lr_scheduler.ReduceLROnPlateau
         
     def fit(self):
+        """
+        Training of the model
+        :return: None
+        """
         my_stopper = EarlyStopping(
                                     monitor="val_loss",
                                     patience=self.p['patience'],
@@ -100,13 +120,15 @@ class TFT(ModelInterfaceDL):
         checkpoint = custom_pytorch.CustomPytorchModelCheckpoint(self)
         self.pl_trainer_kwargs["callbacks"] = [my_stopper, checkpoint]
         self.temp_model.trainer_params =self.pl_trainer_kwargs
-        #self.temp_model.fit(self.ds.ts_train, val_series = self.ds.ts_val, verbose= 1)
-        #self.temp_model.fit(self.ds.ts_train, past_covariates = self.ds.p_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_past_covariates=self.ds.p_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
-        #self.temp_model.fit(self.ds.ts_train,  past_covariates = self.ds.f_cov, future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val,  val_past_covariates=self.ds.f_cov, val_future_covariates=self.ds.f_cov, verbose= 1)   
         self.temp_model.fit(self.ds.ts_train,  future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_future_covariates=self.ds.f_cov, verbose= 1)   
         
         self.model = checkpoint.dnn.model
     def fit_predict(self, X):
+        """
+        Training of the model and Inference step on the samples X
+        :param: Time Series Data Array X: Values to be Predicted 
+        :return: Time Series Data Array predictions: Predictons of the Model
+        """
         my_stopper = EarlyStopping(
                                     monitor="val_loss",
                                     patience=self.p['patience'],
@@ -123,6 +145,11 @@ class TFT(ModelInterfaceDL):
         return predictions
         
     def predict(self, X):
+        """
+        Inference step on the samples X
+        :param: Time Series Data Array X: Values to be Predicted 
+        :return: Time Series Data Array predictions: Predictons of the Model
+        """
         if self.temp_model is None:
             print("ERROR: the model needs to be trained before predict")
             return
@@ -133,6 +160,11 @@ class TFT(ModelInterfaceDL):
 
    
     def __optuna_objective(self, trial):
+        """
+        Custom Function of the Optuna which represented a single execution of a trial
+        :param dict trial: Represents the hypermeters being examined
+        :return float mse: MeanSquaredError of the Model's Predictive Performance on the Validation Set
+        """
         input_chunk = trial.suggest_categorical('input_chunk_length', self.parameter_list['input_chunk_length'])
         output_chunk =trial.suggest_categorical('output_chunk_length', self.parameter_list['output_chunk_length'])
         hidden_size = trial.suggest_categorical('hidden_size', self.parameter_list['hidden_size'])
@@ -156,7 +188,6 @@ class TFT(ModelInterfaceDL):
                     n_epochs= epochs,
                     likelihood=None, 
                     loss_fn= torch.nn.MSELoss(),
-                   # optimizer_kwargs={"lr": learning_rate}, 
                     torch_metrics = MeanSquaredError(),
                     random_state= self.RAND, 
                     force_reset=True,
@@ -178,15 +209,23 @@ class TFT(ModelInterfaceDL):
         return mse(self.ds.ts_val, preds)
  
     def hyperparametrization(self):
+        """
+        Search the best parameter configuration using Optuna
+        :return: None
+        """
         study = optuna.create_study(study_name="TFT_Optimization", direction="minimize", sampler= optuna.samplers.GridSampler(self.parameter_list))
         study.optimize(self.__optuna_objective, n_trials=300, show_progress_bar=True)
         print('\nBEST PARAMS: \n{}'.format(study.best_params))
         print('\nBEST VALUE:\n{}'.format(study.best_value))
         df = study.trials_dataframe()
-        filename = 'talos/' + self.name +'_2.csv'
+        filename = 'talos/' + self.name +'.csv'
         df.to_csv(filename)
     
     def save_model(self):
+        """
+        Save the model into a file in self.saved_models directory
+        :return: boolean: 1 if saving operating is successful, 0 otherwise
+        """
         if self.model is None:
             print("ERROR: the model must be available before saving it")
             return
@@ -195,13 +234,19 @@ class TFT(ModelInterfaceDL):
         self.count_save += 1
      
     def load_model(self):
+        """
+        Load the model from a file
+        :return: boolean: 1 if loading operating is successful, 0 otherwise
+        """
         path = (self.model_path + self.name + str(self.count_save).zfill(4) + '_model.pth.tar')
         self.temp_model = self.model.load_model(path)
+        if self.temp_model is None: return 0
+        else: return 1
     
     def evaluate(self):
         """
-        Evaluate the model on the training set ds.X_train
-        :return: np.array: predictions: predictions of the trained model on the ds.X_train set
+        Evaluate the model on the training set ds.ts_train
+        :return: np.array: predictions: predictions of the trained model on the ds.ts_train set
         """
         return self.predict(self.ds.ts_train)
 
