@@ -11,32 +11,35 @@ from darts import TimeSeries, concatenate
 from scipy import signal
 from statsmodels.tsa.seasonal import seasonal_decompose
 from darts.dataprocessing.transformers import Scaler
-from darts.utils.timeseries_generation import datetime_attribute_timeseries, random_walk_timeseries, gaussian_timeseries, autoregressive_timeseries
 
 class BinanceDataset(DatasetInterface):
+    
     def __init__(self,  filename="", input_window=10, output_window=1, horizon=0, training_features=[], target_name=[],
                  train_split_factor=0.8, apiKey = "", apiSecurity = ""):
         """
         Call to the parent constructor [DatasetInterface] and passing the required parameters:
-            string: filename
-            int: input_window
-            int: output_window
-            int: horizon
-            array: training features
-            array: target name
-            float: train test split factor
+            :param string: filename
+            :param int: input_window
+            :param int: output_window
+            :param int: horizon
+            :param array: training features
+            :param array: target name
+            :param float: train test split factor
         """
         super().__init__(filename, input_window, output_window, horizon, training_features, target_name, train_split_factor)
-        """string: api key required for binance api access"""
+        """:param string: api key required for binance api access"""
         self.apiKey = apiKey
-        """string: api security required for binance api access """
+        """:param string: api security required for binance api access """
         self.apiSecurity = apiSecurity
         
     
-    """
-    Builds DataFrame to structure data returned from Binance API
-    """
+   
     def create_frame(self, data):
+        """
+        Builds DataFrame to structure Data
+        :param data: list: values returned from BinanceAPI
+        :return df: pd.DataFrame: values structured with assigned Columns
+        """
         df = pd.DataFrame(data)
         df = df.iloc[:,0:9]
         """columns returned by binance """
@@ -62,36 +65,51 @@ class BinanceDataset(DatasetInterface):
         return df
     
     
-    """
-    Retrieves Data from Binance API given the symbol of the cryptocurrency, a start date and an end date 
-    """
+    
     def get_binance_data(self, sym, start_date, end_date):
-       try:
-            client = Client(self.apiKey, self.apiSecurity)
-            print("Logged in")
-            interval = Client.KLINE_INTERVAL_1DAY
-            klines = client.get_historical_klines(sym, interval, start_date, end_date)
-            df = self.create_frame(klines)
-            df_b = df.iloc[:, 0:5]
-            return df_b
-       except: 
-            print('Invalid Login')
+        """
+        Retrieves Data from Binance API 
+        :param string sym: representsthe symbol of the cryptocurrency
+        :param string start_data: the start date of collection
+        :param string end date: the end data of collection 
+        :return pd.DataFrame df_b: DataFrame consisting of columns  ['OpenTime', 'Open', 'High', 'Low', 'Close', 'Volume']
+        """
+        try:
+                client = Client(self.apiKey, self.apiSecurity)
+                print("Logged in")
+                interval = Client.KLINE_INTERVAL_1DAY
+                klines = client.get_historical_klines(sym, interval, start_date, end_date)
+                df = self.create_frame(klines)
+                df_b = df.iloc[:, 0:5]
+                return df_b
+        except: 
+                print('Invalid Login')
       
-    """
-    Saves DataFrame to .csv file witin the saved_data folder
-    """
-    def save_to_csv(self, df):
+    
+    def __save_crypto_df_to_csv(self, df):
+        """
+        Saves DataFrame to .csv file witin the saved_data folder
+        :param pd.DataFrame df: DataFrame of Cryptocurrency Data
+        :return None
+        """
         df.columns = ['date', 'open', 'high', 'low', 'close', 'timestamp']
         save_name = self.data_path + self.data_file
         df.to_csv(save_name)
 
-    """
-    Combines Data from Investing.com [stored in Github Repository] with Binance API Data 
-    """
-    def build_crypto_dataset(self, name, year1, year2, sym, start_date, end_date):
+    
+    def build_crypto_dataset(self, name, start_year, end_year, sym, start_date, end_date):
+        """
+        Combines Data from Investing.com [stored in Github Repository] with Binance API Data 
+        :param string name: name of cryptocurrency pairing - the crypto valued against which currency [BTCUSD]
+        :param string start_year: starting year of collection
+        :param string end_year: ending year of collection
+        :param string sym: symbol of cryptocurrency being collected
+        :param string start_date: exact start date of collection
+        :param string end_data: exact end date of collection
+        :return None
+        """
         # get cryptocurrency csv file from github (downloaded from: Investing.com)
-        path ='https://github.com/katemurraay/TFT_Data/blob/main/'+name +'_'+year1+'_'+ year2 +'.csv?raw=true'
-        print(path)
+        path ='https://github.com/katemurraay/TFT_Data/blob/main/'+name +'_'+start_year+'_'+ end_year +'.csv?raw=true'
         df_git = pd.read_csv(path)
         df_git.Date = pd.to_datetime(df_git.Date, format='%d/%m/%Y')
         # get binance data for cryptocurrency
@@ -111,10 +129,13 @@ class BinanceDataset(DatasetInterface):
         #convert list to a dataframe
         df_combined = pd.DataFrame(list_combine, columns=['date', 'open', 'high', 'low', 'close'])
         df_combined['timestamp'] =  pd.to_datetime(df_combined['date']).view(int) // 10 ** 9
-        self.save_to_csv(df= df_combined)
+        self.__save_crypto_df_to_csv(df= df_combined)
+ 
+    def inverse_transform_predictions(self, preds, X = 0, method="minmax", scale_range=(0, 1)):             
+        """
+        Inverts Scaling from the Data
+        """
     
-    def inverse_transform_predictions(self, preds, X = 0, method="minmax", scale_range=(0, 1)):
-     
         if isinstance(preds, (np.ndarray)):
 
             for i in range(self.channels):
@@ -129,7 +150,9 @@ class BinanceDataset(DatasetInterface):
             scaler.fit(X)
             inverse_preds = scaler.inverse_transform(preds)
         return inverse_preds
-    
+    """
+    Builds Difference Dataset based on Interval
+    """
     def differenced_dataset(self, interval =1):
         df = pd.read_csv(self.data_path + self.data_file)
         df.date = pd.to_datetime(df.date)
@@ -145,7 +168,9 @@ class BinanceDataset(DatasetInterface):
         diff_df['timestamp'] = time_steps
         return df, diff_df
 
-
+    """
+    Inverses the Difference on a Dataset
+    """
     def inverse_differenced_dataset(self, df, diff):
         invert = list()
         target = self.target_name[0] 

@@ -13,7 +13,7 @@ from darts import TimeSeries, concatenate
 from scipy import signal
 from statsmodels.tsa.seasonal import seasonal_decompose
 from darts.dataprocessing.transformers import Scaler
-from darts.utils.timeseries_generation import datetime_attribute_timeseries, random_walk_timeseries, gaussian_timeseries, autoregressive_timeseries
+from darts.utils.timeseries_generation import datetime_attribute_timeseries
 
 class DatasetInterface:
     def __init__(self, filename="", input_window=10, output_window=1, horizon=0, training_features=[], target_name=[],
@@ -147,7 +147,7 @@ class DatasetInterface:
         self.X_train = self.X[:split_value]
         self.X_test = self.X[split_value:]
         
-        self.ts_train, self.ts_val, self.ts_test, self.train_cov, self.cov, self.past_cov, self.train_past_cov, self.ts_ttrain =self.ts_dataset(df=self.df) 
+        self.ts_train, self.ts_val, self.ts_test, self.train_cov, self.cov, self.ts_ttrain =self.get_ts_data(df=self.df) 
        
         # unidimensional dataset creation
         self.X_array = self.df[self.target_name].to_numpy()
@@ -227,21 +227,17 @@ class DatasetInterface:
 
 
 
-    def detrend_data_creation(self):
-        df = pd.read_csv(self.data_path + self.data_file)
-        df.date = pd.to_datetime(df.date)
-        df = df.set_index('date')
-        #remove seasonality
-        target = self.target_name[0] 
-        res = seasonal_decompose(df[target], model='multiplicative', extrapolate_trend='freq')
-        detrended = df[target] - res.trend
-        detrended_df = pd.DataFrame(detrended, columns=[target])
-        detrended_df['timestamp'] =  df['timestamp']
-        return detrended_df
+   
 
         
 
     def __ts_build_timeseries(self, df):
+        """
+        Generate darts.TimeSeries from DataFrame
+        :param pd.DataFrame df: DataFrame with Values
+        :return darts.TimeSeries ts: TimeSeries Data Array of DataFrame Values
+        """
+        #Compatible with Univariate Data Only
          #Setting the Daily Frequency of the Dataset
         df_col = self.target_name[0]
         df[df_col] = df[df_col].astype(np.float32)
@@ -261,36 +257,35 @@ class DatasetInterface:
  
        
 
-    def ts_dataset(self, df):
+    def get_ts_data(self, df):
         """
-
-        :param df: dataframe: features of the dataset
-        :return: ts_train: Time Series array
-                 ts_test: Time Series array
-                 train_cov: Training Set covariates
-                 cov: Static Covariates
+        Creation of Time Series Data Arrays for TFT Model
+        :param   pd.DataFrame df: features of the dataset
+        :return: darts.TimeSeries ts_train: Train Time Series array
+                 darts.TimeSeries ts_test: Test Time Series array
+                 darts.TimeSeries ts_val: Validation Time Series array
+                 darts.TimeSeries train_cov: Training Set of Static Covariates
+                 darts.TimeSeries cov: Future Static Covariates
+                 darts.TimeSeries ts_ttrain: Training Time Series array before validation split    
         """
         ts = self.__ts_build_timeseries(df)
-        start_date = datetime.fromtimestamp(df['timestamp'].iloc[0]).strftime('%m/%d/%y')
-        end_date = datetime.fromtimestamp(df['timestamp'].iloc[-1]).strftime('%m/%d/%y')
-       
-        
-
         # Test Split
         ts_ttrain, ts_test = ts.split_before(self.train_split_factor)
         # Train and Validation Split
         ts_train, ts_val = ts_ttrain.split_before(self.train_split_factor)
         
         #Creating Covariates 
-        train_cov, cov, p_cov,  past_train_cov = self.__ts_covariates(ts=ts, df = df, start_date= start_date, end_date= end_date, ts_train = ts_train)
+        train_cov, cov = self.__ts_covariates(ts=ts, ts_train = ts_train)
 
-        return ts_train, ts_val, ts_test, train_cov, cov, p_cov,  past_train_cov, ts_ttrain
+        return ts_train, ts_val, ts_test, train_cov, cov, ts_ttrain
        
 
     def __ts_normalisation(self, method="minmax", range=(0, 1)):
         """
-        :param method: string: method of scaling
-               range: set: range of scaling
+        Normalisation of Time Series Data Arrays
+        :param string method:  method of scaling
+               set range: range of scaling
+        :return None
         """
         if method =='minmax':
             scale_method = MinMaxScaler(feature_range=range)
@@ -301,7 +296,6 @@ class DatasetInterface:
         self.ts_train = scaler.transform(self.ts_train)
         self.ts_val = scaler.transform(self.ts_val)
         self.ts_test = scaler.transform(self.ts_test)
-        #self.ts_t = scaler.transform(self.ts)
         covScaler = Scaler(scaler= scale_method)
         covScaler.fit(self.train_cov)
         self.f_cov = covScaler.transform(self.cov)
@@ -310,21 +304,15 @@ class DatasetInterface:
         self.p_cov = covpScaler.transform(self.past_cov)
                 
 
-    def __ts_covariates(self, ts, df, start_date, end_date, ts_train):
+    def __ts_covariates(self, ts, ts_train):
         """
-
-        :param ts: timeseries: time indexed data array
-               df: dataframe: features of the dataset
-               start_date: date: start date of dataset
-               end_date: date: end date of dataset
-        :return: train_cov: timeseries: Training Set of Future Covariates
-                 cov: timeseries: Future Static Covariates
-                 pcov: timeseries: Past Static Covariates
-                 past_train_cov: timeseries: Training Set of Past Covariates
+        :param darts.TimeSeries ts:  time indexed of entire DataSet 
+               darts.TimeSeries ts_train: time series data array of training data
+        :return: darts.TimeSeries train_cov: Training Set of Static Covariates
+                 darts.TimeSeries cov: Static Covariates
+                 
         """
-        #Future Covariates
         l = ts_train.n_timesteps
-        
         cov = datetime_attribute_timeseries(ts, attribute="day", one_hot=False, add_length=l)
         cov = cov.stack(datetime_attribute_timeseries(cov.time_index, attribute="day_of_week"))
         cov = cov.stack(datetime_attribute_timeseries(cov.time_index, attribute="week"))
@@ -339,33 +327,8 @@ class DatasetInterface:
 
         #Test Split
         train_cov, test_cov = cov.split_before(self.train_split_factor)
-        
-     
-        
-        # Past Covariate
-        mean = np.mean(df[self.target_name[0]].values)
-        std = np.std(df[self.target_name[0]].values)
-        past_cov = (random_walk_timeseries(mean = mean, std = std, start = df['timestamp'].iloc[0], 
-                              freq="D", 
-                              length = (len(ts) +l),
-                              column_name='random_walk'))
-       #past_cov =  gaussian_timeseries( start = df['timestamp'].iloc[0], length= len(ts), freq="D")
-        series_past_cov = past_cov.pd_series()
-        date_1 = datetime.strptime(start_date, "%m/%d/%y")
 
-        end_p_date = date_1 + timedelta(days=(len(ts) +l - 1))
-        pastcov_ts = pd.Series(data =series_past_cov.values, index = pd.date_range(start_date, end_p_date, freq = 'D'))
-        p_cov = TimeSeries.from_series(pastcov_ts)
-        
-
-        p_cov = p_cov.astype(np.float32)
-
-        #Test Split
-        past_train_cov, past_test_cov = p_cov.split_before(self.train_split_factor)
-
-        
-
-        return train_cov, cov, p_cov, past_train_cov
+        return train_cov, cov 
 
 
     def __windowed_dataset(self, dataset):
