@@ -745,13 +745,13 @@ def first_diff_dataset_test(wins, horizons, resources, clusters, model_name, sca
                     labels = np.array(labels.values).reshape(-1, 1)
                     ts_train, ts_val, ts_test, strain_cov, cov, ts_ttrain =ds.get_ts_data(df=df)
                     preds = ds.inverse_transform_predictions(preds= labels, method=scaling[0], X= ts_ttrain)
-                    invert_preds = ds.inverse_differenced_dataset(df=df, diff=preds)
+                    invert_preds = ds.inverse_differenced_dataset(df=df, diff_vals=preds)
                     print(invert_preds)
                     #invert np arrays
                     np_labels = ds.y_test_array
                     np_labels = np.array(np_labels).reshape(-1, 1)
                     np_preds =  ds.inverse_transform_predictions(preds = np_labels)
-                    invert_np_preds = ds.inverse_differenced_dataset(df=df, diff = np_preds)
+                    invert_np_preds = ds.inverse_differenced_dataset(df=df, diff_vals = np_preds)
                     print(invert_np_preds)
 def first_diff_tft_test(wins, horizons, resources, clusters, model_name, scaling, output = 0):
     for win in wins:
@@ -809,7 +809,7 @@ def first_diff_tft_test(wins, horizons, resources, clusters, model_name, scaling
                                 preds = np.array(preds.values).reshape(-1, 1)
                                 
                                 preds = ds.inverse_transform_predictions(preds= preds, method=scaling[0], X= ts_ttrain)
-                                preds= ds.inverse_differenced_dataset(df=df, diff=preds)
+                                preds= ds.inverse_differenced_dataset(df=df, diff_vals=preds)
 
                                             
                                 labels = ts_test.pd_dataframe()
@@ -1177,11 +1177,10 @@ for s in stats_names:
     total_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = s, scaling=['minmax'])
 """
 
-tft_test(wins = [30], horizons = [0], resources = ['close'], clusters =['btc','eth','ltc','xrp','xmr'], model_name ='TFT', scaling=['minmax'])
+#tft_test(wins = [30], horizons = [0], resources = ['close'], clusters =['btc','eth','ltc','xrp','xmr'], model_name ='TFT', scaling=['minmax'])
 
 #dataset_test(wins = [1], horizons = [0], resources = ['close'], clusters = ['ltc'])
 #hyper_param_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc'], model_name = 'ARIMA', scaling=['minmax'])
-#detrended_data_tft_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name ='TFT', scaling=['minmax'])
 #for d in ml_names: detrended_data_all_models_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = d, scaling=['minmax'])
 #dataset_binance_test(wins = [1], horizons = [0], resources = ['close'], clusters = ['btc'])
 #dataset_binance_test_2(wins = [1], horizons = [0], resources = ['close'], clusters = ['ltc'])
@@ -1190,7 +1189,7 @@ tft_test(wins = [30], horizons = [0], resources = ['close'], clusters =['btc','e
 #clist = ['crypto_task_btc.csv',   'crypto_task_xmr.csv']
 #tft_hyperparam_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc'], model_name ='TFT', scaling=['minmax'])
 #tft_combined_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['ltc','xrp'], model_name ='TFT', scaling=['minmax'], pred_crypto='ltc')
-#first_diff_dataset_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['ltc','xrp'], model_name ='TFT', scaling=['minmax'])
+first_diff_dataset_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['ltc','xrp'], model_name ='TFT', scaling=['minmax'])
 #first_diff_tft_test(wins = [30], horizons = [0], resources = ['close'], clusters =  ['btc','eth','ltc','xrp','xmr'], model_name ='TFT', scaling=['minmax'])
 """
 for d in dl_names: 
