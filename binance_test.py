@@ -1015,7 +1015,6 @@ def first_diff_total_test(wins, horizons, resources, clusters, model_name, scali
                             model = SVR(experiment_name)
                         elif model_name == 'RF':
                             model = RF(experiment_name)
-                        
                         elif model_name == 'KNN':
                             model = KNN(experiment_name)
                         elif model_name == 'HYBRID':
@@ -1051,7 +1050,7 @@ def first_diff_total_test(wins, horizons, resources, clusters, model_name, scali
                             preds = model.predict(to_predict)
                             preds = np.array(preds).reshape(-1, 1)
                             np_preds =  ds.inverse_transform_predictions(preds = preds)
-                            preds = ds.inverse_differenced_dataset(df=df, diff = np_preds)
+                            preds = ds.inverse_differenced_dataset(df=df, diff_vals= np_preds)
                             
                             ds.df = df
                             ds.dataset_creation(detrended=True)
@@ -1079,14 +1078,14 @@ def first_diff_total_test(wins, horizons, resources, clusters, model_name, scali
                                 preds= yhat[0]
                             else:
                                 yhat =model.temp_model.forecast(horizon = len(to_predict))
-                                preds = yhat.variance.values[-1, :]
+                                preds = yhat.mean.values[-1, :]
 
                             print(preds)
                             preds = np.array(preds).reshape(-1, 1)
                             ts_train, ts_val, ts_test, strain_cov, cov, ts_ttrain =ds.get_ts_data(df=df) 
                             np_preds =  ds.inverse_transform_predictions(preds = preds, X=ts_ttrain)
                             
-                            preds = ds.inverse_differenced_dataset(df=df, diff = np_preds)
+                            preds = ds.inverse_differenced_dataset(df=df, diff_vals= np_preds)
                             ds.df = df
                             ds.dataset_creation(detrended=True)
                             labels = ds.ts_test.pd_dataframe()
@@ -1189,7 +1188,7 @@ for s in stats_names:
 #clist = ['crypto_task_btc.csv',   'crypto_task_xmr.csv']
 #tft_hyperparam_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc'], model_name ='TFT', scaling=['minmax'])
 #tft_combined_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['ltc','xrp'], model_name ='TFT', scaling=['minmax'], pred_crypto='ltc')
-first_diff_dataset_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['ltc','xrp'], model_name ='TFT', scaling=['minmax'])
+#first_diff_dataset_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['ltc','xrp'], model_name ='TFT', scaling=['minmax'])
 #first_diff_tft_test(wins = [30], horizons = [0], resources = ['close'], clusters =  ['btc','eth','ltc','xrp','xmr'], model_name ='TFT', scaling=['minmax'])
 """
 for d in dl_names: 
@@ -1201,6 +1200,7 @@ for d in ml_names:
     else: ITERATIONS = 1
     first_diff_total_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = d, scaling=['minmax'], output=180)
 """
+
 
 #first_diff_total_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = 'GARCH', scaling=['minmax'])
 #first_diff_total_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = 'ARIMA', scaling=['minmax'])

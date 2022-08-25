@@ -126,6 +126,7 @@ class DatasetInterface:
     def dataset_creation(self, detrended = False):
         """
         Create all the datasets components with the training and test sets split.
+        :param Boolean detrended: checks whether self.df is already set [Default = False]
         :return: None
         """
         if self.data_file is None:
