@@ -134,6 +134,11 @@ class BinanceDataset(DatasetInterface):
     def inverse_transform_predictions(self, preds, X = 0, method="minmax", scale_range=(0, 1)):             
         """
         Inverts Scaling from the Data
+        :param np.array or darts.TimeSeries preds: Scaled predictions from Model
+               darts.TimeSeries X: The original value used to fit Scaler
+               string method: the normalisation method used in scaling
+               set scale_range: the range of values used in scaling
+        :return np.array or darts.TimeSeries inverse_preds: Inverse scaled values
         """
     
         if isinstance(preds, (np.ndarray)):
@@ -150,10 +155,15 @@ class BinanceDataset(DatasetInterface):
             scaler.fit(X)
             inverse_preds = scaler.inverse_transform(preds)
         return inverse_preds
-    """
-    Builds Difference Dataset based on Interval
-    """
+    
     def differenced_dataset(self, interval =1):
+        """
+        Builds Difference Dataset based on Interval
+        :param int interval: represents interval of Difference [Default = 1]
+        :return pd.DataFrame df: the orginial DataFrame from csv file
+                pd.DataFrame diff_df: the DataFrame after Differencing
+        """
+
         df = pd.read_csv(self.data_path + self.data_file)
         df.date = pd.to_datetime(df.date)
         df = df.set_index('date')
@@ -168,17 +178,21 @@ class BinanceDataset(DatasetInterface):
         diff_df['timestamp'] = time_steps
         return df, diff_df
 
-    """
-    Inverses the Difference on a Dataset
-    """
-    def inverse_differenced_dataset(self, df, diff):
+    
+    def inverse_differenced_dataset(self, df, diff_vals):
+        """
+        Inverses the Difference on a Dataset
+        :param  pd.DataFrame df: the orginial DataFrame from csv file
+                list diff_vals:  List of Differenced Values
+        :return np.array inverted_values: Array of values with Difference removed
+        """
         invert = list()
         target = self.target_name[0] 
-        df_start = len(df) - len(diff) -1
-        for i in range(len(diff)):
-            value =  diff[i] + df[target][df_start + i]
+        df_start = len(df) - len(diff_vals) -1
+        for i in range(len(diff_vals)):
+            value =  diff_vals[i] + df[target][df_start + i]
             invert.append(value)
-        arr = np.array(invert)
-        return arr
+        inverted_values = np.array(invert)
+        return inverted_values
         
        
