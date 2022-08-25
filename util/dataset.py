@@ -299,9 +299,7 @@ class DatasetInterface:
         covScaler = Scaler(scaler= scale_method)
         covScaler.fit(self.train_cov)
         self.f_cov = covScaler.transform(self.cov)
-        covpScaler = Scaler(scaler= scale_method)
-        covpScaler.fit(self.train_past_cov)
-        self.p_cov = covpScaler.transform(self.past_cov)
+        
                 
 
     def __ts_covariates(self, ts, ts_train):
