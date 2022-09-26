@@ -194,5 +194,27 @@ class BinanceDataset(DatasetInterface):
             invert.append(value)
         inverted_values = np.array(invert)
         return inverted_values
-        
+    def scale_predictions(self, preds, X = 0, method="minmax", scale_range=(0, 1)):             
+        """
+        Scale Predictions
+        :param np.array or darts.TimeSeries preds: Scaled predictions from Model
+               darts.TimeSeries X: The original value used to fit Scaler
+               string method: the normalisation method used in scaling
+               set scale_range: the range of values used in scaling
+        :return np.array or darts.TimeSeries scaled_preds: Inverse scaled values
+        """   
+        if isinstance(preds, (np.ndarray)):
+
+            for i in range(self.channels):
+                scaled_preds = self.y_scalers[i].transform(preds)
+        else: 
+            if method =='minmax':
+                scale_method = MinMaxScaler(feature_range=scale_range)
+            else: 
+                scale_method = StandardScaler()
+            
+            scaler = Scaler(scaler=scale_method)
+            scaler.fit(X)
+            scaled_preds = scaler.transform(preds)
+        return scaled_preds
        

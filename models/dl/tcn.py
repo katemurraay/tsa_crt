@@ -15,7 +15,6 @@ from datetime import datetime
 import pickle
 
 
-
 class TCN(ModelInterfaceDL):
     def __init__(self, name):
         """
@@ -24,7 +23,8 @@ class TCN(ModelInterfaceDL):
         """
         super().__init__(name)
 
-        self.parameter_list = {'conv_filter': [16, 32, 64],
+        self.parameter_list = {
+                              'conv_filter': [16, 32, 64],
                                'conv_kernel': [3, 5, 7],
                                'conv_activation': ['relu', 'tanh'],
                                'dilation_rate': [1, 2, 4, 8],
@@ -41,13 +41,13 @@ class TCN(ModelInterfaceDL):
                                'decay': [1E-3, 1E-4, 1E-5],
                                }
         """dict: Dictionary of hyperparameters search space"""
-
-        self.p = {'conv_filter': 32,
+        self.p = {
+                'conv_filter': 32,
                   'conv_kernel': 3,
                   'conv_activation': 'relu',
                   'dropout_rate': 0.5,
-                  'dense_dim': 16,
                   'dilation_rate': 1,
+                   'dense_dim': 16,
                   'dense_activation': 'relu',
                   'dense_kernel_init': 'he_normal',
                   'batch_size': 256,

@@ -228,7 +228,32 @@ class DatasetInterface:
 
 
 
-   
+    def __windowed_dataset(self, dataset):
+        """
+
+        :param dataset: np.array: features of the dataset
+        :return: X: np.array: windowed version of the features
+                 y: np.array: windowed version of the labels
+        """
+        dataset = tf.data.Dataset.from_tensor_slices(dataset)
+        dataset = dataset.window(self.input_window + self.output_window, stride=self.stride, shift=1,
+                                 drop_remainder=True)
+        dataset = dataset.flat_map(lambda window: window.batch(self.input_window + self.output_window))
+        dataset = dataset.map(lambda window: (window[:-self.output_window], window[-self.output_window:]))
+        X, y = [], []
+        a = list(dataset.as_numpy_iterator())
+        for i, (A, b) in enumerate(a):
+            if i == len(a) - self.horizon:
+                break
+            X.append(A)
+            y.append(a[i + self.horizon][1])
+        X = np.array(X)
+        y = np.array(y)
+        indexes = []
+        for feature in self.target_name:
+            indexes.append(self.training_features.index(feature))
+        return X, y[:, :, indexes]
+
 
         
 
@@ -330,28 +355,4 @@ class DatasetInterface:
         return train_cov, cov 
 
 
-    def __windowed_dataset(self, dataset):
-        """
-
-        :param dataset: np.array: features of the dataset
-        :return: X: np.array: windowed version of the features
-                 y: np.array: windowed version of the labels
-        """
-        dataset = tf.data.Dataset.from_tensor_slices(dataset)
-        dataset = dataset.window(self.input_window + self.output_window, stride=self.stride, shift=1,
-                                 drop_remainder=True)
-        dataset = dataset.flat_map(lambda window: window.batch(self.input_window + self.output_window))
-        dataset = dataset.map(lambda window: (window[:-self.output_window], window[-self.output_window:]))
-        X, y = [], []
-        a = list(dataset.as_numpy_iterator())
-        for i, (A, b) in enumerate(a):
-            if i == len(a) - self.horizon:
-                break
-            X.append(A)
-            y.append(a[i + self.horizon][1])
-        X = np.array(X)
-        y = np.array(y)
-        indexes = []
-        for feature in self.target_name:
-            indexes.append(self.training_features.index(feature))
-        return X, y[:, :, indexes]
+   

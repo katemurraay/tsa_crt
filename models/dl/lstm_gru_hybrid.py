@@ -2,6 +2,7 @@
 LSTM & GRU hybrid model based on work of Patel et al. (2020)
 Inherits from ModelInterfaceDL class
 """
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.optimizers import RMSprop, Adam, Nadam, SGD
@@ -14,25 +15,25 @@ import pickle
 
 
 class LSTM_GRU(ModelInterfaceDL):
+
     def __init__(self, name):
         """
         Constructor of the Model Interface class
         :param name: string: name of the model
         """
         super().__init__(name)
-
         self.parameter_list = {
-                                'lstm_dim_1': [30, 50, 75],
+                                'first_lstm_dim': [30, 50, 75],
                                 'lstm_activation': ['relu', 'tanh'],
-                                'dropout_rate_1': [0.0, 0.05, 0.1],
-                                'lstm_dim_2': [30, 50, 75],
-                                'dense_dim_1': [16, 32, 64],
+                                'first_dropout_rate': [0.0, 0.05, 0.1],
+                                'second_lstm_dim': [30, 50, 75],
+                                'first_dense_dim': [16, 32, 64],
                                'dense_activation': ['relu', 'elu', 'selu', 'tanh'],
                                'dense_kernel_init': ['he_normal', 'glorot_uniform'],
                                'gru_dim':[30,50,75],
                                 'gru_activation': ['relu', 'tanh'],
-                               'dropout_rate_2': [0.0, 0.05, 0.1],
-                                'dense_dim_2': [16, 32, 64],
+                               'second_dropout_rate': [0.0, 0.05, 0.1],
+                                'second_dense_dim': [16, 32, 64],
                                'batch_size': [256, 512, 1024],
                                'epochs': [2000],
                                'patience': [50],
@@ -44,17 +45,17 @@ class LSTM_GRU(ModelInterfaceDL):
         """dict: Dictionary of hyperparameters search space"""
 
         self.p = {
-                'lstm_dim_1': 50,
+                'first_lstm_dim': 50,
                 'lstm_activation': 'relu',
-                'dropout_rate_1': 0.05, 
-                'lstm_dim_2':  50,
-                'dense_dim_1':  32,
+                'first_dropout_rate': 0.05, 
+                'second_lstm_dim':  50,
+                'first_dense_dim':  32,
                 'dense_activation': 'relu',
                 'dense_kernel_init': 'he_normal',
                 'gru_dim':50,
                 'gru_activation':'relu',
-                'dropout_rate_2':  0.05,
-                'dense_dim_2':  32,
+                'second_dropout_rate':  0.05,
+                'second_dense_dim':  32,
                 'batch_size': 256,
                 'epochs': 1000,
                 'patience': 20,
@@ -76,16 +77,16 @@ class LSTM_GRU(ModelInterfaceDL):
 
 
         #LSTM 
-        x = tf.keras.layers.LSTM(self.p['lstm_dim_1'], activation = self.p['lstm_activation'], return_sequences = True)(input)
-        x = tf.keras.layers.Dropout(rate= self.p['dropout_rate_1'])(x)
-        x = tf.keras.layers.LSTM(self.p['lstm_dim_2'], activation = self.p['lstm_activation'])(x)
-        lstm_model = tf.keras.layers.Dense(self.p['dense_dim_1'], activation = self.p['dense_activation'])(x)
+        x = tf.keras.layers.LSTM(self.p['first_lstm_dim'], activation = self.p['lstm_activation'], return_sequences = True)(input)
+        x = tf.keras.layers.Dropout(rate= self.p['first_dropout_rate'])(x)
+        x = tf.keras.layers.LSTM(self.p['second_lstm_dim'], activation = self.p['lstm_activation'])(x)
+        lstm_model = tf.keras.layers.Dense(self.p['first_dense_dim'], activation = self.p['dense_activation'])(x)
 
 
         #GRU
         y = tf.keras.layers.GRU(self.p['gru_dim'], activation = self.p['gru_activation'])(input)
-        y = tf.keras.layers.Dropout(rate = self.p['dropout_rate_2'])(y)
-        gru_model = tf.keras.layers.Dense(self.p['dense_dim_2'], activation = self.p['dense_activation'])(y)
+        y = tf.keras.layers.Dropout(rate = self.p['second_dropout_rate'])(y)
+        gru_model = tf.keras.layers.Dense(self.p['second_dense_dim'], activation = self.p['dense_activation'])(y)
 
 
         concatenated = tf.keras.layers.concatenate([lstm_model, gru_model])
