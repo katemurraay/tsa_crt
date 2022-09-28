@@ -5,7 +5,6 @@ import torch
 import pandas as pd
 import pickle
 import tensorflow as tf
-
 from keras.utils.vis_utils import plot_model
 from api_key_binance import API_SECURITY, API_KEY
 from models.dl.hbnn import HBNN
@@ -789,7 +788,7 @@ def first_diff_tft_test(wins, horizons, resources, clusters, model_name, scaling
                                 print('PARAMS: ', model.p)
                                 model.create_model()
                                 model.ds = ds
-                                model.fit()
+                                model.fit(use_covariates = False)
                                 
                                 to_predict= ds.ts_test.pd_dataframe()
                                 to_predict= np.array(to_predict.values).reshape(-1, 1)
@@ -1557,7 +1556,7 @@ def first_diff_tft_test_2(wins, horizons, resources, clusters, model_name, scali
                                 print('PARAMS: ', model.p)
                                 model.create_model()
                                 model.ds = ds
-                                model.fit()
+                                model.fit(use_covariates = False)
                                 
                                 to_predict= ds.ts_test.pd_dataframe()
                                 to_predict= np.array(to_predict.values).reshape(-1, 1)
@@ -1677,4 +1676,4 @@ for d in ml_names:
 
 #first_diff_total_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = 'GARCH', scaling=['minmax'])
 #first_diff_total_test(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = 'ARIMA', scaling=['minmax'])
-#first_diff_tft_test_2(wins = [30], horizons = [0], resources = ['close'], clusters =  ['btc','eth','ltc','xrp','xmr'], model_name ='TFT', scaling=['minmax'])
+first_diff_tft_test_2(wins = [30], horizons = [0], resources = ['close'], clusters =  ['btc','eth','ltc','xrp','xmr'], model_name ='TFT', scaling=['minmax'])

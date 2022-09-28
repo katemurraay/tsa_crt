@@ -107,7 +107,7 @@ class TFT(ModelInterfaceDL):
         self.temp_model.optimizer_kwargs={"lr": self.p['lr']}
         self.temp_model.lr_scheduler_cls = torch.optim.lr_scheduler.ReduceLROnPlateau
         
-    def fit(self):
+    def fit(self, use_covariates = True):
         """
         Training of the model on darts.TimeSeries Training Data
         :return: None
@@ -121,7 +121,12 @@ class TFT(ModelInterfaceDL):
         checkpoint = custom_pytorch.CustomPytorchModelCheckpoint(self)
         self.pl_trainer_kwargs["callbacks"] = [my_stopper, checkpoint]
         self.temp_model.trainer_params =self.pl_trainer_kwargs
-        self.temp_model.fit(self.ds.ts_train,  future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_future_covariates=self.ds.f_cov, verbose= 1)   
+        if use_covariates:
+            self.temp_model.fit(self.ds.ts_train,  future_covariates=self.ds.f_cov,  val_series =self.ds.ts_val, val_future_covariates=self.ds.f_cov, verbose= 1)   
+        else:
+            print('Using Relative Index')
+            self.temp_model.add_relative_index = True
+            self.temp_model.fit(self.ds.ts_train,  val_series =self.ds.ts_val, verbose=1)
         self.model = checkpoint.dnn.model
    
     def fit_predict(self, X):
@@ -203,7 +208,6 @@ class TFT(ModelInterfaceDL):
         self.temp_model.optimizer_cls = opt
         self.temp_model.optimizer_kwargs={"lr": learning_rate}
         self.temp_model.lr_scheduler_cls = torch.optim.lr_scheduler.ReduceLROnPlateau
-       
         preds = self.fit_predict(self.ds.ts_val)
         return mse(self.ds.ts_val, preds)
  
