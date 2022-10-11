@@ -3,7 +3,7 @@ Interface of a predictive DL model with shared functionalities
 Inherits from ModelInterface class
 """
 
-from socket import AF_KEY
+
 from sklearn import metrics
 from models.model_interface import ModelInterface
 import numpy as np
@@ -121,7 +121,6 @@ class ModelInterfaceDL(ModelInterface):
         Load the model from a file
         :return: boolean: 1 if loading operating is successful, 0 otherwise
         """
-        self.model.load(self.model_path + self.name + str(self.count_save).zfill(4) + '_model.tf',
-                        save_format="tf")
-        self.count_save += 1
+        count_save = self.count_save - 1
+        self.model = tf.keras.models.load_model(self.model_path + self.name + str(count_save).zfill(4) + '_model.tf')
         return 1
