@@ -676,7 +676,7 @@ def first_diff_tft_test_retrain(wins, horizons, resources, clusters, model_name,
 #all_models = ['HYBRID', 'LSTM', 'GRU', 'TCN', 'TFT', 'KNN', 'RF']
 
 #first_diff_total_test_retrain(wins = [30], horizons = [0], resources = ['close'], clusters = ['xmr'], model_name = 'HYBRID', scaling=['minmax'], retrain = [30])
-ITERATIONS =1
+
 #first_diff_total_test_retrain(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = 'ARIMA', scaling=['minmax'], retrain = [30])
 """
 for d in  dl_names: 
