@@ -7,7 +7,12 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import tensorflow as tf
 import pickle
-
+from datetime import datetime, timedelta
+from darts import TimeSeries, concatenate
+from scipy import signal
+from statsmodels.tsa.seasonal import seasonal_decompose
+from darts.dataprocessing.transformers import Scaler
+from darts.utils.timeseries_generation import datetime_attribute_timeseries
 
 class DatasetInterface:
     def __init__(self, filename="", input_window=10, output_window=1, horizon=0, training_features=[], target_name=[],
@@ -49,7 +54,14 @@ class DatasetInterface:
         """list: Test features in series format"""
         self.y_test_array = []
         """list: Test labels in series format"""
-
+        self.ts_test = None
+        """timeseries: test time series"""
+        self.ts_train = None
+        """timeseries: train time series"""
+        self.tcov = None 
+        """timeseries: future covariates"""
+        self.train_cov = None
+        """timeseries: training covariates"""
         self.training_features = training_features
         """list of strings: columns names of the features for the training"""
         self.target_name = target_name
@@ -72,7 +84,6 @@ class DatasetInterface:
         """dict: dictionary of scaler used for the features"""
         self.y_scalers = {}
         """dict: dictionary of scaler used for the labels"""
-
         self.input_window = input_window
         """int:  input sequence, number of timestamps of the time series used for training the model"""
         self.stride = 1
@@ -84,7 +95,8 @@ class DatasetInterface:
 
         self.verbose = 1
         """int: level of verbosity of the dataset operations"""
-
+        self.add_split_value = 0
+        
     def data_save(self, name):
         """
         Save the dataset using pickle package
@@ -111,9 +123,10 @@ class DatasetInterface:
         """
         print('Training', self.X_train.shape, 'Testing', self.X_test.shape)
 
-    def dataset_creation(self):
+    def dataset_creation(self, detrended = False):
         """
         Create all the datasets components with the training and test sets split.
+        :param Boolean detrended: checks whether self.df is already set [Default = False]
         :return: None
         """
         if self.data_file is None:
@@ -123,25 +136,28 @@ class DatasetInterface:
             print("Data load")
 
         # read the csv file into a pandas dataframe
-        df = pd.read_csv(self.data_path + self.data_file)
+        if not detrended:
+            self.df = pd.read_csv(self.data_path + self.data_file)
 
         # windowed dataset creation
-        columns = df[self.training_features].to_numpy()
+        columns = self.df[self.training_features].to_numpy()
         self.X, self.y = self.__windowed_dataset(columns)
-        split_value = int(self.X.shape[0] * self.train_split_factor)
+        split_value = int(self.X.shape[0] * self.train_split_factor) + self.add_split_value
         self.y_train = self.y[:split_value]
         self.y_test = self.y[split_value:]
         self.X_train = self.X[:split_value]
         self.X_test = self.X[split_value:]
-
+        
+        
         # unidimensional dataset creation
-        self.X_array = df[self.target_name].to_numpy()
+        self.X_array = self.df[self.target_name].to_numpy()
         if len(self.target_name) == 1:
             self.X_array = self.X_array.reshape(-1, 1)
-        split_value = int(self.X_array.shape[0] * self.train_split_factor)
+        split_value = int(self.X_array.shape[0] * self.train_split_factor)  + self.add_split_value
         self.X_train_array = self.X_array[:split_value]
         self.y_train_array = self.X_array[self.horizon + 1:self.horizon + split_value + 1]
-
+        self.ts_train, self.ts_val, self.ts_test, self.train_cov, self.cov, self.ts_ttrain =self.get_ts_data(df=self.df) 
+       
         if self.horizon:
             self.X_test_array = self.X_array[split_value: -self.horizon - 1]
         else:
@@ -154,8 +170,11 @@ class DatasetInterface:
         if self.verbose:
             print("Training size ", self.X_train.shape, self.X_train_array.shape)
             print("Training labels size", self.y_train.shape, self.y_train_array.shape)
+            print("Training Time Series size ", self.ts_train._xa.shape)
+            print("Validation Time Series size ", self.ts_val._xa.shape)
             print("Test size ", self.X_test.shape, self.X_test_array.shape)
             print("Test labels size", self.y_test.shape, self.y_test_array.shape)
+            print("Test Time Series size ", self.ts_test._xa.shape)
 
     def dataset_normalization(self, methods=["minmax"], scale_range=(0, 1)):
         """
@@ -180,12 +199,16 @@ class DatasetInterface:
                     if self.normalization[i] == "standard":
                         self.X_scalers[i] = StandardScaler()
                         self.y_scalers[i] = StandardScaler()
+                        
                     elif self.normalization[i] == "minmax":
                         self.X_scalers[i] = MinMaxScaler(scale_range)
                         self.y_scalers[i] = MinMaxScaler(scale_range)
-                    # window dataset
+                    #time series dataset
+                    self.__ts_normalisation(method = self.normalization[i], range = scale_range)
+                    # window dataset    
                     self.X_train[:, :, i] = self.X_scalers[i].fit_transform(self.X_train[:, :, i])
                     self.X_test[:, :, i] = self.X_scalers[i].transform(self.X_test[:, :, i])
+                    
                     for j, feature in enumerate(self.target_name):
                         if i == self.training_features.index(feature):
                             self.y_train[:, :, j] = self.y_scalers[i].fit_transform(self.y_train[:, :, j])
@@ -202,6 +225,8 @@ class DatasetInterface:
         :return: None
         """
         pass
+
+
 
     def __windowed_dataset(self, dataset):
         """
@@ -228,3 +253,108 @@ class DatasetInterface:
         for feature in self.target_name:
             indexes.append(self.training_features.index(feature))
         return X, y[:, :, indexes]
+
+
+        
+
+    def __ts_build_timeseries(self, df):
+        """
+        Generate darts.TimeSeries from DataFrame
+        :param pd.DataFrame df: DataFrame with Values
+        :return darts.TimeSeries ts: TimeSeries Data Array of DataFrame Values
+        """
+        #Compatible with Univariate Data Only
+        #Setting the Daily Frequency of the Dataset
+        df_col = self.target_name[0]
+        df[df_col] = df[df_col].astype(np.float32)
+        
+        #Converting DataFrame to Series
+        start_date = datetime.fromtimestamp(df['timestamp'].iloc[0]).strftime('%m/%d/%y')
+        end_date = datetime.fromtimestamp(df['timestamp'].iloc[-1]).strftime('%m/%d/%y')
+        series_ts = pd.Series(data = df[df_col].values, index = pd.date_range(start_date, end_date, freq = 'D'))
+        #Converting Series to DataFrame with DatetimeIndex
+        df.index = pd.DatetimeIndex(np.hstack([series_ts.index[:-1],
+                                               series_ts.index[-1:]]), freq='D')
+        df_ts = df[self.target_name].copy()
+        #Converting the DatatimeIndex DataFrame to timeseries 
+        ts = TimeSeries.from_series(df_ts[df_col])
+        return ts
+
+ 
+       
+
+    def get_ts_data(self, df):
+        """
+        Creation of Time Series Data Arrays for TFT Model
+        :param   pd.DataFrame df: features of the dataset
+        :return: darts.TimeSeries ts_train: Train Time Series array
+                 darts.TimeSeries ts_test: Test Time Series array
+                 darts.TimeSeries ts_val: Validation Time Series array
+                 darts.TimeSeries train_cov: Training Set of Static Covariates
+                 darts.TimeSeries cov: Future Static Covariates
+                 darts.TimeSeries ts_ttrain: Training Time Series array before validation split    
+        """
+        ts = self.__ts_build_timeseries(df)
+        # Test Split
+        split_value = int(self.X_array.shape[0] * self.train_split_factor)  + self.add_split_value
+        ts_ttrain, ts_test = ts.split_before(split_value)
+        # Train and Validation Split
+        ts_train, ts_val = ts_ttrain.split_before(self.train_split_factor)
+        
+        #Creating Covariates 
+        train_cov, cov = self.__ts_covariates(ts=ts, ts_train = ts_train)
+
+        return ts_train, ts_val, ts_test, train_cov, cov, ts_ttrain
+       
+
+    def __ts_normalisation(self, method="minmax", range=(0, 1)):
+        """
+        Normalisation of Time Series Data Arrays
+        :param string method:  method of scaling
+               set range: range of scaling
+        :return None
+        """
+        if method =='minmax':
+            scale_method = MinMaxScaler(feature_range=range)
+        else: 
+            scale_method = StandardScaler()
+        scaler = Scaler(scaler=scale_method)
+        scaler.fit(self.ts_ttrain)
+        self.ts_ttrain = scaler.transform(self.ts_ttrain)
+        self.ts_train = scaler.transform(self.ts_train)
+        self.ts_val = scaler.transform(self.ts_val)
+        self.ts_test = scaler.transform(self.ts_test)
+        covScaler = Scaler(scaler= scale_method)
+        covScaler.fit(self.train_cov)
+        self.f_cov = covScaler.transform(self.cov)
+        
+                
+
+    def __ts_covariates(self, ts, ts_train):
+        """
+        :param darts.TimeSeries ts:  time indexed of entire DataSet 
+               darts.TimeSeries ts_train: time series data array of training data
+        :return: darts.TimeSeries train_cov: Training Set of Static Covariates
+                 darts.TimeSeries cov: Static Covariates
+                 
+        """
+        l = ts_train.n_timesteps
+        cov = datetime_attribute_timeseries(ts, attribute="day", one_hot=False, add_length=l)
+        cov = cov.stack(datetime_attribute_timeseries(cov.time_index, attribute="day_of_week"))
+        cov = cov.stack(datetime_attribute_timeseries(cov.time_index, attribute="week"))
+        cov = cov.stack(datetime_attribute_timeseries(cov.time_index, attribute="month"))
+        cov = cov.stack(datetime_attribute_timeseries(cov.time_index, attribute="year"))
+        cov = cov.stack(TimeSeries.from_times_and_values(
+                                times=cov.time_index, 
+                                values=np.arange(len(ts) + l), 
+                                columns=["linear_increase"]))
+        cov.add_holidays(country_code="US")
+        cov = cov.astype(np.float32)
+
+        #Test Split
+        train_cov, test_cov = cov.split_before(self.train_split_factor)
+
+        return train_cov, cov 
+
+
+   

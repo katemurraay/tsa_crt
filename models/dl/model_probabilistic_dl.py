@@ -14,7 +14,7 @@ class ModelProbabilisticDL(ModelProbabilistic, ModelInterfaceDL):
         Constructor of the Model Probabilistic class
         :param name: string: name of the model
         """
-        # super(ModelProbabilistic, self).__init__(name)
+      
         super(ModelProbabilisticDL, self).__init__(name)
 
     def predict(self, X):

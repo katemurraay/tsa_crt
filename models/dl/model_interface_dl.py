@@ -3,6 +3,8 @@ Interface of a predictive DL model with shared functionalities
 Inherits from ModelInterface class
 """
 
+
+from sklearn import metrics
 from models.model_interface import ModelInterface
 import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping
@@ -31,7 +33,6 @@ class ModelInterfaceDL(ModelInterface):
         """
         save_check = custom_keras.CustomSaveCheckpoint(self)
         es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=self.p['patience'])
-
         history = self.temp_model.fit(self.ds.X_train, self.ds.y_train, epochs=self.p['epochs'],
                                       batch_size=self.p['batch_size'],
                                       validation_split=0.2, verbose=2, callbacks=[es, save_check])
@@ -79,14 +80,20 @@ class ModelInterfaceDL(ModelInterface):
         :return: None
         """
         tf.keras.backend.clear_session()
-        talos.Scan(x=self.ds.X_train,
+        t = talos.Scan(x=self.ds.X_train,
                    y=self.ds.y_train,
                    model=self.__talos_model,
                    experiment_name='talos/' + self.name,
                    params=self.parameter_list,
                    clear_session=True,
-                   print_params=True,
-                   round_limit=5)
+                   print_params=True, round_limit=100)
+      
+        a = talos.Analyze(t)
+        a_table = a.table('val_loss', [], sort_by= 'val_mse', ascending= True)
+        print('BEST PARAMS \n{}'.format(a_table.iloc[0]))
+     
+    
+      
 
     def __talos_model(self, X_train, y_train, x_val, y_val, p):
         """
@@ -114,7 +121,6 @@ class ModelInterfaceDL(ModelInterface):
         Load the model from a file
         :return: boolean: 1 if loading operating is successful, 0 otherwise
         """
-        self.model.load(self.model_path + self.name + str(self.count_save).zfill(4) + '_model.tf',
-                        save_format="tf")
-        self.count_save += 1
+        count_save = self.count_save - 1
+        self.model = tf.keras.models.load_model(self.model_path + self.name + str(count_save).zfill(4) + '_model.tf')
         return 1

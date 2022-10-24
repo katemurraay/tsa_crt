@@ -72,9 +72,29 @@ def save_bayes_csv(preds, min, max, labels, feature, filename):
     df.to_csv(PATH)
 
 
-def save_metrics_csv(mses, maes, filename):
+def save_metrics_csv(mses, maes, rmse, mape, filename):
     PATH = "res/metrics_" + filename + ".csv"
     dct = {'MSE': mses,
-           'MAE': maes}
+           'MAE': maes, 
+           'RMSE': rmse,
+           'MAPE': mape}
     df = pd.DataFrame(dct)
     df.to_csv(PATH)
+
+def save_ensemble_prediction_csv(models, cluster, target, filename, train = False):
+    el_df = pd.DataFrame(columns= models)
+    PATH = 'res/output_'
+    if train:
+        PATH = 'res/output_train-' 
+    for m in models: 
+            m_path = PATH +  m.upper() + '-' +filename + '.csv'
+            df = pd.read_csv(m_path)
+            labels = df['labels'].values
+            target_col = 'avg' + target
+            target_v = df[target_col].values
+            el_df[m] = target_v
+    el_df['ACTUAL'] = labels
+    el_df['PREDICTED'] = el_df[models].mean(axis=1)
+    file_name = 'res/ensemble_learning-' + cluster + '.csv'
+    el_df.to_csv(file_name)
+    return el_df
