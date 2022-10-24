@@ -41,30 +41,25 @@ class VotingRegressor:
         PATH = 'res/output_'
         dct_ensemble = dict.fromkeys(self.models, None)
         length_difference = 0
+        start_at = 0
         tft_present = False
         if train:
-            if 'TFT' in self.models: 
-                tft_present = True
-            PATH = 'res/output_train-' 
-            length_difference = 26
-        else: 
-            length_difference = 2
+            PATH = 'res/train/output_train-' 
+            start_at = 1
+       
         for m in self.models: 
             m_path = PATH +  m.upper() + '-' +self.filename + '.csv'
             df = pd.read_csv(m_path)
             labels = df['labels'].values
             target_col = self.target
             target_v = df[target_col].values
-            if m.upper() != 'TFT' and tft_present: start_date = int(len(target_v) * 0.02)
-            else: start_date = 0 
             if m.upper() in ml_models:
-                if m.upper() =='TFT': l = 25
-                else: l = length_difference
+                l = length_difference
                 target_v = target_v[:len(target_v)-l]
                 labels = labels[:len(labels)-l]
             
-            target_v = target_v[start_date:]
-            labels = labels[start_date:]
+            target_v = target_v[start_at:]
+            labels = labels[start_at:]
             dct_ensemble[m.upper()] = target_v
         
         predictions = list()

@@ -5,7 +5,6 @@ Interface of a Dataset class with shared functionalities
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sqlalchemy import false
 import tensorflow as tf
 import pickle
 from datetime import datetime, timedelta
@@ -96,6 +95,7 @@ class DatasetInterface:
 
         self.verbose = 1
         """int: level of verbosity of the dataset operations"""
+        self.add_split_value = 0
         
     def data_save(self, name):
         """
@@ -142,22 +142,22 @@ class DatasetInterface:
         # windowed dataset creation
         columns = self.df[self.training_features].to_numpy()
         self.X, self.y = self.__windowed_dataset(columns)
-        split_value = int(self.X.shape[0] * self.train_split_factor)
+        split_value = int(self.X.shape[0] * self.train_split_factor) + self.add_split_value
         self.y_train = self.y[:split_value]
         self.y_test = self.y[split_value:]
         self.X_train = self.X[:split_value]
         self.X_test = self.X[split_value:]
         
-        self.ts_train, self.ts_val, self.ts_test, self.train_cov, self.cov, self.ts_ttrain =self.get_ts_data(df=self.df) 
-       
+        
         # unidimensional dataset creation
         self.X_array = self.df[self.target_name].to_numpy()
         if len(self.target_name) == 1:
             self.X_array = self.X_array.reshape(-1, 1)
-        split_value = int(self.X_array.shape[0] * self.train_split_factor)
+        split_value = int(self.X_array.shape[0] * self.train_split_factor)  + self.add_split_value
         self.X_train_array = self.X_array[:split_value]
         self.y_train_array = self.X_array[self.horizon + 1:self.horizon + split_value + 1]
-
+        self.ts_train, self.ts_val, self.ts_test, self.train_cov, self.cov, self.ts_ttrain =self.get_ts_data(df=self.df) 
+       
         if self.horizon:
             self.X_test_array = self.X_array[split_value: -self.horizon - 1]
         else:
@@ -264,7 +264,7 @@ class DatasetInterface:
         :return darts.TimeSeries ts: TimeSeries Data Array of DataFrame Values
         """
         #Compatible with Univariate Data Only
-         #Setting the Daily Frequency of the Dataset
+        #Setting the Daily Frequency of the Dataset
         df_col = self.target_name[0]
         df[df_col] = df[df_col].astype(np.float32)
         
@@ -296,7 +296,8 @@ class DatasetInterface:
         """
         ts = self.__ts_build_timeseries(df)
         # Test Split
-        ts_ttrain, ts_test = ts.split_before(self.train_split_factor)
+        split_value = int(self.X_array.shape[0] * self.train_split_factor)  + self.add_split_value
+        ts_ttrain, ts_test = ts.split_before(split_value)
         # Train and Validation Split
         ts_train, ts_val = ts_ttrain.split_before(self.train_split_factor)
         
@@ -319,6 +320,7 @@ class DatasetInterface:
             scale_method = StandardScaler()
         scaler = Scaler(scaler=scale_method)
         scaler.fit(self.ts_ttrain)
+        self.ts_ttrain = scaler.transform(self.ts_ttrain)
         self.ts_train = scaler.transform(self.ts_train)
         self.ts_val = scaler.transform(self.ts_val)
         self.ts_test = scaler.transform(self.ts_test)

@@ -12,6 +12,7 @@ from scipy import signal
 from statsmodels.tsa.seasonal import seasonal_decompose
 from darts.dataprocessing.transformers import Scaler
 
+
 class BinanceDataset(DatasetInterface):
     
     def __init__(self,  filename="", input_window=10, output_window=1, horizon=0, training_features=[], target_name=[],
@@ -141,8 +142,7 @@ class BinanceDataset(DatasetInterface):
         :return np.array or darts.TimeSeries inverse_preds: Inverse scaled values
         """
     
-        if isinstance(preds, (np.ndarray)):
-
+        if isinstance(X, (int)):
             for i in range(self.channels):
                 inverse_preds = self.y_scalers[i].inverse_transform(preds)
         else: 
@@ -152,8 +152,11 @@ class BinanceDataset(DatasetInterface):
                 scale_method = StandardScaler()
             
             scaler = Scaler(scaler=scale_method)
+            to_invert = TimeSeries.from_values(preds)
             scaler.fit(X)
-            inverse_preds = scaler.inverse_transform(preds)
+            inv_preds = scaler.inverse_transform(to_invert)
+            inverse_preds = inv_preds.pd_dataframe()
+            inverse_preds = np.array(inverse_preds.values).reshape(-1, 1)
         return inverse_preds
     
     def differenced_dataset(self, interval =1):
@@ -179,7 +182,7 @@ class BinanceDataset(DatasetInterface):
         return df, diff_df
 
     
-    def inverse_differenced_dataset(self, df, diff_vals):
+    def inverse_differenced_dataset(self, df, diff_vals, l = 0, df_start = 0):
         """
         Inverses the Difference on a Dataset
         :param  pd.DataFrame df: the orginial DataFrame from csv file
@@ -188,12 +191,16 @@ class BinanceDataset(DatasetInterface):
         """
         invert = list()
         target = self.target_name[0] 
-        df_start = len(df) - len(diff_vals) -1
+        if df_start == 0: 
+            if l == 0: df_start = len(df) - len(diff_vals) -1
+            else: df_start = len(df) - l -1
+    
         for i in range(len(diff_vals)):
             value =  diff_vals[i] + df[target][df_start + i]
             invert.append(value)
         inverted_values = np.array(invert)
         return inverted_values
+        
     def scale_predictions(self, preds, X = 0, method="minmax", scale_range=(0, 1)):             
         """
         Scale Predictions
