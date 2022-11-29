@@ -7,9 +7,8 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import tensorflow as tf
 import pickle
-from datetime import datetime, timedelta
-from darts import TimeSeries, concatenate
-from scipy import signal
+from datetime import datetime
+from darts import TimeSeries
 from statsmodels.tsa.seasonal import seasonal_decompose
 from darts.dataprocessing.transformers import Scaler
 from darts.utils.timeseries_generation import datetime_attribute_timeseries
@@ -123,7 +122,7 @@ class DatasetInterface:
         """
         print('Training', self.X_train.shape, 'Testing', self.X_test.shape)
 
-    def dataset_creation(self, detrended = False):
+    def dataset_creation(self, df = False, detrended = False):
         """
         Create all the datasets components with the training and test sets split.
         :param Boolean detrended: checks whether self.df is already set [Default = False]
@@ -136,13 +135,17 @@ class DatasetInterface:
             print("Data load")
 
         # read the csv file into a pandas dataframe
-        if not detrended:
+        if not df:
             self.df = pd.read_csv(self.data_path + self.data_file)
-
-        # windowed dataset creation
         columns = self.df[self.training_features].to_numpy()
         self.X, self.y = self.__windowed_dataset(columns)
-        split_value = int(self.X.shape[0] * self.train_split_factor) + self.add_split_value
+        if detrended:
+            split_value = (int(self.X.shape[0] * self.train_split_factor)-1) + self.add_split_value
+        else:
+            split_value = (int(self.X.shape[0] * self.train_split_factor)) + self.add_split_value
+
+        # windowed dataset creation
+
         self.y_train = self.y[:split_value]
         self.y_test = self.y[split_value:]
         self.X_train = self.X[:split_value]
@@ -153,7 +156,8 @@ class DatasetInterface:
         self.X_array = self.df[self.target_name].to_numpy()
         if len(self.target_name) == 1:
             self.X_array = self.X_array.reshape(-1, 1)
-        split_value = int(self.X_array.shape[0] * self.train_split_factor)  + self.add_split_value
+        if detrended: split_value = (int(self.X_array.shape[0] * self.train_split_factor)-1) + self.add_split_value
+        else: split_value = split_value = (int(self.X_array.shape[0] * self.train_split_factor)) + self.add_split_value
         self.X_train_array = self.X_array[:split_value]
         self.y_train_array = self.X_array[self.horizon + 1:self.horizon + split_value + 1]
         self.ts_train, self.ts_val, self.ts_test, self.train_cov, self.cov, self.ts_ttrain =self.get_ts_data(df=self.df) 
@@ -175,6 +179,7 @@ class DatasetInterface:
             print("Test size ", self.X_test.shape, self.X_test_array.shape)
             print("Test labels size", self.y_test.shape, self.y_test_array.shape)
             print("Test Time Series size ", self.ts_test._xa.shape)
+
 
     def dataset_normalization(self, methods=["minmax"], scale_range=(0, 1)):
         """
@@ -226,7 +231,9 @@ class DatasetInterface:
         """
         pass
 
+   
 
+        
 
     def __windowed_dataset(self, dataset):
         """
@@ -296,10 +303,10 @@ class DatasetInterface:
         """
         ts = self.__ts_build_timeseries(df)
         # Test Split
-        split_value = int(self.X_array.shape[0] * self.train_split_factor)  + self.add_split_value
+        split_value = (int(self.X_array.shape[0] * self.train_split_factor))  + self.add_split_value 
         ts_ttrain, ts_test = ts.split_before(split_value)
         # Train and Validation Split
-        ts_train, ts_val = ts_ttrain.split_before(self.train_split_factor)
+        ts_train, ts_val = ts_ttrain.split_before(0.8)
         
         #Creating Covariates 
         train_cov, cov = self.__ts_covariates(ts=ts, ts_train = ts_train)

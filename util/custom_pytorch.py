@@ -28,7 +28,7 @@ class CustomPytorchModelCheckpoint(Callback):
         :return: None
         """
         elogs = trainer.logged_metrics
-        tensor_log = elogs['val_loss']
+        tensor_log = elogs[self.monitor]
         val_loss = tensor_log.item()
         
         if val_loss < self.dnn.best_val_loss and self.counter >=1 :
