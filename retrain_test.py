@@ -33,7 +33,7 @@ from keras import backend as K
 ITERATIONS = 3
 apiKey = API_KEY
 apiSecurity = API_SECURITY
-dl_names= [ 'LSTM', 'GRU', 'HYBRID']
+dl_names= [ 'TCN']
 #[ 'TCN',  'LSTM', 'HYBRID'] 
 ml_names = ['SVR', 'KNN', 'RF']
 stats_names = ['ARIMA']
@@ -77,6 +77,7 @@ def first_diff_total_test_retrain(wins, horizons, resources, clusters, model_nam
                     r2_scores, evs_scores, medaes, rmsles, msles = [], [], [], [], []
                     all_inversed_labels, all_training_time, all_inference_time =[], [], []
                     for i in range(ITERATIONS):
+                        three_year_model = 0
                         predictions, true_values =[], []
                         train, true_train = [], []
                         n_predictions, n_true_values = [], []
@@ -280,7 +281,12 @@ def first_diff_total_test_retrain(wins, horizons, resources, clusters, model_nam
                                 elif model_name in ml_names:
                                     model.p = p
                                     model.create_model()
-                                else: model.load_model()
+                                elif model_name == 'ARIMA':
+                                    model.p = p
+                                    model.create_model()
+                                else: 
+                                    model.count_save = three_year_model
+                                    model.load_model()
                             # MEASURE PERFORMANCE
                             with torch.no_grad():
                                 for rep in range(repetitions):
@@ -288,13 +294,15 @@ def first_diff_total_test_retrain(wins, horizons, resources, clusters, model_nam
                                     model.fit()
                                     ender.record()
                                     torch.cuda.synchronize()
-                                    curr_time = starter.elapsed_time(ender)
+                                    curr_time = starter.elapsed_time(ender)/1000
                                     timings[rep] = curr_time
 
                             train_time = np.sum(timings) / repetitions
                             std_syn = np.std(timings)
                             training_time.append(train_time)
-                            
+                            if r ==0:
+                                if model_name in dl_names:
+                                    three_year_model = model.count_save
                                
                             
                             print("Training complete")
@@ -306,7 +314,7 @@ def first_diff_total_test_retrain(wins, horizons, resources, clusters, model_nam
 
                                 # INIT LOGGERS
                                 starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
-                                repetitions = 1
+                                repetitions = 10
                                 timings=np.zeros((repetitions,1))
                                 
                                 for _ in range(10):
@@ -325,12 +333,14 @@ def first_diff_total_test_retrain(wins, horizons, resources, clusters, model_nam
                                     for rep in range(repetitions):
                                         starter.record()
                                         preds = model.predict(to_predict)
+                                        
                                         ender.record()
                                         torch.cuda.synchronize()
-                                        curr_time = starter.elapsed_time(ender)
+                                        curr_time = starter.elapsed_time(ender)/1000
                                         timings[rep] = curr_time
-
-                                inf_time = np.sum(timings) / len(to_predict)
+                                mean_time = np.sum(timings) / repetitions
+                                inf_time = mean_time / len(to_predict)
+                               
                                 std_syn = np.std(timings)
                                 inference_time.append(inf_time)
                                
@@ -375,28 +385,37 @@ def first_diff_total_test_retrain(wins, horizons, resources, clusters, model_nam
 
                             
                             elif model_name =='ARIMA' or model_name =='GARCH':
+                                
+                                
+                                
+                                
                                 labels = ds.X_test_array
                                 if output > 0:
                                     labels = labels[:output]
                                 to_predict = labels
-                               
+                                actual = ds.y_test_array[:output]
+                                 
+
+                                yhat, y_std, mean_time = model.predict(to_predict)
+
                                 
-                                if model_name =='ARIMA':
-                                    yhat, y_std = model.predict(to_predict)
-                                    preds = yhat                                    
-                                    train_mean, train_std = model.evaluate()
-                                    
-                                else:
-                                    yhat = model.temp_model.forecast(horizon = len(to_predict))
-                                    preds = yhat.mean.values[-1, :]
+                                preds = yhat  
+                                
+                                inf_time = mean_time / len(to_predict)
+                               
+                                std_syn = np.std(timings)
+                                inference_time.append(inf_time)
+                                train_mean, train_std = model.evaluate()
                                 
                                 
                                 preds = np.array(preds).reshape(-1, 1)
                                 train_mean = np.array(train_mean).reshape(-1, 1)
                                 np_preds =  ds.inverse_transform_predictions(preds = preds)
+                                np_actual =  ds.inverse_transform_predictions(preds = actual)
                                 np_preds = np.array(np_preds).reshape(-1,1)
-                                np_actual = np.array(ds.y_test_array).reshape(-1,1)
+                                np_actual = np.array(np_actual).reshape(-1,1)
                                 np_train = ds.inverse_transform_predictions(preds = train_mean)
+
                                 inversed_preds = ds.inverse_differenced_dataset(df=df, diff_vals= np_preds, l= (len(ds.y_test_array)))
                                 inversed_actual = ds.inverse_differenced_dataset(diff_vals= np_actual, df=df, l =len(ds.y_test_array))
                                 inversed_train = ds.inverse_differenced_dataset(df=df, diff_vals= np_train, l = len(df))
@@ -531,6 +550,7 @@ def first_diff_tft_test_retrain(wins, horizons, resources, clusters, model_name,
                         n_train, n_true_train = [], []
                         inversed_l = []
                         add_split_value = 0
+                        three_year_model = 0
                         training_time, inference_time = [], []
                         w_mses, w_maes, w_rmses, w_mapes, w_r2 = [], [], [], [], []
                         w_nmses, w_nmaes, w_nrmses, w_nmapes, w_nr2 = [], [], [], [], []
@@ -595,6 +615,7 @@ def first_diff_tft_test_retrain(wins, horizons, resources, clusters, model_name,
                                     model.p
                                     model.create_model()
                                 else:
+                                    model.count_save = three_year_model
                                     model.load_model()
                             # MEASURE PERFORMANCE
                             with torch.no_grad():
@@ -603,13 +624,14 @@ def first_diff_tft_test_retrain(wins, horizons, resources, clusters, model_name,
                                     model.fit(use_covariates = False)  
                                     ender.record()
                                     torch.cuda.synchronize()
-                                    curr_time = starter.elapsed_time(ender)
+                                    curr_time = starter.elapsed_time(ender)/1000
                                     timings[rep] = curr_time
 
                             train_time = np.sum(timings) / repetitions
                             std_syn = np.std(timings)
                             training_time.append(train_time)
-                            
+                            if r == 0:
+                                three_year_model = model.count_save
                             
                             
                             print("Training complete")
@@ -622,7 +644,7 @@ def first_diff_tft_test_retrain(wins, horizons, resources, clusters, model_name,
                             
                             ts_train, ts_val, ts_test, strain_cov, cov, ts_ttrain = ds.get_ts_data(df=diff_df)    
                             starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
-                            repetitions = 1
+                            repetitions = 10
                             timings=np.zeros((repetitions,1))
                             for _ in range(10):
                                 to_predict= ds.ts_test.pd_dataframe()
@@ -637,10 +659,10 @@ def first_diff_tft_test_retrain(wins, horizons, resources, clusters, model_name,
                                     preds = model.predict(to_predict)
                                     ender.record()
                                     torch.cuda.synchronize()
-                                    curr_time = starter.elapsed_time(ender)
+                                    curr_time = starter.elapsed_time(ender)/1000
                                     timings[rep] = curr_time
-
-                            inf_time = np.sum(timings) / len(to_predict)
+                            mean_time = np.sum(timings) / repetitions
+                            inf_time = mean_time / len(to_predict)
                             std_syn = np.std(timings)
                             inference_time.append(inf_time)
                             preds = model.predict(to_predict)
@@ -781,9 +803,6 @@ def first_diff_tft_test_retrain(wins, horizons, resources, clusters, model_name,
 
 
  
-dct_lstm_time = {'BTC': 14361.8095703125, 'ETH': 10038.1572265625, 'LTC': 11263.4453125, 'XRP': 9896.107421875, 'XMR': 13423.7294921875}
-dct_gru_time = {'BTC': 77818.4453125, 'ETH': 54792.3125, 'LTC': 62416.484375, 'XRP': 55065.66015625, 'XMR': 77253.6484375}
-dct_hybrid_time = {'BTC': 179469.140625, 'ETH': 127679.9140625, 'LTC': 145463.765625, 'XRP': 124436.3828125, 'XMR': 179966.3125}
 
 #first_diff_total_test_retrain(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = 'LSTM', scaling=['minmax'], retrain = [30])
 
@@ -792,6 +811,8 @@ dl_timeframes = [[30, 30, 30], [30], [30, 30]]
 all_models = ['HYBRID', 'LSTM', 'GRU', 'TCN', 'TFT', 'RF']
 one_iteration_mod = ['ARIMA', 'SVR', 'KNN']
 #start_datsets(clusters = ['btc','eth','ltc','xrp','xmr'])
+#first_diff_total_test_retrain(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = 'ARIMA', scaling=['minmax'], retrain = [0, 6, 7, 8, 9 , 10, 11, 12, 1, 2, 3, 4], outputs =[6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5])
+
 """
 for m in all_models:
     
@@ -809,8 +830,8 @@ for d in  dl_names:
     print(d)
     
     first_diff_total_test_retrain(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = d, scaling=['minmax'], retrain = [0, 6, 7, 8, 9 , 10, 11, 12, 1, 2, 3, 4], outputs =[6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5])
-
 """
+
 """
 ITERATIONS=1
 first_diff_total_test_retrain(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = 'ARIMA', scaling=['minmax'], retrain = [0])
@@ -835,7 +856,7 @@ for d in ml_names:
     if d == 'RF': ITERATIONS = 3
     else: ITERATIONS = 1
     first_diff_total_test_retrain(wins = [30], resources = ['close'], horizons = [0], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = d, scaling=['minmax'], retrain = [0, 6, 7, 8, 9 , 10, 11, 12, 1, 2, 3, 4], outputs =[6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5])
-"""
 
-first_diff_tft_test_retrain(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = 'TFT', scaling=['minmax'], retrain = [0, 6, 7, 8, 9 , 10, 11, 12, 1, 2, 3, 4], outputs =[6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5])
+"""
+#first_diff_tft_test_retrain(wins = [30], horizons = [0], resources = ['close'], clusters = ['btc','eth','ltc','xrp','xmr'], model_name = 'TFT', scaling=['minmax'], retrain = [0, 6, 7, 8, 9 , 10, 11, 12, 1, 2, 3, 4], outputs =[6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5])
 
