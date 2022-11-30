@@ -34,9 +34,8 @@ class ModelInterfaceDL(ModelInterface):
         save_check = custom_keras.CustomSaveCheckpoint(self)
         es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=self.p['patience'])
         history = self.temp_model.fit(self.ds.X_train, self.ds.y_train, epochs=self.p['epochs'],
-                                      batch_size=self.p['batch_size'],
-                                      validation_split=0.2, verbose=2, callbacks=[es, save_check])
-
+                                      batch_size=self.p['batch_size'], validation_split=0.2, verbose=2, callbacks=[es, save_check])
+        
         self.model = save_check.dnn.model
         return history, self.model
 
@@ -46,10 +45,10 @@ class ModelInterfaceDL(ModelInterface):
         :param X: np.array: Input samples to predict
         :return: np.array: predictions: Predictions of the samples X
         """
-        if self.model is None:
+        if self.temp_model is None:
             print("ERROR: the model needs to be trained before predict")
             return
-        predictions = self.model.predict(X)
+        predictions = self.temp_model.predict(X)
         return predictions
 
     def tune(self, X, y):
@@ -122,5 +121,12 @@ class ModelInterfaceDL(ModelInterface):
         :return: boolean: 1 if loading operating is successful, 0 otherwise
         """
         count_save = self.count_save - 1
-        self.model = tf.keras.models.load_model(self.model_path + self.name + str(count_save).zfill(4) + '_model.tf')
+        self.temp_model = tf.keras.models.load_model(self.model_path + self.name + str(count_save).zfill(4) + '_model.tf')
         return 1
+    def training(self, p, X_test):
+        self.p = p
+        self.create_model()
+        _, train_model = self.fit()
+        predictions = self.predict(X_test)
+        return predictions, train_model
+

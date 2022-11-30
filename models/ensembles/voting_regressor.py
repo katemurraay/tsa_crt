@@ -12,12 +12,14 @@ class VotingRegressor:
         """list models: List of models to combine"""
         self.parameter_list = {'weights': [(1, 0)]}
         """dict parameter_list: Dictionary of hyperparameter configuration of the model"""
-        self.p = {'weights': (1, 0)}
+        self.p = {'weights': [1, 0]}
         """dict p: Dictionary of hyperparameters search space"""
         self.name = name
         self.target = 'close'
         self.filename = filename
+        self.path = 'res/output_'
         self.search_space = list()
+        self.iterations = False
 
     def __set_possible_weights(self):
         """
@@ -38,17 +40,17 @@ class VotingRegressor:
         """
         ml_models = ['SVR', 'RF', 'KNN', 'ARIMA', 'TFT']
         el_df = pd.DataFrame(columns= self.models)
-        PATH = 'res/output_'
+       
         dct_ensemble = dict.fromkeys(self.models, None)
         length_difference = 0
         start_at = 0
         tft_present = False
         if train:
-            PATH = 'res/train/output_train-' 
+            self.path = 'res/train/output_train-' 
             start_at = 1
        
         for m in self.models: 
-            m_path = PATH +  m.upper() + '-' +self.filename + '.csv'
+            m_path = self.path +  m.upper() + '-' +self.filename + '.csv'
             df = pd.read_csv(m_path)
             labels = df['labels'].values
             target_col = self.target
@@ -67,8 +69,47 @@ class VotingRegressor:
             predictions.append(dct_ensemble[m.upper()])
         
         return predictions, labels
-
-    def predict(self, train = False, weighted = False):
+  
+    def __get_iterative_model_predictions(self, index):
+        """
+        Aggregates a List of Model's Predictions
+        :param train: Boolean (Default = False): determines whether to use train predictions or test predictions
+        :return predictions: a 2D list of multiple models preidctions
+                labels: a list of true values for evalutation
+        """
+        ml_models = ['SVR', 'KNN', 'ARIMA']
+        change_length = [ 'ARIMA']
+        el_df = pd.DataFrame(columns= self.models)
+        dct_ensemble = dict.fromkeys(self.models, None)
+       
+        for m in self.models: 
+            m_file =  m.upper() + '-' +self.filename + '.csv'
+            l_path =  self.path + 'labels_' + m_file
+            df = pd.read_csv(l_path)
+            loc = index
+            if m in ml_models:
+                loc = 0 
+            i_path = self.path + 'preds_' + m_file
+            
+            labels  =df.iloc[loc].values
+            labels = labels[1:]
+            df_iteration = pd.read_csv(i_path)
+            pred =df_iteration.iloc[loc].values
+            preds = pred[1:]
+            if m in change_length:
+                preds = preds[:-5]
+                labels = labels[:-5]
+            dct_ensemble[m.upper()] = preds
+        
+        predictions = list()
+        for m in self.models: 
+            predictions.append(dct_ensemble[m.upper()])
+        
+        return predictions, labels
+    def get_predictions(self, index):
+        preds, labels = self.__get_iterative_model_predictions(index = index)
+        return preds, labels
+    def predict(self, train = False, weighted = False, index = -1):
         """
         Inference step on the samples
         :param:  boolean train (Default = False): Determines whether to use train or test model outputs
@@ -76,9 +117,13 @@ class VotingRegressor:
         :return: np.array combined_predictions: array of combined model predictions
                  np.array labels: array of true values 
         """
-        predictions, labels = self.__get_model_predictions(train)
+        if index == -1:
+            predictions, labels = self.__get_model_predictions(train)
+        else: 
+            predictions, labels = self.__get_iterative_model_predictions(index = index)
         labels = np.asarray(labels)
         if weighted:
+            
             combined_predictions = np.average(predictions, axis = 0, weights= self.p['weights'])
         else:
             combined_predictions = np.average(predictions, axis = 0)
