@@ -222,25 +222,25 @@ class ARIMA(ModelProbabilistic):
         return np.sqrt(error)
     def training(self, p, X_test):
             
-        X_train = list(X_train)
+        X_train = list(self.ds.X_train_array)
 
         self.history = X_train
         if p is not None:
-            self.parameter_list = p
-        if self.parameter_list['sliding_window']:
-            self.history = self.history[-self.parameter_list['sliding_window']:]
-        if self.parameter_list['selection']:
-            self.param_selection(X_train)
-        self.model = ARIMA(X_train, order=(self.parameter_list['p'], self.parameter_list['d'],
-                                           self.parameter_list['q']),
-                           seasonal_order=(self.parameter_list['P'], self.parameter_list['D'],
-                                           self.parameter_list['Q'], self.parameter_list['S']))
+            self.p= p
+        if self.p['sliding_window']:
+            self.history = self.history[-self.p['sliding_window']:]
+ 
+        self.model =  arima.model.ARIMA(self.history, order=(self.p['p'], self.p['d'],
+                                           self.p['q']),
+                           seasonal_order=(self.p['P'], self.p['D'],
+                                           self.p['Q'], self.p['S']))
         self.train_model = self.model.fit(method_kwargs={"warn_convergence": False})
 
         print(self.train_model.summary())
         print(self.train_model.params)
 
-        predicted_mean, predicted_std, _ = self.predict(X_test, self.parameter_list['loop'],
-                                                        self.parameter_list['horizon'])
+        predicted_mean, predicted_std, _ = self.predict(X_test, self.p['loop'],
+
+                                                        self.p['horizon'])
 
         return predicted_mean, predicted_std, self.train_model

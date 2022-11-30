@@ -215,11 +215,11 @@ def combine_ensemble_metrics(combine_models, res, clusters, timeframe =None):
             avg_maes, avg_mses, avg_rmses, avg_mapes, avg_r2 = [], [], [], [], []
             ensemble_models = []
             if timeframe: 
-                file_name =  'res/ensembles/metrics-all_ensembles' + '-' + res + '-' + c  + '-'+ timeframe +'_N.csv'
+                file_name =  'res/metrics-all_ensembles' + '-' + res + '-' + c  + '-'+ timeframe +'_N.csv'
                 
                 eof = '-w30-h0-'+ timeframe +'_N'+ '-'+ timeframe +'_N.csv'
             else: 
-                file_name =  'res/ensembles/metrics-all_ensembles' + '-' + res + '-' + c   +'_N.csv'
+                file_name =  'res/metrics-all_ensembles' + '-' + res + '-' + c   +'_N.csv'
                 eof = '_N.csv'
             
             for mod in combine_models:
@@ -243,13 +243,13 @@ def combine_ensemble_metrics(combine_models, res, clusters, timeframe =None):
 def get_ranking_of_model(model, clusters, res, timeframe = None):
     avg_mses_with, avg_mses_without= [], []
     if timeframe:
-        file_name = 'res/ensembles/ranking-' + model.upper() + '-' + res  +'-'+ timeframe +  '_N.csv'
+        file_name = 'res/ranking-' + model.upper() + '-' + res  +'-'+ timeframe +  '_N.csv'
         eof =  '-'+ timeframe +'_N.csv'
     else:
-        file_name = 'res/ensembles/ranking-' + model.upper() + '-' + res  +  '_N.csv'
+        file_name = 'res/ranking-' + model.upper() + '-' + res  +  '_N.csv'
         eof =  '_N.csv'
     for c in clusters:
-        PATH =  'res/ensembles/metrics-all_ensembles' + '-' + res + '-' + c  + eof
+        PATH =  'res/metrics-all_ensembles' + '-' + res + '-' + c  + eof
         df_ensembles = pd.read_csv(PATH)
         mses_with, mses_without = [], []
         for index, row in df_ensembles.iterrows():
