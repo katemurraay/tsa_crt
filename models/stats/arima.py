@@ -3,7 +3,7 @@ ARIMA model
 Inherits from ModelInterface class and build over statsmodel.tsa.arima
 """
 import pickle
-
+import torch
 from models.model_probabilistic import ModelProbabilistic
 import numpy as np
 import itertools
@@ -35,11 +35,11 @@ class ARIMA(ModelProbabilistic):
         """dict: Dictionary of Hyperparameter configuration of the model"""
         self.__history = None
         """np.array: temporary training set"""
-
+        self.train_model = None
         # Model configuration
         self.verbose = True
         """Boolean: Print output of the training phase"""
-        self.sliding_window = 288
+        self.sliding_window = 0
         """int: sliding window to apply in the training phase"""
 
     def create_model(self):
@@ -61,11 +61,11 @@ class ARIMA(ModelProbabilistic):
         if self.sliding_window:
             self.__history = self.__history[-self.sliding_window:]
         self.model = arima.model.ARIMA(self.__history, order=(self.p['p'], self.p['d'],
-                                                                     self.p['q']),
-                                       seasonal_order=(self.p['P'], self.p['D'],
+                                                        self.p['q']),
+                                                    seasonal_order=(self.p['P'], self.p['D'],
                                                        self.p['Q'], self.p['S']))
         self.__temp_model = self.model.fit(method_kwargs={"warn_convergence": False})
-
+        self.temp_model = self.__temp_model
         if self.verbose:
             print(self.__temp_model.summary())
             print(self.__temp_model.params)
@@ -88,8 +88,9 @@ class ARIMA(ModelProbabilistic):
         if self.verbose:
             print(self.model.summary())
             print("Parameters", self.model.params)
+   
 
-    def predict(self, X):
+    def predict(self, X, horizon):
         """
         Inference step on the samples X
         :param X: np.array: Input samples to predict
@@ -116,15 +117,17 @@ class ARIMA(ModelProbabilistic):
             # last iterations predict over the last remaining steps
             if X.shape[0] % steps != 0 and j == iterations - 1:
                 steps = X.shape[0] % steps
+           
+            
+          
+           
             self.model = arima.model.ARIMA(self.__history, order=(self.p['p'], self.p['d'],
                                                                   self.p['q']),
-                                           seasonal_order=(self.p['P'], self.p['Q'],
-                                                           self.p['D'], self.p['S']))
-
+                                                            seasonal_order=(self.p['P'], self.p['D'],
+                                                                    self.p['Q'], self.p['S']))
             # retrain the model at each step prediction
             self.__temp_model = self.model.fit(method_kwargs={"warn_convergence": False})
-            result = self.__temp_model.get_forecast(steps=int(steps + self.ds.horizon))
-
+            result = self.train_model.get_forecast(steps=int(steps + horizon)) 
             predicted_mean = list(result.predicted_mean)
             predicted_std = list(result.se_mean)
 
@@ -144,7 +147,7 @@ class ARIMA(ModelProbabilistic):
             print('MAPE: %.7f' % mape)
         self.__history = list(self.__history)
         return predicted_mean, predicted_std
-
+    
     def hyperparametrization(self):
         """
         Search the best parameter configuration
@@ -217,3 +220,27 @@ class ARIMA(ModelProbabilistic):
         # calculate out of sample error
         error = mean_squared_error(test, predicted_means)
         return np.sqrt(error)
+    def training(self, p, X_test):
+            
+        X_train = list(X_train)
+
+        self.history = X_train
+        if p is not None:
+            self.parameter_list = p
+        if self.parameter_list['sliding_window']:
+            self.history = self.history[-self.parameter_list['sliding_window']:]
+        if self.parameter_list['selection']:
+            self.param_selection(X_train)
+        self.model = ARIMA(X_train, order=(self.parameter_list['p'], self.parameter_list['d'],
+                                           self.parameter_list['q']),
+                           seasonal_order=(self.parameter_list['P'], self.parameter_list['D'],
+                                           self.parameter_list['Q'], self.parameter_list['S']))
+        self.train_model = self.model.fit(method_kwargs={"warn_convergence": False})
+
+        print(self.train_model.summary())
+        print(self.train_model.params)
+
+        predicted_mean, predicted_std, _ = self.predict(X_test, self.parameter_list['loop'],
+                                                        self.parameter_list['horizon'])
+
+        return predicted_mean, predicted_std, self.train_model

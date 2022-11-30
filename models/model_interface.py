@@ -110,3 +110,9 @@ class ModelInterface:
         :return: None
         """
         pass
+    def training(self, p, X_test):
+        self.p = p 
+        self.create_model()
+        train_model = self.fit()
+        predictions = self.predict(X_test)
+        return  predictions, train_model

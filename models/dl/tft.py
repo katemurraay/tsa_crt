@@ -12,6 +12,7 @@ from darts.models import TFTModel
 from models.dl.model_interface_dl import ModelInterfaceDL
 from torchmetrics import MeanSquaredError
 from darts.metrics import mse
+from darts.timeseries import concatenate
 from util import custom_pytorch
 
 class TFT(ModelInterfaceDL):
@@ -126,8 +127,8 @@ class TFT(ModelInterfaceDL):
         else:
             print('Using Relative Index')
             self.temp_model.add_relative_index = True
-            self.temp_model.fit(self.ds.ts_train,  val_series =self.ds.ts_val, verbose=1)
-        self.model = checkpoint.dnn.model
+            self.temp_model.fit(self.ds.ts_train, val_series =self.ds.ts_val, verbose=1)
+            self.model = self.temp_model
    
     def fit_predict(self, X):
         """
@@ -155,11 +156,11 @@ class TFT(ModelInterfaceDL):
         :param: darts.TimeSeries X: Values to be Predicted 
         :return: darts.TimeSeries predictions: Predictons of the Model
         """
-        if self.temp_model is None:
+        if self.model is None:
             print("ERROR: the model needs to be trained before predict")
             return
         else: 
-            predictions = self.temp_model.predict(n=len(X))
+            predictions = self.model.predict(n=len(X))
             return predictions
   
     def __optuna_objective(self, trial):
@@ -241,18 +242,59 @@ class TFT(ModelInterfaceDL):
         Load the model from a file
         :return: boolean: 1 if loading operating is successful, 0 otherwise
         """
-        path = (self.model_path + self.name + str(self.count_save).zfill(4) + '_model.pth.tar')
+        count_save = self.count_save - 1
+        path = (self.model_path + self.name + str(count_save).zfill(4) + '_model.pth.tar')
+        if self.model is None:
+            print("ERROR: the model must be available before loading it")
+            return
         self.temp_model = self.model.load_model(path)
-        if self.temp_model is None: return 0
-        else: return 1
-    
+    def tune(self, X):
+        """
+        Tune the models with new available samples (X, y)
+        :param X: nparray: Training features
+        :param y: nparray: Training labels
+        :return: None
+        """
+        my_stopper = EarlyStopping(
+                                    monitor="train_loss",
+                                    patience=self.p['patience'],
+                                    verbose= 0,
+                                    mode='min',
+                                )
+        checkpoint = custom_pytorch.CustomPytorchModelCheckpoint(self)
+        self.pl_trainer_kwargs["callbacks"] = [my_stopper, checkpoint]
+        self.temp_model.trainer_params =self.pl_trainer_kwargs
+        self.temp_model.fit(X,  verbose= 1)   
+        self.model = checkpoint.dnn.model    
+
+    def __tft_backtest(self):
+        if self.temp_model is None:
+            print("ERROR: the model needs to be trained before predict")
+            return
+        else: 
+            h_forecasts = self.temp_model.historical_forecasts(series=self.ds.ts_ttrain,  
+                                                        past_covariates=None, 
+                                                        future_covariates=None, 
+                                                        num_samples=1, 
+                                                        train_length=None, 
+                                                        start= 0.02, 
+                                                        forecast_horizon=1, 
+                                                        stride=1, 
+                                                        retrain=False, 
+                                                        overlap_end=False, 
+                                                        last_points_only=False, 
+                                                        verbose=True)
+            h_forecasts = concatenate(h_forecasts)
+            return h_forecasts
     def evaluate(self):
         """
         Evaluate the model on the training set ds.ts_train
         :return: np.array: predictions: predictions of the trained model on the ds.ts_train set
         """
-        return self.predict(self.ds.ts_train)
+        return self.predict(self.ds.ts_ttrain)
+        
 
-    
+    def evaluate_backtest(self):
+        return self.__tft_backtest()
    
    

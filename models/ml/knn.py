@@ -68,6 +68,7 @@ class KNN(ModelInterface):
             self.__history_y = self.ds.y_train_array  # .reshape(-1, len(self.ds.target_name))
 
         self.model = self.model.fit(self.__history_X, self.__history_y)  # .ravel())
+        return self.model
 
     def predict(self, X):
         """
