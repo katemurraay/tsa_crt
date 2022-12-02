@@ -20,67 +20,67 @@ Traders and investors are interested in accurately predicting cryptocurrency pri
 ## Project Structure
 * **talos**: contains for each deep learning model the list of optimal hyperparameters found with Talos.
 * **img**: contains output plot for predictions, models and loss function.
-* **models**: contains the definition of statistical and deep learning models. One can train the model from scratch using the optimal parameters found with Talos, look for the optimal hyperparameters by changing the search space dictionary or load a saved model and make new forecasts.
+* **models**: contains the definition of statistical and deep learning models. One can Test the model from scratch using the optimal parameters found with Talos, look for the optimal hyperparameters by changing the search space dictionary or load a saved model and make new forecasts.
 * **param**: contains for each statistical model the list of optimal parameters found.
 * **res**: contains the results of the prediction.
 * **saved_data**: contains the preprocessed datasets.
-* **saved_models**: contains the model saved during the training phase.
-* **time**: contains measurements of the time for training, fine-tuning and inference. phases.
+* **saved_models**: contains the model saved during the test  phase.
+* **time**: contains measurements of the time for test , fine-tuning and inference. phases.
 * **util**: contains useful methods for initialising the datasets, plotting and saving the results.
 
 ## Statistical Methods
 
-#### Train ARIMA
+#### Test ARIMA
 
 ```bash
-python arima_training.py
+python arima_test.py
 ```
 
 ## Machine Learning Methods
-#### Train SVR
+#### Test SVR
 
 ```bash
-python svr_training.py
+python svr_test.py
 ```
-#### Train RF
+#### Test RF
 
 ```bash
-python rf_training.py
+python rf_test.py
 ```
-#### Train kNN
+#### Test kNN
 
 ```bash
-python knn_training.py
+python knn_test.py
 ```
 ## Deep Learning Methods
 
-#### Train LSTM
+#### Test LSTM
 
 ```bash
-python lstm_training.py
+python lstm_test.py
 ```
-#### Train GRU
+#### Test GRU
 
 ```bash
-python gru_training.py
-```
-
-#### Train LSTM-GRU Hybrid
-
-```bash
-python hybrid_training.py
+python gru_test.py
 ```
 
-#### Train TFT
+#### Test LSTM-GRU Hybrid
 
 ```bash
-python tft_training.py
+python hybrid_test.py
 ```
 
-#### Train TCN
+#### Test TFT
 
 ```bash
-python tcn_training.py
+python tft_test.py
+```
+
+#### Test TCN
+
+```bash
+python tcn_test.py
 ```
 
 

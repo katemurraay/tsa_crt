@@ -128,7 +128,9 @@ class TFT(ModelInterfaceDL):
             print('Using Relative Index')
             self.temp_model.add_relative_index = True
             self.temp_model.fit(self.ds.ts_train, val_series =self.ds.ts_val, verbose=1)
-            self.model = self.temp_model
+        self.model = checkpoint.dnn.model
+        return self.model
+        
    
     def fit_predict(self, X):
         """
@@ -218,7 +220,7 @@ class TFT(ModelInterfaceDL):
         :return: None
         """
         study = optuna.create_study(study_name="TFT_Optimization", direction="minimize", sampler= optuna.samplers.GridSampler(self.parameter_list))
-        study.optimize(self.__optuna_objective, n_trials=300, show_progress_bar=True)
+        study.optimize(self.__optuna_objective, n_trials=100, show_progress_bar=True)
         print('\nBEST PARAMS: \n{}'.format(study.best_params))
         print('\nBEST VALUE:\n{}'.format(study.best_value))
         df = study.trials_dataframe()
@@ -296,5 +298,12 @@ class TFT(ModelInterfaceDL):
 
     def evaluate_backtest(self):
         return self.__tft_backtest()
+    
+    def training(self, p, X_test):
+        self.p = p 
+        self.create_model()
+        train_model = self.fit()
+        predictions = self.predict(X_test)
+        return  predictions, train_model
    
    
