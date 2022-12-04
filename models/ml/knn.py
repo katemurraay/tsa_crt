@@ -113,7 +113,7 @@ class KNN(ModelInterface):
         mse_score = make_scorer(mean_squared_error, greater_is_better=False)
 
         knn_gs = GridSearchCV(estimator=self.__temp_model, cv=tscv, param_grid=self.parameter_list, scoring=mse_score)
-        knn_gs.fit(self.ds.X_train_array, self.ds.y_train_array)
+        knn_gs.fit(self.__history_X, self.__history_y)
 
         print("BEST MODEL", knn_gs.best_estimator_)
         print("BEST PARAMS", knn_gs.best_params_)
