@@ -11,12 +11,14 @@ def main():
     retrain = [0, 30, 31, 31, 30, 31, 30, 31, 31, 28, 31, 30]
     outputs =[30, 31, 31, 30, 31, 30, 31, 31, 28, 31, 30, 26]
     scaling = ['minmax']
-    tuned =  1
+    tuned =  0
     window = 30
     for t in targets:
         for c in cryptos:
             add_split_value = 0
             mse, rmse, mape, r2_score, mae = [], [], [], [], []
+            all_predictions, all_labels = [], []
+            inference_time, train_time =[], []
             for index, r in enumerate(retrain):
                 output = outputs[index]
                 
@@ -38,18 +40,19 @@ def main():
                             'algorithm': parameters['algorithm'],
                             'p': parameters['p'],
                               }
+                        
                 else:
-                   p = {'n_neighbors': 2,
+                   p = {'n_neighbors': 28,
                         'weights': 'uniform',
-                        'algorithm': 'auto',
-                        'p': 1,
+                        'algorithm': 'brute',
+                        'p': 2,
                         }
                 model = KNN(experiment_name)
                 model.ds = ds 
                 ds.dataset_creation(df=True, detrended= True)
                 ds.dataset_normalization(scaling)
                 ds.data_summary()
-                to_predict = ds.X_test_array[:output]
+                to_predict = ds.X_test[:output]
                 yhat, train_model = model.training(p, X_test=to_predict)                                                                 
                 preds = np.array(yhat).reshape(-1, 1)
                 np_preds = ds.inverse_transform_predictions(preds = preds)
@@ -76,8 +79,16 @@ def main():
                 print("RMSE",np.sqrt(mean_squared_error(n_labels, n_preds)))
                 print("R2", r2.r_squared(n_labels, n_preds))
                 n_experiment_name = experiment_name + '_N'
-                save_results.save_output_csv(preds = n_preds, labels= n_labels, feature=t, filename= n_experiment_name, bivariate=len(ds.target_name) > 1)
+                inference_time.append(model.inference_time)
+                train_time.append(model.train_time)
+                all_predictions.extend(n_preds)
+                all_labels.extend(n_labels)
+            save_results.save_output_csv(preds = all_predictions, labels= all_labels, feature=t, filename= n_experiment_name, bivariate=len(ds.target_name) > 1)
             save_results.save_metrics_csv(mses = mse, maes= mae, rmses= rmse, mapes=mape, filename=experiment_name, r2=r2_score)
+            inference_name = experiment_name + '-inf_time'
+            save_results.save_timing(times = inference_time, filename = inference_name)
+            train_name =  experiment_name + '-train_time'
+            save_results.save_timing(times = train_time, filename = train_name) 
                                                   
 
 if __name__ == "__main__":
