@@ -68,7 +68,7 @@ class SVR(ModelInterface):
         self.train_time = et-st
         return self.model
 
-    def predict(self, X):
+    def predict(self, X, train=False):
         """
         Inference step on the samples X
         :param X: np.array: Input samples to predict
@@ -79,12 +79,13 @@ class SVR(ModelInterface):
             return
 
         X = X[:, :, 0]
-        print('predict X: ', X.shape)
+      
         st = time.time()
         predictions = self.model.predict(X)
         et = time.time()
         self.inference_time = ((et-st)*1000)/len(predictions)
-        true = self.ds.y_test_array
+        if train: true = self.ds.y_train_array
+        else: true = self.ds.y_test_array
         mse = mean_squared_error(true[:len(predictions)], predictions)
         mae = mean_absolute_error(true[:len(predictions)], predictions)
 

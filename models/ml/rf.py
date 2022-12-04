@@ -20,7 +20,7 @@ class RF(ModelInterface):
         """
         super().__init__(name)
         self.p = {'n_estimators': 100,
-                  'criterion': "mse",
+                  'criterion': "squared_error",
                   'max_depth': None,
                   'max_features': "sqrt",
                   'bootstrap': True,
@@ -30,7 +30,8 @@ class RF(ModelInterface):
                                         'criterion': ["squared_error", "absolute_error", "poisson"],
                                         'max_depth': [None, 10, 20, 50, 70, 100],
                                         'max_features': ["auto", "sqrt" ,"log2"],
-                                        'bootstrap': [True, False]
+                                        'bootstrap': [True, False],
+                                       
                               }
         """dict: Dictionary of hyperparameters search space"""
 
@@ -55,7 +56,7 @@ class RF(ModelInterface):
                                            criterion=self.p['criterion'],
                                            max_depth=self.p['max_depth'],
                                            max_features=self.p['max_features'],
-                                           bootstrap=self.p['bootstrap'])
+                                           bootstrap=self.p['bootstrap'],)
 
     def fit(self):
         """
@@ -70,10 +71,10 @@ class RF(ModelInterface):
         st = time.time()
         self.model = self.model.fit(self.__history_X, self.__history_y)  # .ravel())
         et = time.time()
-        self.training_time = et-st
+        self.train_time = et-st
         return self.model
 
-    def predict(self, X):
+    def predict(self, X, train = False):
         """
         Inference step on the samples X
         :param X: np.array: Input samples to predict
@@ -84,12 +85,13 @@ class RF(ModelInterface):
             return
 
         X = X[:, :, 0]
-        print('predict X: ', X.shape)
+
         st = time.time()
         predictions = self.model.predict(X)
         et = time.time()
-        self.inference_time = (et-st)/len(X)
-        true = self.ds.y_test_array
+        self.inference_time = ((et-st) *1000)/len(X)
+        if train: true = self.ds.y_train_array
+        else: true = self.ds.y_test_array
         mse = mean_squared_error(true[:len(predictions)], predictions)
         mae = mean_absolute_error(true[:len(predictions)], predictions)
 
@@ -128,3 +130,4 @@ class RF(ModelInterface):
         self.p['max_depth'] = rf_gs.best_params_['max_depth']
         self.p['max_features'] = rf_gs.best_params_['max_features']
         self.p['bootstrap'] = rf_gs.best_params_['bootstrap']
+  

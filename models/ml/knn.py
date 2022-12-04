@@ -63,15 +63,14 @@ class KNN(ModelInterface):
         self.__history_X = self.ds.X_train[:, :, 0]
         self.__history_y = np.ravel(self.ds.y_train.reshape(-1, 1))
         
-        print('ML X_train shape: ', self.__history_X.shape)
-        print('ML Y_train shape: ', self.__history_y.shape)
+        
         st = time.time()
         self.model = self.model.fit(self.__history_X, self.__history_y)
         et = time.time()
         self.train_time = et-st
         return self.model
 
-    def predict(self, X):
+    def predict(self, X, train = False):
         """
         Inference step on the samples X
         :param X: np.array: Input samples to predict
@@ -82,12 +81,13 @@ class KNN(ModelInterface):
             return
 
         X = X[:, :, 0]
-        print('predict X: ', X.shape)
+  
         st = time.time()
         predictions = self.model.predict(X)
         et = time.time()
         self.inference_time = ((et-st)*1000)/len(predictions)
-        true = self.ds.y_test_array
+        if train: true = self.ds.y_train_array
+        else: true = self.ds.y_test_array
         mse = mean_squared_error(true[:len(predictions)], predictions)
         mae = mean_absolute_error(true[:len(predictions)], predictions)
 

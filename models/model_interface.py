@@ -25,7 +25,8 @@ class ModelInterface:
         """dict: Dictionary of hyperparameters search space"""
         self.p = {}
         """dict: Dictionary of Hyperparameter configuration of the model"""
-
+        self.train_time = None
+        self.inference_time = None
         # Model configuration
         self.verbose = False
         """Boolean: Print output of the training phase"""
@@ -83,7 +84,7 @@ class ModelInterface:
         Evaluate the model on the training set ds.X_train
         :return: np.array: predictions: predictions of the trained model on the ds.X_train set
         """
-        return self.predict(self.ds.X_train_array)
+        return self.predict(self.ds.X_train, train = True)
 
     def save_model(self):
         """

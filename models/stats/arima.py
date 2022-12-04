@@ -12,7 +12,7 @@ from math import sqrt
 import pandas as pd
 import statsmodels.tsa.arima as arima
 from statsmodels.tsa.arima_model import ARIMAResults
-
+import time
 
 class ARIMA(ModelProbabilistic):
     def __init__(self, name):
@@ -60,11 +60,15 @@ class ARIMA(ModelProbabilistic):
         self.__history = list(self.ds.X_train_array)
         if self.sliding_window:
             self.__history = self.__history[-self.sliding_window:]
+        
         self.model = arima.model.ARIMA(self.__history, order=(self.p['p'], self.p['d'],
                                                         self.p['q']),
                                                     seasonal_order=(self.p['P'], self.p['D'],
                                                        self.p['Q'], self.p['S']))
+        st = time.time()
         self.__temp_model = self.model.fit(method_kwargs={"warn_convergence": False})
+        et = time.time()
+        self.train_time = (et-st)
         self.temp_model = self.__temp_model
         if self.verbose:
             print(self.__temp_model.summary())
@@ -89,8 +93,8 @@ class ARIMA(ModelProbabilistic):
             print(self.model.summary())
             print("Parameters", self.model.params)
    
-
-    def predict(self, X, horizon):
+    
+    def predict(self, X, horizon = 0):
         """
         Inference step on the samples X
         :param X: np.array: Input samples to predict
@@ -126,8 +130,12 @@ class ARIMA(ModelProbabilistic):
                                                             seasonal_order=(self.p['P'], self.p['D'],
                                                                     self.p['Q'], self.p['S']))
             # retrain the model at each step prediction
+            
             self.__temp_model = self.model.fit(method_kwargs={"warn_convergence": False})
-            result = self.train_model.get_forecast(steps=int(steps + horizon)) 
+            st = time.time()
+            result = self.__temp_model.get_forecast(steps=int(steps + horizon)) 
+            et = time.time()
+            self.inference_time = ((et-st) * 1000)/steps
             predicted_mean = list(result.predicted_mean)
             predicted_std = list(result.se_mean)
 
