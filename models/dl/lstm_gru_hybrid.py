@@ -58,7 +58,7 @@ class LSTM_GRU(ModelInterfaceDL):
                 'second_dense_dim':  32,
                 'batch_size': 256,
                 'epochs': 1000,
-                'patience': 20,
+                'patience': 50,
                 'optimizer': 'adam',
                 'lr': 1E-4,
                 'momentum': 0.9,

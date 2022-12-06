@@ -44,7 +44,7 @@ class GRU(ModelInterfaceDL):
                   'dense_kernel_init': 'he_normal',
                   'batch_size': 256,
                   'epochs': 1000,
-                  'patience': 20,
+                  'patience': 50,
                   'optimizer': 'adam',
                   'lr': 1E-4,
                   'momentum': 0.9,

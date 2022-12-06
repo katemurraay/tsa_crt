@@ -37,6 +37,7 @@ class ModelInterfaceDL(ModelInterface):
                                       batch_size=self.p['batch_size'], validation_split=0.2, verbose=2, callbacks=[es, save_check])
         
         self.model = save_check.dnn.model
+
         return history, self.model
 
     def predict(self, X):
@@ -45,10 +46,10 @@ class ModelInterfaceDL(ModelInterface):
         :param X: np.array: Input samples to predict
         :return: np.array: predictions: Predictions of the samples X
         """
-        if self.temp_model is None:
+        if self.model is None:
             print("ERROR: the model needs to be trained before predict")
             return
-        predictions = self.temp_model.predict(X)
+        predictions = self.model.predict(X)
         return predictions
 
     def tune(self, X, y):

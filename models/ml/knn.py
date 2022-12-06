@@ -10,6 +10,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import TimeSeriesSplit
 from models.model_interface import ModelInterface
+import time
 
 
 class KNN(ModelInterface):
@@ -59,18 +60,17 @@ class KNN(ModelInterface):
         Training of the model
         :return: None
         """
-
-        if self.sliding_window > 0:
-            self.__history_X = self.ds.X_train_array[-self.sliding_window:]
-            self.__history_y = self.ds.y_train_array[-self.sliding_window:]
-        else: 
-            self.__history_X = self.ds.X_train_array  # .reshape(-1, len(self.ds.training_features))
-            self.__history_y = self.ds.y_train_array  # .reshape(-1, len(self.ds.target_name))
-
-        self.model = self.model.fit(self.__history_X, self.__history_y)  # .ravel())
+        self.__history_X = self.ds.X_train[:, :, 0]
+        self.__history_y = np.ravel(self.ds.y_train.reshape(-1, 1))
+        
+        
+        st = time.time()
+        self.model = self.model.fit(self.__history_X, self.__history_y)
+        et = time.time()
+        self.train_time = et-st
         return self.model
 
-    def predict(self, X):
+    def predict(self, X, train = False):
         """
         Inference step on the samples X
         :param X: np.array: Input samples to predict
@@ -80,15 +80,16 @@ class KNN(ModelInterface):
             print("ERROR: the model needs to be trained before predict")
             return
 
-        if self.model is None:
-            print("ERROR: the model needs to be trained before predict")
-            return
-        if np.array_equal(X, self.ds.X_test):
-            X = self.ds.X_test_array
-
+        X = X[:, :, 0]
+  
+        st = time.time()
         predictions = self.model.predict(X)
-        mse = mean_squared_error(X[:len(predictions)], predictions)
-        mae = mean_absolute_error(X[:len(predictions)], predictions)
+        et = time.time()
+        self.inference_time = ((et-st)*1000)/len(predictions)
+        if train: true = self.ds.y_train_array
+        else: true = self.ds.y_test_array
+        mse = mean_squared_error(true[:len(predictions)], predictions)
+        mae = mean_absolute_error(true[:len(predictions)], predictions)
 
         if self.verbose:
             print('MSE: %.3f' % mse)
@@ -101,12 +102,17 @@ class KNN(ModelInterface):
         Search the best parameter configuration
         :return: None
         """
+        self.__history_X = self.ds.X_train[:, :, 0]
+        self.__history_y = np.ravel(self.ds.y_train.reshape(-1, 1))
+
+
         self.__temp_model = KNeighborsRegressor()
-        tscv = TimeSeriesSplit(n_splits=10)
+        split_val = int(len(self.__history_X) * 0.8) 
+        tscv = TimeSeriesSplit(gap = 0, n_splits= 10, max_train_size=split_val)
         mse_score = make_scorer(mean_squared_error, greater_is_better=False)
 
         knn_gs = GridSearchCV(estimator=self.__temp_model, cv=tscv, param_grid=self.parameter_list, scoring=mse_score)
-        knn_gs.fit(self.ds.X_train_array, self.ds.y_train_array)
+        knn_gs.fit(self.__history_X, self.__history_y)
 
         print("BEST MODEL", knn_gs.best_estimator_)
         print("BEST PARAMS", knn_gs.best_params_)
