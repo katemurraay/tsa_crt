@@ -1,0 +1,2 @@
+,conv_filter,conv_kernel,conv_activation,dropout_rate,dense_dim,dilation_rate,dense_activation,dense_kernel_init,batch_size,epochs,patience,optimizer,lr,momentum,decay
+0,32,16,relu,0.05,64,8,relu,he_normal,256,200,50,adam,0.0001,0.9,0.0001

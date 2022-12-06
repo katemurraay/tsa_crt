@@ -1,2 +1,0 @@
-,first_conv_dim,first_conv_kernel,first_conv_activation,first_lstm_dim,first_dense_dim,first_dense_activation,dense_kernel_init,batch_size,epochs,patience,optimizer,lr,momentum,decay
-0,32,5,relu,16,16,relu,he_normal,256,5,50,adam,0.0001,0.9,0.0001
