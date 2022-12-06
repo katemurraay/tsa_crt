@@ -60,8 +60,6 @@ class SVR(ModelInterface):
         self.__history_X = self.ds.X_train[:, :, 0]
         self.__history_y = np.ravel(self.ds.y_train.reshape(-1, 1))
 
-        print('ML X_train shape: ', self.__history_X.shape)
-        print('ML Y_train shape: ', self.__history_y.shape)
         st = time.time()
         self.model = self.model.fit(self.__history_X, self.__history_y)  # .ravel())
         et = time.time()
@@ -102,8 +100,7 @@ class SVR(ModelInterface):
         """
         self.__history_X = self.ds.X_train[:, :, 0]
         self.__history_y = np.ravel(self.ds.y_train.reshape(-1, 1))
-        print('ML X_train shape: ',self.__history_X.shape)
-        print('ML Y_train shape: ', self.__history_y.shape)
+       
         self.__temp_model = svm.SVR()
         split_val = int(len(self.__history_X) * 0.8) 
         tscv = TimeSeriesSplit(gap = 0, n_splits= 10, max_train_size=split_val)

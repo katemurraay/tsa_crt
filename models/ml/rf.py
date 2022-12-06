@@ -66,8 +66,6 @@ class RF(ModelInterface):
         self.__history_X = self.ds.X_train[:, :, 0]
         self.__history_y = np.ravel(self.ds.y_train.reshape(-1, 1))
 
-        print('ML X_train shape: ', self.__history_X.shape)
-        print('ML Y_train shape: ', self.__history_y.shape)
         st = time.time()
         self.model = self.model.fit(self.__history_X, self.__history_y)  # .ravel())
         et = time.time()

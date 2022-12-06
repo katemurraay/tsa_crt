@@ -104,8 +104,7 @@ class KNN(ModelInterface):
         """
         self.__history_X = self.ds.X_train[:, :, 0]
         self.__history_y = np.ravel(self.ds.y_train.reshape(-1, 1))
-        print('ML X_train shape: ',self.__history_X.shape)
-        print('ML Y_train shape: ', self.__history_y.shape)
+
 
         self.__temp_model = KNeighborsRegressor()
         split_val = int(len(self.__history_X) * 0.8) 

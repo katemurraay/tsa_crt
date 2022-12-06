@@ -16,7 +16,7 @@ from darts.dataprocessing.transformers import Scaler
 class BinanceDataset(DatasetInterface):
     
     def __init__(self,  filename="", input_window=10, output_window=1, horizon=0, training_features=[], target_name=[],
-                 train_split_factor=0.8, apiKey = "", apiSecurity = ""):
+                 train_split_factor=0.8, apiKey = "", apiSecurity =""):
         """
         Call to the parent constructor [DatasetInterface] and passing the required parameters:
             :param string: filename
