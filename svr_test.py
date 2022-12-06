@@ -9,7 +9,7 @@ def main():
     targets = ['close']
     cryptos =  ['btc',  'eth', 'ltc', 'xmr', 'xrp']
     retrain = [0, 30, 31, 31, 30, 31, 30, 31, 31, 28, 31, 30]
-    outputs =[30, 31, 31, 30, 31, 30, 31, 31, 28, 31, 30, 31] 
+    outputs =[30, 31, 31, 30, 31, 30, 31, 31, 28, 31, 30, 31]
     scaling = ['minmax']
     tuned =  1
     window = 30
@@ -17,6 +17,9 @@ def main():
         for c in cryptos:
             add_split_value = 0
             mse, rmse, mape, r2_score, mae = [], [], [], [], []
+            all_ytrue, all_yhat =[], []
+            inference_time, train_time = [], []
+            all_predictions, all_labels = [], []
             for index, r in enumerate(retrain):
                 output = outputs[index]
                 
@@ -39,20 +42,22 @@ def main():
                         'tol':  parameters['tol'],
                         'C': parameters['C'],
                         }
+                 
                 else:
                     p = {'kernel': 'poly',
-                        'degree': 2,
+                        'degree': 5,
                         'gamma': 'auto',
                         'tol': 0.001,
-                        'C': 10,
+                        'C': 100,
                         }
                 model = SVR(experiment_name)
-                model.ds = ds 
                 ds.dataset_creation(df=True, detrended= True)
                 ds.dataset_normalization(scaling)
                 ds.data_summary()
-                to_predict = ds.X_test_array[:output]
-                yhat, train_model = model.training(p, X_test=to_predict)                                                                 
+                model.ds = ds 
+                to_predict = ds.X_test[:output]
+                yhat, train_model = model.training(p, X_test=to_predict) 
+                ytrue= ds.y_test_array[(h):output].reshape(-1, 1)                                                          
                 preds = np.array(yhat).reshape(-1, 1)
                 np_preds = ds.inverse_transform_predictions(preds = preds)
                 inversed_preds = ds.inverse_differenced_dataset(diff_vals= np_preds, df=df, l = (len(ds.y_test_array)))
@@ -66,7 +71,7 @@ def main():
                 n_preds = ds.scale_predictions(preds= inversed_preds)                               
                 n_labels =  ds.scale_predictions(preds= labels)
                 if not tuned:
-                    save_results.save_params_csv(model.parameter_list, model.name)      
+                    save_results.save_params_csv(model.p, model.name)      
                 mse.append(mean_squared_error(n_labels, n_preds))
                 rmse.append(np.sqrt(mean_squared_error(n_labels, n_preds)))
                 mae.append(mean_absolute_error(n_labels, n_preds))
@@ -77,10 +82,22 @@ def main():
                 print("MAPE", mean_absolute_percentage_error(n_labels, n_preds))
                 print("RMSE",np.sqrt(mean_squared_error(n_labels, n_preds)))
                 print("R2", r2.r_squared(n_labels, n_preds))
+                all_yhat.extend(yhat)
+                all_ytrue.extend(ytrue)
                 n_experiment_name = experiment_name + '_N'
-                save_results.save_output_csv(preds = n_preds, labels= n_labels, feature=t, filename= n_experiment_name, bivariate=len(ds.target_name) > 1)
+                d_experiment_name = experiment_name + '_FD'
+                train_time.append(model.train_time)
+                inference_time.append(model.inference_time)
+                all_predictions.extend(n_preds)
+                all_labels.extend(n_labels)
+            save_results.save_output_csv(preds = all_predictions, labels= all_labels, feature=t, filename= n_experiment_name, bivariate=len(ds.target_name) > 1)
             save_results.save_metrics_csv(mses = mse, maes= mae, rmses= rmse, mapes=mape, filename=experiment_name, r2=r2_score)
-                                                  
+            inference_name = experiment_name + '-inf_time'
+            save_results.save_timing(times = inference_time, filename = inference_name)
+            train_name =  experiment_name + '-train_time'
+            save_results.save_timing(times = train_time, filename = train_name)              
+            save_results.save_output_csv(preds = all_yhat, labels= all_ytrue, feature=t, filename= experiment_name, bivariate=len(ds.target_name) > 1)
+                                                      
 
 if __name__ == "__main__":
     main()

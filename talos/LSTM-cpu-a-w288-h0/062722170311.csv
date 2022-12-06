@@ -1,3 +1,0 @@
-round_epochs,loss,mse,mae,val_loss,val_mse,val_mae,batch_size,decay,dense_kernel_init,epochs,first_conv_activation,first_conv_dim,first_conv_kernel,first_dense_activation,first_dense_dim,first_lstm_dim,lr,momentum,optimizer,patience
-5,0.7935619950294495,0.7935619950294495,0.710697591304779,0.6126493215560913,0.6126493215560913,0.6150794625282288,256,0.001,he_normal,2000,relu,32,11,relu,16,16,0.001,0.99,adam,50
-5,0.76898592710495,0.76898592710495,0.6954833269119263,0.6262912750244141,0.6262912750244141,0.6165969371795654,256,0.001,he_normal,2000,tanh,128,7,elu,16,32,0.0001,0.99,nadam,50

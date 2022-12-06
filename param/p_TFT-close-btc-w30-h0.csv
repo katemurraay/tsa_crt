@@ -1,0 +1,2 @@
+,epochs,input_chunk_length,hidden_layer_dim,num_lstm_layers,num_attention_heads,dropout_rate,batch_size,output_chunk_length,patience,lr,optimizer,feed_forward
+0,200,30,64,3,7,0.05,256,1,50,0.001,adam,GatedResidualNetwork

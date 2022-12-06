@@ -1,0 +1,2 @@
+,first_gru_dim,gru_activation,first_dense_dim,first_dense_activation,dense_kernel_init,batch_size,epochs,patience,optimizer,lr,momentum,decay
+0,75,relu,100,relu,he_normal,256,200,50,adam,0.001,0.9,0.001

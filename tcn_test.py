@@ -3,7 +3,7 @@ from util import plot_training, save_results, dataset_binance, r2
 from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, median_absolute_error, explained_variance_score, mean_squared_log_error
 import numpy as np
 import pandas as pd
-
+from keras import backend as K
 def main():
     h=0
     targets = ['close']
@@ -19,7 +19,7 @@ def main():
             mse, rmse, mape, r2_score, mae = [], [], [], [], []
             for index, r in enumerate(retrain):
                 output = outputs[index]
-                
+                K.clear_session()
                 experiment_name = 'tcn-' + c + '-' + t + '-h' + str(h) + '-'+ str(index) +'m'
                 ds = dataset_binance.BinanceDataset(filename='crypto_task_' + c + '.csv', input_window=window, output_window=1,
                                                             horizon=h, training_features=['close'],
