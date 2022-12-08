@@ -21,7 +21,7 @@ def main():
             for index, r in enumerate(retrain):
                 output = outputs[index]
                 
-                experiment_name = 'gru-' + c + '-' + t + '-h' + str(h) + '-'+ str(index) +'m'
+                experiment_name = 'gru-' + c + '-' + t  + '-w' + str(window) +  '-h' + str(h) + '-' + str(len(outputs)) +'m'
                 ds = dataset_binance.BinanceDataset(filename='crypto_task_' + c + '.csv', input_window=window, output_window=1,
                                                             horizon=h, training_features=['close'],
                                                             target_name=['close'], train_split_factor=0.8)
