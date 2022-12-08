@@ -11,6 +11,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 from util import custom_keras
 import tensorflow as tf
 import talos
+import torch
 
 
 class ModelInterfaceDL(ModelInterface):
@@ -125,9 +126,39 @@ class ModelInterfaceDL(ModelInterface):
         self.temp_model = tf.keras.models.load_model(self.model_path + self.name + str(count_save).zfill(4) + '_model.tf')
         return 1
     def training(self, p, X_test):
-        self.p = p
-        self.create_model()
-        _, train_model = self.fit()
-        predictions = self.predict(X_test)
+        starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+        repetitions = 1
+        timings=np.zeros((repetitions,1))
+        
+        for _ in range(10):
+            self.p = p
+            self.create_model()
+            
+        with torch.no_grad():
+            for rep in range(repetitions):
+                starter.record()
+                _, train_model = self.fit()
+                ender.record()
+                torch.cuda.synchronize()
+                curr_time = starter.elapsed_time(ender)/1000
+                timings[rep] = curr_time
+
+        self.train_time = np.sum(timings) / repetitions
+        for _ in range(10):
+            to_predict = X_test
+        # MEASURE PERFORMANCE
+        with torch.no_grad():
+            for rep in range(repetitions):
+                starter.record()
+                predictions = self.predict(to_predict)
+                ender.record()
+                torch.cuda.synchronize()
+                curr_time = starter.elapsed_time(ender)
+                timings[rep] = curr_time
+        mean_time = np.sum(timings) / repetitions
+        self.inference_time = mean_time / len(to_predict)
+    
+       
+        
         return predictions, train_model
 
