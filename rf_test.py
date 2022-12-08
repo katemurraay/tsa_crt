@@ -69,8 +69,6 @@ def main():
                 ds.dataset_normalization(scaling)
                 n_preds = ds.scale_predictions(preds= inversed_preds)                               
                 n_labels =  ds.scale_predictions(preds= labels)
-                if not tuned:
-                    save_results.save_params_csv(model.p, model.name)      
                 mse.append(mean_squared_error(n_labels, n_preds))
                 rmse.append(np.sqrt(mean_squared_error(n_labels, n_preds)))
                 mae.append(mean_absolute_error(n_labels, n_preds))
@@ -86,6 +84,8 @@ def main():
                 inference_time.append(model.inference_time)
                 all_predictions.extend(n_preds)
                 all_labels.extend(n_labels)
+            if not tuned:
+                    save_results.save_params_csv(model.p, model.name)      
             save_results.save_output_csv(preds = all_predictions, labels= all_labels, feature=t, filename= n_experiment_name, bivariate=len(ds.target_name) > 1)
             save_results.save_metrics_csv(mses = mse, maes= mae, rmses= rmse, mapes=mape, filename=experiment_name, r2=r2_score)
             inference_name = experiment_name + '-inf_time'

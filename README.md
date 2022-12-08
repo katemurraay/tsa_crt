@@ -25,13 +25,13 @@ Traders and investors are interested in accurately predicting cryptocurrency pri
 
 
 ## Project Structure
-* **talos**: contains for each deep learning model the list of optimal hyperparameters found with Talos.
+* **talos**: contains the list of optimal hyperparameters found with Talos for each deep model.
 * **models**: contains the definition of statistical, machine learning and deep learning models. One can Test the model from scratch using the optimal parameters found with Talos, look for the optimal hyperparameters by changing the search space dictionary or load a saved model and make new forecasts.
-* **param**: contains for each model the list of optimal parameters found.
+* **param**: contains the list of optimal parameters found for every model.
 * **res**: contains the results of the prediction.
-* **saved_data**: contains the preprocessed datasets.
-* **saved_models**: contains the model saved during the test  phase.
-* **util**: contains useful methods for initialising the datasets, plotting and saving the results.
+* **saved_data**: contains the datasets.
+* **saved_models**: contains the model saved when fitting the model.
+* **util**: contains useful methods for initialising the datasets, plotting, calculating and saving the results.
 
 ## Statistical Methods
 
