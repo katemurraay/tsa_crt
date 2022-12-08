@@ -11,7 +11,7 @@ def main():
     retrain = [0, 30, 31, 31, 30, 31, 30, 31, 31, 28, 31, 30]
     outputs =[30, 31, 31, 30, 31, 30, 31, 31, 28, 31, 30, 31] 
     scaling = ['minmax']
-    tuned =  1
+    tuned =  0
     window = 30
     for t in targets:
         for c in cryptos:
