@@ -10,11 +10,11 @@ import itertools
 from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 from math import sqrt
 import pandas as pd
-import statsmodels.tsa.arima as arima
-from statsmodels.tsa.arima_model import ARIMAResults
+from statsmodels.tsa.arima.model import ARIMA
+
 import time
 
-class ARIMA(ModelProbabilistic):
+class STATS_ARIMA(ModelProbabilistic):
     def __init__(self, name):
         """
         Constructor of the Model Interface class
@@ -47,7 +47,7 @@ class ARIMA(ModelProbabilistic):
         Create an instance of the model. This function contains the definition and the library of the model
         :return: None
         """
-        self.model = arima.model.ARIMA(self.ds.X_train_array, order=(self.p['p'], self.p['d'],
+        self.model = ARIMA(self.history, order=(self.p['p'], self.p['d'],
                                                                      self.p['q']),
                                        seasonal_order=(self.p['P'], self.p['Q'],
                                                        self.p['D'], self.p['S']))
@@ -61,7 +61,7 @@ class ARIMA(ModelProbabilistic):
         if self.sliding_window:
             self.__history = self.__history[-self.sliding_window:]
         
-        self.model = arima.model.ARIMA(self.__history, order=(self.p['p'], self.p['d'],
+        self.model = ARIMA(self.__history, order=(self.p['p'], self.p['d'],
                                                         self.p['q']),
                                                     seasonal_order=(self.p['P'], self.p['D'],
                                                        self.p['Q'], self.p['S']))
@@ -82,7 +82,7 @@ class ARIMA(ModelProbabilistic):
         :return: None
         """
         self.__history = X
-        self.model = arima.model.ARIMA(X, order=(self.p['p'], self.p['d'],
+        self.model = ARIMA(X, order=(self.p['p'], self.p['d'],
                                                  self.p['q']),
                                        seasonal_order=(self.p['P'], self.p['D'],
                                                        self.p['Q'], self.p['S']))
@@ -125,7 +125,7 @@ class ARIMA(ModelProbabilistic):
             
           
            
-            self.model = arima.model.ARIMA(self.__history, order=(self.p['p'], self.p['d'],
+            self.model = ARIMA(self.__history, order=(self.p['p'], self.p['d'],
                                                                   self.p['q']),
                                                             seasonal_order=(self.p['P'], self.p['D'],
                                                                     self.p['Q'], self.p['S']))
@@ -170,7 +170,7 @@ class ARIMA(ModelProbabilistic):
         for comb in pdq:
             for combs in pdqs:
                 # try:
-                mod = arima.model.ARIMA(self.ds.X_train_array,
+                mod = ARIMA(self.ds.X_train_array,
                                         order=comb,
                                         seasonal_order=combs,
                                         enforce_stationarity=False,
@@ -214,7 +214,7 @@ class ARIMA(ModelProbabilistic):
             if self.verbose:
                 if t % 100 == 0:
                     print("Iteration ", t, ' of ', len(test))
-            self.model = arima.model.ARIMA(history, order=arima_order,
+            self.model = ARIMA(history, order=arima_order,
                                            seasonal_order=arima_seasonal_order,
                                            enforce_stationarity=False,
                                            enforce_invertibility=False)
@@ -237,18 +237,14 @@ class ARIMA(ModelProbabilistic):
             self.p= p
         if self.p['sliding_window']:
             self.history = self.history[-self.p['sliding_window']:]
- 
-        self.model =  arima.model.ARIMA(self.history, order=(self.p['p'], self.p['d'],
-                                           self.p['q']),
-                           seasonal_order=(self.p['P'], self.p['D'],
-                                           self.p['Q'], self.p['S']))
-        self.train_model = self.model.fit(method_kwargs={"warn_convergence": False})
+        self.p = p
+        
+        
+        self.fit()
+        
+       
 
-        print(self.train_model.summary())
-        print(self.train_model.params)
-
-        predicted_mean, predicted_std, _ = self.predict(X_test, self.p['loop'],
-
+        predicted_mean, predicted_std = self.predict(X_test,
                                                         self.p['horizon'])
 
-        return predicted_mean, predicted_std, self.train_model
+        return predicted_mean, predicted_std, self.model

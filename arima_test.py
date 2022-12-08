@@ -1,4 +1,4 @@
-from models.stats.arima import ARIMA
+from models.stats.arima import STATS_ARIMA
 from util import plot_training, save_results, dataset_binance, r2
 from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, median_absolute_error, explained_variance_score, mean_squared_log_error
 import numpy as np
@@ -47,7 +47,7 @@ def main():
                         'sliding_window': parameters['sliding_window'],
                         }
                 else:
-                    p = {'p': 1,
+                   p = {'p': 1,
                         'd': 0,
                         'q': 2,
                         'P': 2,
@@ -56,9 +56,11 @@ def main():
                         'S': 12,
                         'loop': 0,
                         'horizon': 0,
-                        'sliding_window':0,
+                        'sliding_window': 0, 
                         }
-                model = ARIMA(experiment_name)
+        
+                        
+                model = STATS_ARIMA(experiment_name)
                 model.ds = ds 
                 ds.dataset_creation(df=True, detrended= True)
                 ds.dataset_normalization(scaling)
