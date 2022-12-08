@@ -17,7 +17,6 @@ def main():
         for c in cryptos:
             add_split_value = 0
             mse, rmse, mape, r2_score, mae = [], [], [], [], []
-            all_ytrue, all_yhat =[], []
             inference_time, train_time = [], []
             all_predictions, all_labels = [], []
             for index, r in enumerate(retrain):
@@ -57,7 +56,7 @@ def main():
                 model.ds = ds 
                 to_predict = ds.X_test[:output]
                 yhat, train_model = model.training(p, X_test=to_predict) 
-                ytrue= ds.y_test_array[(h):output].reshape(-1, 1)                                                          
+                                                                          
                 preds = np.array(yhat).reshape(-1, 1)
                 np_preds = ds.inverse_transform_predictions(preds = preds)
                 inversed_preds = ds.inverse_differenced_dataset(diff_vals= np_preds, df=df, l = (len(ds.y_test_array)))
@@ -80,8 +79,7 @@ def main():
                 print("MAPE", mean_absolute_percentage_error(n_labels, n_preds))
                 print("RMSE",np.sqrt(mean_squared_error(n_labels, n_preds)))
                 print("R2", r2.r_squared(n_labels, n_preds))
-                all_yhat.extend(yhat)
-                all_ytrue.extend(ytrue)
+                
                 n_experiment_name = experiment_name + '_N'
                 train_time.append(model.train_time)
                 inference_time.append(model.inference_time)
@@ -96,7 +94,6 @@ def main():
             save_results.save_timing(times = inference_time, filename = inference_name)
             train_name =  experiment_name + '-train_time'
             save_results.save_timing(times = train_time, filename = train_name)              
-            save_results.save_output_csv(preds = all_yhat, labels= all_ytrue, feature=t, filename= experiment_name, bivariate=len(ds.target_name) > 1)
                                                       
 
 if __name__ == "__main__":

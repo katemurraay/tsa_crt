@@ -17,6 +17,7 @@ def main():
         for c in cryptos:
             add_split_value = 0
             mse, rmse, mape, r2_score, mae = [], [], [], [], []
+            all_predictions, all_labels =[], []
             for index, r in enumerate(retrain):
                 output = outputs[index]
                 
@@ -91,12 +92,14 @@ def main():
                 print("RMSE",np.sqrt(mean_squared_error(n_labels, n_preds)))
                 print("R2", r2.r_squared(n_labels, n_preds))
                 n_experiment_name = experiment_name + '_N'
-                save_results.save_output_csv(preds = n_preds, labels= n_labels, feature=t, filename= n_experiment_name, bivariate=len(ds.target_name) > 1)
+                all_predictions.extend(n_preds)
+                all_labels.extend(n_labels)
             if not tuned:
-                    save_results.save_params_csv(model.parameter_list, model.name)      
+                save_results.save_params_csv(model.parameter_list, model.name)      
                
+            save_results.save_output_csv(preds = all_predictions, labels= all_labels, feature=t, filename= n_experiment_name, bivariate=len(ds.target_name) > 1)
             save_results.save_metrics_csv(mses = mse, maes= mae, rmses= rmse, mapes=mape, filename=experiment_name, r2=r2_score)
-                                                  
+                                                                                   
 
 if __name__ == "__main__":
     main()
