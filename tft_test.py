@@ -11,7 +11,7 @@ def main():
     retrain = [0, 30, 31, 31, 30, 31, 30, 31, 31, 28, 31, 30]
     outputs =[30, 31, 31, 30, 31, 30, 31, 31, 28, 31, 30, 31] 
     scaling = ['minmax']
-    tuned =  1
+    tuned =  0
     window = 30
     for t in targets:
         for c in cryptos:
@@ -81,8 +81,6 @@ def main():
                 ds.dataset_normalization(scaling)
                 n_preds = ds.scale_predictions(preds= inversed_preds)                               
                 n_labels =  ds.scale_predictions(preds= labels)
-                if not tuned:
-                    save_results.save_params_csv(model.parameter_list, model.name)      
                 mse.append(mean_squared_error(n_labels, n_preds))
                 rmse.append(np.sqrt(mean_squared_error(n_labels, n_preds)))
                 mae.append(mean_absolute_error(n_labels, n_preds))
@@ -95,6 +93,9 @@ def main():
                 print("R2", r2.r_squared(n_labels, n_preds))
                 n_experiment_name = experiment_name + '_N'
                 save_results.save_output_csv(preds = n_preds, labels= n_labels, feature=t, filename= n_experiment_name, bivariate=len(ds.target_name) > 1)
+            if not tuned:
+                save_results.save_params_csv(model.parameter_list, model.name)      
+               
             save_results.save_metrics_csv(mses = mse, maes= mae, rmses= rmse, mapes=mape, filename=experiment_name, r2=r2_score)
                                                   
 

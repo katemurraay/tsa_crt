@@ -84,8 +84,8 @@ class TFT(ModelInterfaceDL):
                         hidden_size=self.p['hidden_layer_dim'],
                         lstm_layers= self.p['num_lstm_layers'],
                         num_attention_heads= self.p['num_attention_heads'],
-                        dropout= self.p['dropout_rate'],
-                        batch_size= self.p['batch_size'],
+                        dropout = self.p['dropout_rate'],
+                        batch_size = self.p['batch_size'],
                         n_epochs= self.p['epochs'],
                         likelihood=None, 
                         loss_fn= torch.nn.MSELoss(),
@@ -302,7 +302,7 @@ class TFT(ModelInterfaceDL):
     def training(self, p, X_test):
         self.p = p 
         self.create_model()
-        train_model = self.fit()
+        train_model = self.fit(use_covariates = False)
         predictions = self.predict(X_test)
         return  predictions, train_model
    
