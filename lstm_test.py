@@ -34,11 +34,11 @@ def main():
                 
                 if tuned:
                     parameters = pd.read_csv("param/p_LSTM-"+t+ '-'+c +"-w30-h0.csv").iloc[0] 
-                    p  = {  'first_gru_dim': parameters['first_gru_dim'],
-                            'gru_activation': parameters['gru_activation'],
-                            'first_dense_dim':parameters['first_dense_dim'],
-                            'first_dense_activation': parameters['first_dense_activatio'],
-                            'dense_kernel_init': parameters['dense_kernel_init'],
+                    p  = {  'first_conv_dim': parameters['first_conv_dim'],
+                            'first_conv_activation': parameters['first_conv_activation'],
+                            'first_conv_kernel':parameters['first_conv_kernel'],
+                            'first_lstm_dim': parameters['first_lstm_dim'],
+                            'first_dense_activation': parameters['first_dense_activation'],
                             'batch_size': parameters['batch_size'],
                             'epochs':parameters['epochs'],
                             'patience': parameters['patience'],
@@ -49,19 +49,20 @@ def main():
                             
                         }
                 else:
-                   p = {'first_gru_dim': 75,
-                        'gru_activation': 'relu',
-                        'first_dense_dim': 100,
-                        'first_dense_activation': 'relu',
-                        'dense_kernel_init': 'he_normal',
+                  p =  {'first_conv_dim': 64,
+                        'first_conv_activation': 'relu',
+                        'first_conv_kernel': 5,
+                        'first_lstm_dim': 75,
+                        'first_dense_dim': 16,
+                        'first_dense_activation':'relu',
                         'batch_size': 256,
-                        'epochs': 200,
                         'patience': 50,
+                        'epochs': 200,  
                         'optimizer': 'adam',
-                        'lr': 1E-3,
+                        'lr':1E-4,
                         'momentum': 0.9,
                         'decay': 1E-3,
-                            }
+                                    }
                 model =LSTM(experiment_name)
                 model.ds = ds 
                 ds.dataset_creation(df=True, detrended= True)
