@@ -98,7 +98,7 @@ def main():
                 train_time.append(model.train_time)
                 inference_time.append(model.inference_time)
             if not tuned:
-                save_results.save_params_csv(model.parameter_list, model.name)      
+                save_results.save_params_csv(model.p, model.name)      
                
             save_results.save_output_csv(preds = all_predictions, labels= all_labels, feature=t, filename= n_experiment_name, bivariate=len(ds.target_name) > 1)
             save_results.save_metrics_csv(mses = mse, maes= mae, rmses= rmse, mapes=mape, filename=experiment_name, r2=r2_score)
